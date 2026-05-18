@@ -1,30 +1,45 @@
 // Endpoint de debug TEMPORAIRE — à supprimer après diagnostic
+import { getSupabase } from '../lib/supabase.js';
+import { createPayPalOrder } from '../lib/paypal.js';
+
 export default async function handler(req, res) {
   const results = {};
+  const TEST_PRODUCT_ID = '2bf5ff21-eb4a-4bbf-991a-bdece4b92b7a';
 
-  // PayPal credentials
-  const clientId     = process.env.PAYPAL_CLIENT_ID ?? '';
-  const clientSecret = process.env.PAYPAL_CLIENT_SECRET ?? '';
-  results.paypal_id_set      = clientId.length > 10;
-  results.paypal_secret_set  = clientSecret.length > 10 && !clientSecret.includes('VOTRE');
-  results.paypal_mode        = process.env.PAYPAL_MODE;
+  // 1. Supabase — lecture produit
+  try {
+    const sb = getSupabase();
+    const { data, error } = await sb.from('products').select('id,name,price_cad,in_stock').eq('id', TEST_PRODUCT_ID).single();
+    results.supabase_product = error ? `ERREUR: ${error.message}` : `OK: ${data.name}`;
+  } catch(e) { results.supabase_product = `EXCEPTION: ${e.message}`; }
 
-  // Test token PayPal
-  if (results.paypal_id_set && results.paypal_secret_set) {
+  // 2. Supabase — insert order test
+  let testOrderId = null;
+  try {
+    const sb = getSupabase();
+    const { data, error } = await sb.from('orders').insert({
+      customer_name: 'Debug Test', customer_email: 'debug@test.com',
+      product_id: TEST_PRODUCT_ID, product_name: 'Test', qty: 1,
+      amount_cad: 5.00, livraison: 'collecte', frais_livraison: 0, rabais: 0,
+      status: 'pending', notes: ''
+    }).select('id').single();
+    if (error) { results.supabase_insert = `ERREUR: ${error.message} | ${error.details}`; }
+    else { testOrderId = data.id; results.supabase_insert = `OK: ${data.id}`; }
+  } catch(e) { results.supabase_insert = `EXCEPTION: ${e.message}`; }
+
+  // 3. PayPal order
+  if (testOrderId) {
     try {
-      const creds = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-      const r = await fetch('https://api-m.sandbox.paypal.com/v1/oauth2/token', {
-        method: 'POST',
-        headers: { 'Authorization': `Basic ${creds}`, 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'grant_type=client_credentials',
-      });
-      const d = await r.json();
-      results.paypal_token = r.ok ? 'OK' : `ERREUR ${r.status}: ${d.error_description}`;
-    } catch (e) {
-      results.paypal_token = `EXCEPTION: ${e.message}`;
-    }
-  } else {
-    results.paypal_token = 'SKIP — credentials manquants';
+      const pp = await createPayPalOrder(5.00, testOrderId, 'Test x1');
+      results.paypal_order = `OK: ${pp.id}`;
+    } catch(e) { results.paypal_order = `ERREUR: ${e.message}`; }
+
+    // Cleanup
+    try {
+      const sb = getSupabase();
+      await sb.from('orders').delete().eq('id', testOrderId);
+      results.cleanup = 'OK';
+    } catch(e) { results.cleanup = `ERREUR: ${e.message}`; }
   }
 
   res.status(200).json(results);
