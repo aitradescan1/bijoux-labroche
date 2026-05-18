@@ -219,11 +219,11 @@
       <div class="modal-card">
         <h3 id="qrProductName"></h3>
         <p class="modal-sku" id="qrProductSku"></p>
-        <canvas id="qrCanvas"></canvas>
+        <canvas id="qrCanvas" style="border-radius:8px;border:1px solid #e8ddd0"></canvas>
         <p class="qr-url-text" id="qrUrlText"></p>
         <div class="modal-actions">
           <button class="btn-modal-close" id="qrClose">Fermer</button>
-          <button class="btn-modal-print" id="qrPrint">🖨 Imprimer</button>
+          <button class="btn-modal-print" id="qrDownload">⬇ Télécharger PNG</button>
         </div>
       </div>
     </div>
@@ -436,14 +436,82 @@
     }
 
     // ── QR Code ────────────────────────────────────────────
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(' ');
+      let line = '';
+      for (const word of words) {
+        const test = line ? line + ' ' + word : word;
+        if (ctx.measureText(test).width > maxWidth && line) {
+          ctx.fillText(line, x, y);
+          line = word;
+          y += lineHeight;
+        } else {
+          line = test;
+        }
+      }
+      ctx.fillText(line, x, y);
+    }
+
     function openQr(id, sku, name) {
       const base = location.origin + location.pathname.replace(/\/[^/]*$/, '');
       const url  = `${base}/vendre.html?sku=${encodeURIComponent(sku)}`;
       document.getElementById('qrProductName').textContent = name;
       document.getElementById('qrProductSku').textContent  = sku;
       document.getElementById('qrUrlText').textContent     = url;
+
+      const W = 300, H = 420;
       const canvas = document.getElementById('qrCanvas');
-      QRCode.toCanvas(canvas, url, { width: 240, margin: 2, color: { dark: '#2d1a0a', light: '#ffffff' } });
+      canvas.width  = W;
+      canvas.height = H;
+      canvas.style.width  = W + 'px';
+      canvas.style.height = H + 'px';
+
+      // Generate QR on a temp canvas, then draw composite
+      const tmp = document.createElement('canvas');
+      QRCode.toCanvas(tmp, url, { width: 240, margin: 1, color: { dark: '#2d1a0a', light: '#ffffff' } }, err => {
+        if (err) { console.error('[QR]', err); return; }
+        const ctx = canvas.getContext('2d');
+
+        // Background
+        ctx.fillStyle = '#fffdf8';
+        ctx.fillRect(0, 0, W, H);
+
+        // Top border stripe
+        ctx.fillStyle = '#b8860b';
+        ctx.fillRect(0, 0, W, 6);
+
+        // Brand name
+        ctx.fillStyle = '#b8860b';
+        ctx.font = 'bold 15px "Playfair Display", serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Labroche et Gobeil', W / 2, 34);
+
+        // Tagline
+        ctx.fillStyle = '#a07830';
+        ctx.font = '11px sans-serif';
+        ctx.fillText('Bijoux artisanaux — Nathan & Lyam', W / 2, 52);
+
+        // QR code
+        const qrSize = 230;
+        const qrX = (W - qrSize) / 2;
+        ctx.drawImage(tmp, qrX, 64, qrSize, qrSize);
+
+        // Product name
+        ctx.fillStyle = '#2d1a0a';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'center';
+        wrapText(ctx, name, W / 2, 320, W - 32, 20);
+
+        // SKU
+        ctx.fillStyle = '#888';
+        ctx.font = '11px monospace';
+        ctx.fillText(sku, W / 2, 370);
+
+        // Bottom border stripe
+        ctx.fillStyle = '#b8860b';
+        ctx.fillRect(0, H - 6, W, 6);
+      });
+
       document.getElementById('qrModal').classList.add('open');
     }
 
@@ -454,28 +522,13 @@
       if (e.target === document.getElementById('qrModal')) document.getElementById('qrModal').classList.remove('open');
     });
 
-    document.getElementById('qrPrint').addEventListener('click', () => {
-      const canvas  = document.getElementById('qrCanvas');
-      const name    = document.getElementById('qrProductName').textContent;
-      const sku     = document.getElementById('qrProductSku').textContent;
-      const url     = document.getElementById('qrUrlText').textContent;
-      const dataUrl = canvas.toDataURL();
-      const w = window.open('', '_blank');
-      w.document.write(`<!doctype html><html><head><title>QR — ${name}</title>
-        <style>
-          body { font-family:sans-serif; text-align:center; padding:24px; }
-          img  { display:block; margin:0 auto 12px; width:220px; height:220px; }
-          h2   { font-size:1.1rem; margin:0 0 4px; }
-          p    { font-size:.75rem; color:#666; word-break:break-all; margin:0 0 8px; }
-          .brand { font-size:.85rem; font-weight:700; color:#b8860b; margin-bottom:16px; }
-        </style></head><body>
-        <div class="brand">✨ Labroche et Gobeil</div>
-        <img src="${dataUrl}" alt="QR Code">
-        <h2>${name}</h2>
-        <p>${sku}</p>
-        <p style="font-size:.65rem;color:#aaa">${url}</p>
-        <script>window.onload=()=>{ window.print(); }<\/script>
-        </body></html>`);
+    document.getElementById('qrDownload').addEventListener('click', () => {
+      const canvas = document.getElementById('qrCanvas');
+      const sku    = document.getElementById('qrProductSku').textContent || 'code';
+      const link   = document.createElement('a');
+      link.download = `QR_${sku}.png`;
+      link.href     = canvas.toDataURL('image/png');
+      link.click();
     });
 
     // ── Ventes locales ─────────────────────────────────────
