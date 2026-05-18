@@ -415,7 +415,7 @@
             </div>
           </td>
           <td>
-            ${p.sku ? `<button class="btn-qr" onclick="openQr('${escHtml(p.id)}','${escHtml(p.sku)}','${escHtml(p.name)}')">📱 QR</button>` : '—'}
+            ${p.sku ? `<button class="btn-qr" data-id="${escHtml(p.id)}" data-sku="${escHtml(p.sku)}" data-name="${escHtml(p.name).replace(/"/g,'&quot;')}" onclick="openQr(this.dataset.id,this.dataset.sku,this.dataset.name)">📱 QR</button>` : '—'}
           </td>
         </tr>`;
       }).join('');
