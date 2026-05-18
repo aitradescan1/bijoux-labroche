@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <style>
     /* ── Onglets admin ──────────────────────────────────────── */
     .admin-tabs   { display:flex; gap:4px; padding:0 0 0 24px; border-bottom:2px solid #e8e0d0;
@@ -458,8 +457,6 @@
       document.getElementById('qrProductName').textContent = name;
       document.getElementById('qrProductSku').textContent  = sku;
       document.getElementById('qrUrlText').textContent     = url;
-
-      // Ouvrir le modal en premier — peu importe ce qui suit
       document.getElementById('qrModal').classList.add('open');
 
       const W = 300, H = 420;
@@ -469,48 +466,59 @@
       canvas.style.width  = W + 'px';
       canvas.style.height = H + 'px';
 
-      try {
-        const tmp = document.createElement('canvas');
-        QRCode.toCanvas(tmp, url, { width: 240, margin: 1, color: { dark: '#2d1a0a', light: '#ffffff' } }, err => {
-          if (err) {
-            document.getElementById('qrUrlText').textContent = 'Erreur QR: ' + err.message;
-            return;
-          }
-          const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fffdf8';
+      ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#ccc';
+      ctx.font = '13px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Génération…', W / 2, H / 2);
 
-          ctx.fillStyle = '#fffdf8';
-          ctx.fillRect(0, 0, W, H);
+      // Charger le QR via API image (CORS: Access-Control-Allow-Origin: *)
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}&color=2d1a0a&bgcolor=fffdf8&margin=4`;
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        ctx.fillStyle = '#fffdf8';
+        ctx.fillRect(0, 0, W, H);
 
-          ctx.fillStyle = '#b8860b';
-          ctx.fillRect(0, 0, W, 6);
+        ctx.fillStyle = '#b8860b';
+        ctx.fillRect(0, 0, W, 6);
 
-          ctx.fillStyle = '#b8860b';
-          ctx.font = 'bold 15px "Playfair Display", serif';
-          ctx.textAlign = 'center';
-          ctx.fillText('Labroche et Gobeil', W / 2, 34);
+        ctx.fillStyle = '#b8860b';
+        ctx.font = 'bold 15px "Playfair Display", serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Labroche et Gobeil', W / 2, 34);
 
-          ctx.fillStyle = '#a07830';
-          ctx.font = '11px sans-serif';
-          ctx.fillText('Bijoux artisanaux — Nathan & Lyam', W / 2, 52);
+        ctx.fillStyle = '#a07830';
+        ctx.font = '11px sans-serif';
+        ctx.fillText('Bijoux artisanaux — Nathan & Lyam', W / 2, 52);
 
-          const qrSize = 230;
-          ctx.drawImage(tmp, (W - qrSize) / 2, 64, qrSize, qrSize);
+        const qrSize = 230;
+        ctx.drawImage(img, (W - qrSize) / 2, 64, qrSize, qrSize);
 
-          ctx.fillStyle = '#2d1a0a';
-          ctx.font = 'bold 14px sans-serif';
-          ctx.textAlign = 'center';
-          wrapText(ctx, name, W / 2, 320, W - 32, 20);
+        ctx.fillStyle = '#2d1a0a';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'center';
+        wrapText(ctx, name, W / 2, 318, W - 32, 20);
 
-          ctx.fillStyle = '#888';
-          ctx.font = '11px monospace';
-          ctx.fillText(sku, W / 2, 370);
+        ctx.fillStyle = '#888';
+        ctx.font = '11px monospace';
+        ctx.fillText(sku, W / 2, 368);
 
-          ctx.fillStyle = '#b8860b';
-          ctx.fillRect(0, H - 6, W, 6);
-        });
-      } catch (e) {
-        document.getElementById('qrUrlText').textContent = 'Erreur: ' + e.message;
-      }
+        ctx.fillStyle = '#b8860b';
+        ctx.fillRect(0, H - 6, W, 6);
+      };
+      img.onerror = () => {
+        ctx.clearRect(0, 0, W, H);
+        ctx.fillStyle = '#fffdf8';
+        ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = '#c62828';
+        ctx.font = '13px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Erreur réseau — QR indisponible', W / 2, H / 2);
+      };
+      img.src = qrApiUrl;
     }
 
     document.getElementById('qrClose').addEventListener('click', () => {
