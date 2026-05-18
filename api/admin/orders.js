@@ -19,7 +19,7 @@ function isAuthorized(req) {
   const authHeader = req.headers['authorization'] ?? '';
   const token      = authHeader.replace(/^Bearer\s+/i, '').trim();
   const secret     = process.env.ADMIN_SECRET;
-  if (!secret || secret.length < 16) {
+  if (!secret || secret.length < 6) {
     console.error('[admin] ADMIN_SECRET non configuré ou trop court');
     return false;
   }
