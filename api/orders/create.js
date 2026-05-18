@@ -12,6 +12,14 @@ const MAX_NAME_LEN   = 100;
 const MAX_EMAIL_LEN  = 254;
 const MAX_QTY        = 20;
 
+// Frais de livraison Canada Post — source of truth côté serveur
+const FRAIS_LIVRAISON = {
+  collecte:          0.00,   // Ramassage à l'adresse — gratuit
+  poste_sans_suivi:  3.50,   // Lettermail non-standard (enveloppe capitonnée, sans suivi)
+  colis_suivi:      14.95,   // Expedited Parcel Canada Post (avec suivi, toutes provinces)
+};
+const LIVRAISONS_VALIDES = Object.keys(FRAIS_LIVRAISON);
+
 function cors(res) {
   res.setHeader('Access-Control-Allow-Origin',  ALLOWED_ORIGIN);
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
@@ -19,13 +27,14 @@ function cors(res) {
 }
 
 /** Validation simple — retourne null si OK, sinon un message d'erreur */
-function validate({ customerName, customerEmail, productId, qty }) {
+function validate({ customerName, customerEmail, productId, qty, livraison }) {
   if (!customerName  || typeof customerName  !== 'string' || customerName.trim().length  < 2)  return 'Nom invalide';
   if (!customerEmail || typeof customerEmail !== 'string' || !customerEmail.includes('@'))       return 'Email invalide';
   if (customerName.length  > MAX_NAME_LEN)  return 'Nom trop long';
   if (customerEmail.length > MAX_EMAIL_LEN) return 'Email trop long';
   if (!productId || typeof productId !== 'string') return 'Produit manquant';
   if (!Number.isInteger(qty) || qty < 1 || qty > MAX_QTY) return `Quantité invalide (1–${MAX_QTY})`;
+  if (!livraison || !LIVRAISONS_VALIDES.includes(livraison)) return 'Mode de livraison invalide';
   return null;
 }
 
@@ -41,10 +50,10 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Corps JSON invalide' });
   }
 
-  const { customerName, customerEmail, productId, qty = 1, notes = '' } = body ?? {};
+  const { customerName, customerEmail, productId, qty = 1, notes = '', livraison = 'collecte' } = body ?? {};
 
   // ── Validation ──────────────────────────────────────────────
-  const validErr = validate({ customerName, customerEmail, productId, qty });
+  const validErr = validate({ customerName, customerEmail, productId, qty, livraison });
   if (validErr) return res.status(400).json({ error: validErr });
 
   try {
@@ -61,7 +70,8 @@ export default async function handler(req, res) {
     if (!product.in_stock) return res.status(409).json({ error: 'Produit en rupture de stock' });
 
     // ── Calcul du montant côté serveur (jamais confiance au client) ──
-    const amountCAD = parseFloat((product.price_cad * qty).toFixed(2));
+    const fraisLivraison = FRAIS_LIVRAISON[livraison];
+    const amountCAD = parseFloat((product.price_cad * qty + fraisLivraison).toFixed(2));
 
     // ── Créer la commande en DB (pending) ───────────────────
     const { data: order, error: oErr } = await supabase
@@ -72,9 +82,11 @@ export default async function handler(req, res) {
         product_id:     product.id,
         product_name:   product.name,
         qty,
-        amount_cad:     amountCAD,
-        status:         'pending',
-        notes:          notes?.toString().slice(0, 500) ?? '',
+        amount_cad:       amountCAD,
+        livraison,
+        frais_livraison:  fraisLivraison,
+        status:           'pending',
+        notes:            notes?.toString().slice(0, 500) ?? '',
       })
       .select('id')
       .single();
@@ -96,17 +108,21 @@ export default async function handler(req, res) {
 
     // Email client — commande en attente de paiement (fire-and-forget)
     sendOrderReceived({
-      customer_name:  customerName.trim(),
-      customer_email: customerEmail.trim().toLowerCase(),
-      product_name:   product.name,
+      customer_name:    customerName.trim(),
+      customer_email:   customerEmail.trim().toLowerCase(),
+      product_name:     product.name,
       qty,
-      amount_cad:     amountCAD,
+      amount_cad:       amountCAD,
+      livraison,
+      frais_livraison:  fraisLivraison,
     }).catch(e => console.error('[orders/create] Email non envoyé:', e));
 
     return res.status(201).json({
-      orderId:       order.id,
+      orderId:         order.id,
       paypalOrderId,
       amountCAD,
+      fraisLivraison,
+      livraison,
     });
 
   } catch (err) {

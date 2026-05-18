@@ -767,6 +767,41 @@ footer:not(.site-footer) {
 .field-error { font-size: .8rem; color: var(--rose); }
 .form-error  { padding: 12px 16px; background: #fff0f3; border: 1px solid var(--rose); border-radius: var(--radius-sm); font-size: .88rem; color: var(--rose); }
 
+/* ── Livraison ──────────────────────────────────────────── */
+.livraison-group {
+  border: 1.5px solid rgba(58,31,13,.16);
+  border-radius: var(--radius-sm);
+  padding: 4px 16px 12px;
+  margin: 0;
+}
+.livraison-group legend {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--dark);
+  padding: 0 4px;
+}
+.livraison-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--cream-dark);
+  cursor: pointer;
+}
+.livraison-option:last-child { border-bottom: none; }
+.livraison-option input[type="radio"] {
+  accent-color: var(--gold);
+  width: 16px; height: 16px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.livraison-label { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.livraison-title { font-size: .88rem; font-weight: 600; color: var(--dark); }
+.livraison-desc  { font-size: .78rem; color: var(--text-muted); }
+.livraison-price { font-size: .9rem; font-weight: 700; color: #8a6200; white-space: nowrap; }
+.livraison-option input:disabled ~ .livraison-label,
+.livraison-option input:disabled ~ .livraison-price { opacity: .55; }
+
 .paypal-zone { border-top: 1px solid var(--cream-dark); padding-top: 20px; }
 .paypal-zone-label { font-size: .82rem; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; text-align: center; letter-spacing: .06em; text-transform: uppercase; }
 #paypal-button-container { max-width: 360px; margin: 0 auto; }

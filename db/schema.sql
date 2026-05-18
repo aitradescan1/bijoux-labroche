@@ -32,6 +32,9 @@ CREATE TABLE IF NOT EXISTS orders (
   paypal_order_id  TEXT    UNIQUE,                          -- NULL jusqu'au retour PayPal
   status           TEXT    NOT NULL DEFAULT 'pending'
                            CHECK (status IN ('pending','paid','cancelled','refunded')),
+  livraison        TEXT    NOT NULL DEFAULT 'collecte'
+                           CHECK (livraison IN ('collecte','poste_sans_suivi','colis_suivi')),
+  frais_livraison  NUMERIC(6,2) NOT NULL DEFAULT 0.00,     -- inclus dans amount_cad
   notes            TEXT,
   created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

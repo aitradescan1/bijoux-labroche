@@ -49,6 +49,14 @@
             <span>Quantité</span>
             <strong id="summaryQty">1</strong>
           </div>
+          <div class="summary-line">
+            <span>Articles</span>
+            <strong id="summarySubtotal">—</strong>
+          </div>
+          <div class="summary-line" id="summaryShippingLine" hidden>
+            <span>Livraison</span>
+            <strong id="summaryShipping">—</strong>
+          </div>
           <div class="summary-line summary-total">
             <span>Total</span>
             <strong id="summaryTotal">—</strong>
@@ -90,6 +98,39 @@
                      placeholder="Ex: Pour un cadeau, couleur préférée…">
             </div>
           </div>
+
+          <!-- ── Livraison ──────────────────────────────────── -->
+          <fieldset class="form-group livraison-group">
+            <legend>Mode de livraison *</legend>
+
+            <label class="livraison-option">
+              <input type="radio" name="livraison" value="collecte" checked>
+              <span class="livraison-label">
+                <span class="livraison-title">📍 Ramassage à l'adresse</span>
+                <span class="livraison-desc">Gratuit · On vous communique l'adresse par courriel</span>
+              </span>
+              <span class="livraison-price">Gratuit</span>
+            </label>
+
+            <label class="livraison-option">
+              <input type="radio" name="livraison" value="poste_sans_suivi">
+              <span class="livraison-label">
+                <span class="livraison-title">📬 Canada Post — Enveloppe capitonnée</span>
+                <span class="livraison-desc">Sans suivi · Partout au Canada · ~5–10 jours ouvrables</span>
+              </span>
+              <span class="livraison-price">+3,50 $</span>
+            </label>
+
+            <label class="livraison-option">
+              <input type="radio" name="livraison" value="colis_suivi">
+              <span class="livraison-label">
+                <span class="livraison-title">📦 Canada Post — Colis avec suivi</span>
+                <span class="livraison-desc">Expedited Parcel · Numéro de suivi inclus · 1–7 jours</span>
+              </span>
+              <span class="livraison-price">+14,95 $</span>
+            </label>
+
+          </fieldset>
 
           <!-- Zone PayPal (apparaît après validation du formulaire) -->
           <div class="paypal-zone" id="paypalZone" hidden>
@@ -134,17 +175,41 @@
     const productName = params.get('productName') ?? 'Bijou artisanal';
     const priceCAD    = parseFloat(params.get('price') ?? '0');
 
+    // Frais de livraison — miroir des valeurs serveur (pour affichage seulement, serveur valide)
+    const FRAIS = { collecte: 0, poste_sans_suivi: 3.50, colis_suivi: 14.95 };
+
     // ── Mettre à jour le récap ──────────────────────────────
     document.getElementById('summaryName').textContent  = productName;
     document.getElementById('summaryPrice').textContent = priceCAD > 0 ? `${priceCAD.toFixed(2)} $ / unité` : '—';
     updateTotals();
 
     document.getElementById('qty').addEventListener('input', updateTotals);
+    document.querySelectorAll('input[name="livraison"]').forEach(r =>
+      r.addEventListener('change', updateTotals)
+    );
+
+    function getLivraison() {
+      return document.querySelector('input[name="livraison"]:checked')?.value ?? 'collecte';
+    }
 
     function updateTotals() {
-      const qty   = parseInt(document.getElementById('qty').value, 10) || 1;
-      const total = priceCAD * qty;
-      document.getElementById('summaryQty').textContent   = qty;
+      const qty       = parseInt(document.getElementById('qty').value, 10) || 1;
+      const livraison = getLivraison();
+      const frais     = FRAIS[livraison] ?? 0;
+      const subtotal  = priceCAD * qty;
+      const total     = subtotal + frais;
+
+      document.getElementById('summaryQty').textContent      = qty;
+      document.getElementById('summarySubtotal').textContent = subtotal > 0 ? `${subtotal.toFixed(2)} $CAD` : '—';
+
+      const shippingLine = document.getElementById('summaryShippingLine');
+      if (frais > 0) {
+        document.getElementById('summaryShipping').textContent = `+${frais.toFixed(2)} $CAD`;
+        shippingLine.hidden = false;
+      } else {
+        shippingLine.hidden = true;
+      }
+
       document.getElementById('summaryTotal').textContent = total > 0 ? `${total.toFixed(2)} $CAD` : '—';
     }
 
@@ -181,6 +246,10 @@
         showFormError('Aucun produit sélectionné. Retourne à la boutique.');
         ok = false;
       }
+      if (!getLivraison()) {
+        showFormError('Veuillez choisir un mode de livraison.');
+        ok = false;
+      }
       return ok;
     }
 
@@ -211,8 +280,9 @@
             customerName:  document.getElementById('customerName').value.trim(),
             customerEmail: document.getElementById('customerEmail').value.trim(),
             productId,
-            qty:    parseInt(document.getElementById('qty').value, 10),
-            notes:  document.getElementById('notes').value.trim(),
+            qty:       parseInt(document.getElementById('qty').value, 10),
+            notes:     document.getElementById('notes').value.trim(),
+            livraison: getLivraison(),
           }),
         });
 
@@ -232,6 +302,7 @@
         ['customerName','customerEmail','qty','notes'].forEach(id => {
           document.getElementById(id).disabled = true;
         });
+        document.querySelectorAll('input[name="livraison"]').forEach(r => r.disabled = true);
 
         // Rendu bouton PayPal
         paypal.Buttons({
