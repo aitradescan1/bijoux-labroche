@@ -45,8 +45,8 @@ documentation_bom_filled.md
 questions_entrepreneurs.md
 pedagogie_pour_enfant.md
 
-# Scripts Python locaux
-scripts/
+# Scripts Python locaux (les scripts Node.js .mjs sont versionnés)
+*.py
 
 # Profils IA privés
 assets/ai_profiles/
