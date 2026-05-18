@@ -459,6 +459,9 @@
       document.getElementById('qrProductSku').textContent  = sku;
       document.getElementById('qrUrlText').textContent     = url;
 
+      // Ouvrir le modal en premier — peu importe ce qui suit
+      document.getElementById('qrModal').classList.add('open');
+
       const W = 300, H = 420;
       const canvas = document.getElementById('qrCanvas');
       canvas.width  = W;
@@ -466,53 +469,48 @@
       canvas.style.width  = W + 'px';
       canvas.style.height = H + 'px';
 
-      // Generate QR on a temp canvas, then draw composite
-      const tmp = document.createElement('canvas');
-      QRCode.toCanvas(tmp, url, { width: 240, margin: 1, color: { dark: '#2d1a0a', light: '#ffffff' } }, err => {
-        if (err) { console.error('[QR]', err); return; }
-        const ctx = canvas.getContext('2d');
+      try {
+        const tmp = document.createElement('canvas');
+        QRCode.toCanvas(tmp, url, { width: 240, margin: 1, color: { dark: '#2d1a0a', light: '#ffffff' } }, err => {
+          if (err) {
+            document.getElementById('qrUrlText').textContent = 'Erreur QR: ' + err.message;
+            return;
+          }
+          const ctx = canvas.getContext('2d');
 
-        // Background
-        ctx.fillStyle = '#fffdf8';
-        ctx.fillRect(0, 0, W, H);
+          ctx.fillStyle = '#fffdf8';
+          ctx.fillRect(0, 0, W, H);
 
-        // Top border stripe
-        ctx.fillStyle = '#b8860b';
-        ctx.fillRect(0, 0, W, 6);
+          ctx.fillStyle = '#b8860b';
+          ctx.fillRect(0, 0, W, 6);
 
-        // Brand name
-        ctx.fillStyle = '#b8860b';
-        ctx.font = 'bold 15px "Playfair Display", serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('Labroche et Gobeil', W / 2, 34);
+          ctx.fillStyle = '#b8860b';
+          ctx.font = 'bold 15px "Playfair Display", serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('Labroche et Gobeil', W / 2, 34);
 
-        // Tagline
-        ctx.fillStyle = '#a07830';
-        ctx.font = '11px sans-serif';
-        ctx.fillText('Bijoux artisanaux — Nathan & Lyam', W / 2, 52);
+          ctx.fillStyle = '#a07830';
+          ctx.font = '11px sans-serif';
+          ctx.fillText('Bijoux artisanaux — Nathan & Lyam', W / 2, 52);
 
-        // QR code
-        const qrSize = 230;
-        const qrX = (W - qrSize) / 2;
-        ctx.drawImage(tmp, qrX, 64, qrSize, qrSize);
+          const qrSize = 230;
+          ctx.drawImage(tmp, (W - qrSize) / 2, 64, qrSize, qrSize);
 
-        // Product name
-        ctx.fillStyle = '#2d1a0a';
-        ctx.font = 'bold 14px sans-serif';
-        ctx.textAlign = 'center';
-        wrapText(ctx, name, W / 2, 320, W - 32, 20);
+          ctx.fillStyle = '#2d1a0a';
+          ctx.font = 'bold 14px sans-serif';
+          ctx.textAlign = 'center';
+          wrapText(ctx, name, W / 2, 320, W - 32, 20);
 
-        // SKU
-        ctx.fillStyle = '#888';
-        ctx.font = '11px monospace';
-        ctx.fillText(sku, W / 2, 370);
+          ctx.fillStyle = '#888';
+          ctx.font = '11px monospace';
+          ctx.fillText(sku, W / 2, 370);
 
-        // Bottom border stripe
-        ctx.fillStyle = '#b8860b';
-        ctx.fillRect(0, H - 6, W, 6);
-      });
-
-      document.getElementById('qrModal').classList.add('open');
+          ctx.fillStyle = '#b8860b';
+          ctx.fillRect(0, H - 6, W, 6);
+        });
+      } catch (e) {
+        document.getElementById('qrUrlText').textContent = 'Erreur: ' + e.message;
+      }
     }
 
     document.getElementById('qrClose').addEventListener('click', () => {
