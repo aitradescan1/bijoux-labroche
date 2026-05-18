@@ -5,7 +5,7 @@
 
 import { getSupabase }        from '../../lib/supabase.js';
 import { capturePayPalOrder } from '../../lib/paypal.js';
-import { sendOrderConfirmation } from '../../lib/mail.js';
+import { sendPaymentConfirmedClient, sendPaymentConfirmedAdmin } from '../../lib/mail.js';
 
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN ?? '*';
 
@@ -69,11 +69,10 @@ export default async function handler(req, res) {
 
     if (updateErr) throw updateErr;
 
-    // ── Envoyer l'email de confirmation à l'adulte ──────────
-    // Fire-and-forget : une erreur email ne doit pas bloquer la réponse client
-    sendOrderConfirmation({ ...order, status: 'paid' }).catch(e =>
-      console.error('[capture] Email non envoyé:', e)
-    );
+    // Emails confirmation — fire-and-forget (erreur email ne bloque pas la réponse)
+    const paidOrder = { ...order, status: 'paid' };
+    sendPaymentConfirmedClient(paidOrder).catch(e => console.error('[capture] Email client:', e));
+    sendPaymentConfirmedAdmin(paidOrder).catch(e  => console.error('[capture] Email admin:', e));
 
     return res.status(200).json({
       success:    true,

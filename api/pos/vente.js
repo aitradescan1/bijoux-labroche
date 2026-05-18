@@ -5,6 +5,7 @@
 
 import { getSupabase }                  from '../../lib/supabase.js';
 import { timingSafeEqual, createHash }  from 'crypto';
+import { sendVentePOS }                 from '../../lib/mail.js';
 
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN ?? '*';
 const POS_PIN        = process.env.POS_PIN ?? '';
@@ -94,6 +95,15 @@ export default async function handler(req, res) {
       .single();
 
     if (vErr) throw vErr;
+
+    // Notif email admin — fire-and-forget
+    sendVentePOS({
+      product_name: product.name,
+      qty,
+      price_cad:    amountCAD,
+      paiement,
+      vendu_par:    String(vendu_par).slice(0, 50),
+    }).catch(e => console.error('[pos/vente] Email non envoyé:', e));
 
     return res.status(201).json({
       success:      true,

@@ -5,6 +5,7 @@
 
 import { getSupabase }       from '../../lib/supabase.js';
 import { createPayPalOrder } from '../../lib/paypal.js';
+import { sendOrderReceived } from '../../lib/mail.js';
 
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN ?? '*';
 const MAX_NAME_LEN   = 100;
@@ -92,6 +93,15 @@ export default async function handler(req, res) {
       .from('orders')
       .update({ paypal_order_id: paypalOrderId })
       .eq('id', order.id);
+
+    // Email client — commande en attente de paiement (fire-and-forget)
+    sendOrderReceived({
+      customer_name:  customerName.trim(),
+      customer_email: customerEmail.trim().toLowerCase(),
+      product_name:   product.name,
+      qty,
+      amount_cad:     amountCAD,
+    }).catch(e => console.error('[orders/create] Email non envoyé:', e));
 
     return res.status(201).json({
       orderId:       order.id,
