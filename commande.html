@@ -57,6 +57,10 @@
             <span>Livraison</span>
             <strong id="summaryShipping">—</strong>
           </div>
+          <div class="summary-line summary-rabais" id="summaryRabaisLine" hidden>
+            <span>🎉 Rabais 35 $+</span>
+            <strong id="summaryRabais">—</strong>
+          </div>
           <div class="summary-line summary-total">
             <span>Total</span>
             <strong id="summaryTotal">—</strong>
@@ -132,6 +136,14 @@
 
           </fieldset>
 
+          <!-- Badge rabais — visible/caché selon le sous-total -->
+          <p class="promo-badge" id="promoBadge" hidden>
+            🎉 <strong>Rabais de 5 $ appliqué</strong> — Merci pour ta commande !
+          </p>
+          <p class="promo-hint" id="promoHint">
+            💡 Commande pour <strong>35 $</strong> ou plus et économise <strong>5 $</strong> !
+          </p>
+
           <!-- Zone PayPal (apparaît après validation du formulaire) -->
           <div class="paypal-zone" id="paypalZone" hidden>
             <p class="paypal-zone-label">Paiement sécurisé via PayPal</p>
@@ -175,8 +187,10 @@
     const productName = params.get('productName') ?? 'Bijou artisanal';
     const priceCAD    = parseFloat(params.get('price') ?? '0');
 
-    // Frais de livraison — miroir des valeurs serveur (pour affichage seulement, serveur valide)
-    const FRAIS = { collecte: 0, poste_sans_suivi: 3.50, colis_suivi: 14.95 };
+    // Miroir des valeurs serveur (affichage seulement — le serveur recalcule tout)
+    const FRAIS         = { collecte: 0, poste_sans_suivi: 3.50, colis_suivi: 14.95 };
+    const SEUIL_RABAIS  = 35.00;
+    const MONTANT_RABAIS = 5.00;
 
     // ── Mettre à jour le récap ──────────────────────────────
     document.getElementById('summaryName').textContent  = productName;
@@ -197,7 +211,8 @@
       const livraison = getLivraison();
       const frais     = FRAIS[livraison] ?? 0;
       const subtotal  = priceCAD * qty;
-      const total     = subtotal + frais;
+      const rabais    = subtotal >= SEUIL_RABAIS ? MONTANT_RABAIS : 0;
+      const total     = Math.max(0.01, subtotal + frais - rabais);
 
       document.getElementById('summaryQty').textContent      = qty;
       document.getElementById('summarySubtotal').textContent = subtotal > 0 ? `${subtotal.toFixed(2)} $CAD` : '—';
@@ -208,6 +223,18 @@
         shippingLine.hidden = false;
       } else {
         shippingLine.hidden = true;
+      }
+
+      const rabaisLine = document.getElementById('summaryRabaisLine');
+      if (rabais > 0) {
+        document.getElementById('summaryRabais').textContent = `−${rabais.toFixed(2)} $CAD`;
+        rabaisLine.hidden = false;
+        document.getElementById('promoBadge').hidden = false;
+        document.getElementById('promoHint').hidden  = true;
+      } else {
+        rabaisLine.hidden = true;
+        document.getElementById('promoBadge').hidden = true;
+        document.getElementById('promoHint').hidden  = false;
       }
 
       document.getElementById('summaryTotal').textContent = total > 0 ? `${total.toFixed(2)} $CAD` : '—';

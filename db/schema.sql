@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS orders (
   livraison        TEXT    NOT NULL DEFAULT 'collecte'
                            CHECK (livraison IN ('collecte','poste_sans_suivi','colis_suivi')),
   frais_livraison  NUMERIC(6,2) NOT NULL DEFAULT 0.00,     -- inclus dans amount_cad
+  rabais           NUMERIC(6,2) NOT NULL DEFAULT 0.00,     -- déjà déduit de amount_cad
   notes            TEXT,
   created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

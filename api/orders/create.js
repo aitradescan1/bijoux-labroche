@@ -20,6 +20,10 @@ const FRAIS_LIVRAISON = {
 };
 const LIVRAISONS_VALIDES = Object.keys(FRAIS_LIVRAISON);
 
+// Rabais automatique dès que le sous-total articles atteint ce seuil
+const SEUIL_RABAIS  = 35.00;
+const MONTANT_RABAIS = 5.00;
+
 function cors(res) {
   res.setHeader('Access-Control-Allow-Origin',  ALLOWED_ORIGIN);
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
@@ -70,8 +74,10 @@ export default async function handler(req, res) {
     if (!product.in_stock) return res.status(409).json({ error: 'Produit en rupture de stock' });
 
     // ── Calcul du montant côté serveur (jamais confiance au client) ──
-    const fraisLivraison = FRAIS_LIVRAISON[livraison];
-    const amountCAD = parseFloat((product.price_cad * qty + fraisLivraison).toFixed(2));
+    const fraisLivraison  = FRAIS_LIVRAISON[livraison];
+    const subtotalArticles = parseFloat((product.price_cad * qty).toFixed(2));
+    const rabais           = subtotalArticles >= SEUIL_RABAIS ? MONTANT_RABAIS : 0;
+    const amountCAD        = parseFloat(Math.max(0.01, subtotalArticles + fraisLivraison - rabais).toFixed(2));
 
     // ── Créer la commande en DB (pending) ───────────────────
     const { data: order, error: oErr } = await supabase
@@ -85,6 +91,7 @@ export default async function handler(req, res) {
         amount_cad:       amountCAD,
         livraison,
         frais_livraison:  fraisLivraison,
+        rabais,
         status:           'pending',
         notes:            notes?.toString().slice(0, 500) ?? '',
       })
@@ -115,6 +122,7 @@ export default async function handler(req, res) {
       amount_cad:       amountCAD,
       livraison,
       frais_livraison:  fraisLivraison,
+      rabais,
     }).catch(e => console.error('[orders/create] Email non envoyé:', e));
 
     return res.status(201).json({
@@ -123,6 +131,7 @@ export default async function handler(req, res) {
       amountCAD,
       fraisLivraison,
       livraison,
+      rabais,
     });
 
   } catch (err) {

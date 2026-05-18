@@ -17,3 +17,9 @@ COMMENT ON COLUMN orders.livraison IS
 
 COMMENT ON COLUMN orders.frais_livraison IS
   'Frais de livraison inclus dans amount_cad (référence seulement)';
+
+ALTER TABLE orders
+  ADD COLUMN IF NOT EXISTS rabais NUMERIC(6,2) NOT NULL DEFAULT 0.00;
+
+COMMENT ON COLUMN orders.rabais IS
+  'Rabais automatique de 5,00$ appliqué quand sous-total articles >= 35,00$ (déjà déduit de amount_cad)';

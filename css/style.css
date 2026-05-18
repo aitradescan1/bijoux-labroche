@@ -733,6 +733,8 @@ footer:not(.site-footer) {
 .summary-name  { font-weight: 600; font-size: .95rem; color: var(--dark); }
 .summary-price { font-size: .84rem; color: var(--text-muted); margin-top: 2px; }
 .summary-line  { display: flex; justify-content: space-between; padding: 8px 0; font-size: .88rem; color: var(--text-muted); border-bottom: 1px solid var(--cream-dark); }
+.summary-rabais { color: #2e7d32; }
+.summary-rabais strong { color: #2e7d32; }
 .summary-total { font-size: 1.02rem; font-weight: 700; color: var(--dark); border-bottom: none; }
 .summary-note  { margin-top: 16px; font-size: .8rem; color: var(--text-muted); font-style: italic; }
 
@@ -766,6 +768,25 @@ footer:not(.site-footer) {
 .form-group input:disabled { background: var(--cream-dark); cursor: not-allowed; }
 .field-error { font-size: .8rem; color: var(--rose); }
 .form-error  { padding: 12px 16px; background: #fff0f3; border: 1px solid var(--rose); border-radius: var(--radius-sm); font-size: .88rem; color: var(--rose); }
+
+/* ── Promo badge ────────────────────────────────────────── */
+.promo-badge {
+  background: #e8f5e9;
+  border: 1.5px solid #a5d6a7;
+  color: #1b5e20;
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  font-size: .88rem;
+  margin: 0;
+}
+.promo-hint {
+  background: var(--cream-dark, #f5ede0);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  font-size: .84rem;
+  color: var(--text-muted);
+  margin: 0;
+}
 
 /* ── Livraison ──────────────────────────────────────────── */
 .livraison-group {
