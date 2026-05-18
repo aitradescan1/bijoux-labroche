@@ -479,31 +479,46 @@
       const tbody = document.getElementById('ventesBody');
       tbody.innerHTML = '<tr><td colspan="7" class="admin-loading">Chargement…</td></tr>';
       try {
-        // On utilise l'endpoint admin/orders pour l'instant — ventes via supabase direct
-        // Pour les ventes_locales, on passe par une requête Supabase via l'API inventory
-        // Note: dans une prochaine version, ajouter /api/admin/ventes
-        const res = await fetch(`${API}/api/admin/orders?limit=100&offset=0`, {
+        const res = await fetch(`${API}/api/admin/ventes?limit=100&offset=0`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const { orders } = await res.json();
-        renderVentesPlaceholder();
+        const { ventes, total } = await res.json();
+        renderVentes(ventes, total);
       } catch (err) {
         tbody.innerHTML = `<tr><td colspan="7" class="shop-error">Erreur: ${escHtml(err.message)}</td></tr>`;
       }
     }
 
-    function renderVentesPlaceholder() {
+    const PAIEMENT_LABEL = { comptant: '💵 Comptant', interac: '📱 Interac', paypal: '🅿️ PayPal' };
+
+    function renderVentes(ventes, total) {
       const tbody = document.getElementById('ventesBody');
-      tbody.innerHTML = `<tr><td colspan="7" class="admin-loading" style="padding:40px">
-        ℹ️ Les ventes boutique apparaîtront ici une fois l'endpoint <code>/api/admin/ventes</code> ajouté.<br>
-        <small>Les données sont déjà enregistrées dans la table <code>ventes_locales</code> de Supabase.</small>
-      </td></tr>`;
-      // Stats placeholder
-      document.getElementById('vStatTotal').textContent  = '—';
-      document.getElementById('vStatRev').textContent    = '—';
-      document.getElementById('vStatNathan').textContent = '—';
-      document.getElementById('vStatLyam').textContent   = '—';
+
+      // Stats
+      const rev     = ventes.reduce((s, v) => s + parseFloat(v.price_cad), 0);
+      const nathan  = ventes.filter(v => (v.vendu_par ?? '').toLowerCase() === 'nathan').length;
+      const lyam    = ventes.filter(v => (v.vendu_par ?? '').toLowerCase() === 'lyam').length;
+      document.getElementById('vStatTotal').textContent  = total ?? ventes.length;
+      document.getElementById('vStatRev').textContent    = `${rev.toFixed(2)} $`;
+      document.getElementById('vStatNathan').textContent = nathan;
+      document.getElementById('vStatLyam').textContent   = lyam;
+
+      if (!ventes.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="admin-loading">Aucune vente boutique.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = ventes.map(v => `
+        <tr>
+          <td><code class="order-ref">${escHtml(v.id.slice(0,8).toUpperCase())}</code></td>
+          <td>${escHtml(v.product_name)}</td>
+          <td>${escHtml(v.qty)}</td>
+          <td><strong>${parseFloat(v.price_cad).toFixed(2)} $</strong></td>
+          <td>${escHtml(PAIEMENT_LABEL[v.paiement] ?? v.paiement)}</td>
+          <td>${escHtml(v.vendu_par ?? '—')}</td>
+          <td>${escHtml(formatDate(v.created_at))}</td>
+        </tr>`).join('');
     }
   </script>
 
