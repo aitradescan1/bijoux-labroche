@@ -63,8 +63,8 @@ export default async function handler(req, res) {
     if (!product_id || typeof product_id !== 'string') {
       return res.status(400).json({ error: 'product_id manquant' });
     }
-    if (!Number.isInteger(add_qty) || add_qty < 1 || add_qty > 999) {
-      return res.status(400).json({ error: 'add_qty invalide (1–999)' });
+    if (!Number.isInteger(add_qty) || add_qty === 0 || Math.abs(add_qty) > 999) {
+      return res.status(400).json({ error: 'add_qty invalide (−999 à 999, non nul)' });
     }
 
     try {
@@ -76,10 +76,10 @@ export default async function handler(req, res) {
 
       if (pErr || !product) return res.status(404).json({ error: 'Produit introuvable' });
 
-      const newQty = product.stock_qty + add_qty;
+      const newQty = Math.max(0, product.stock_qty + add_qty);
       const { error: uErr } = await supabase
         .from('products')
-        .update({ stock_qty: newQty, in_stock: true })
+        .update({ stock_qty: newQty, in_stock: newQty > 0 })
         .eq('id', product_id);
 
       if (uErr) throw uErr;

@@ -32,6 +32,8 @@
                     background:#fdf6e3; color:#8a6200; cursor:pointer; font-weight:600;
                     transition:background .15s; }
     .btn-restock:hover { background:#d4a017; color:#fff; }
+    .btn-restock-minus { border-color:#c62828; color:#c62828; background:#fff5f5; }
+    .btn-restock-minus:hover { background:#c62828; color:#fff; }
     .btn-qr       { padding:5px 10px; font-size:.78rem; border-radius:8px; border:1px solid #9e9e9e;
                     background:#fafafa; color:#555; cursor:pointer; font-weight:500;
                     transition:background .15s; }
@@ -406,9 +408,10 @@
           <td><span class="stock-badge ${stockClass}">${p.stock_qty}</span></td>
           <td>
             <div class="restock-btns">
+              <button class="btn-restock btn-restock-minus" onclick="restock('${escHtml(p.id)}',-1)">−1</button>
+              <button class="btn-restock" onclick="restock('${escHtml(p.id)}',1)">+1</button>
               <button class="btn-restock" onclick="restock('${escHtml(p.id)}',5)">+5</button>
               <button class="btn-restock" onclick="restock('${escHtml(p.id)}',10)">+10</button>
-              <button class="btn-restock" onclick="restock('${escHtml(p.id)}',20)">+20</button>
             </div>
           </td>
           <td>
@@ -434,7 +437,8 @@
 
     // ── QR Code ────────────────────────────────────────────
     function openQr(id, sku, name) {
-      const url = `${location.origin}/vendre.html?sku=${encodeURIComponent(sku)}`;
+      const base = location.origin + location.pathname.replace(/\/[^/]*$/, '');
+      const url  = `${base}/vendre.html?sku=${encodeURIComponent(sku)}`;
       document.getElementById('qrProductName').textContent = name;
       document.getElementById('qrProductSku').textContent  = sku;
       document.getElementById('qrUrlText').textContent     = url;
