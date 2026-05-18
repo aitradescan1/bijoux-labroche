@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Vente — Labroche et Gobeil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── POS-specific overrides ──────────────────────────── */
+    body          { background: var(--cream, #faf6f0); min-height: 100dvh; }
+
+    .pos-wrap     { max-width: 480px; margin: 0 auto; padding: 0 0 40px; }
+
+    /* ── PIN overlay ──────────────────────────────────────── */
+    .pin-overlay  {
+      position: fixed; inset: 0; z-index: 100;
+      background: var(--cream, #faf6f0);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pin-card     {
+      background: #fff; border-radius: 20px;
+      padding: 36px 28px; width: 320px; text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+    }
+    .pin-logo     { font-size: 2.4rem; margin-bottom: 8px; }
+    .pin-title    { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 4px; }
+    .pin-sub      { color: #888; font-size: .9rem; margin-bottom: 24px; }
+    .pin-input    {
+      width: 100%; padding: 14px; font-size: 1.4rem; text-align: center;
+      letter-spacing: .5em; border: 2px solid #ddd; border-radius: 12px;
+      margin-bottom: 16px; background: #fafafa;
+    }
+    .pin-input:focus { border-color: var(--gold, #b8860b); outline: none; }
+    .pin-error    { color: #c0392b; font-size: .85rem; margin-bottom: 12px; min-height: 1.2em; }
+
+    /* ── Skeleton / loading ───────────────────────────────── */
+    .pos-loading  {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 80px 20px; gap: 16px; color: #888;
+    }
+    .spinner      {
+      width: 44px; height: 44px; border: 4px solid #e8e0d0;
+      border-top-color: var(--gold, #b8860b);
+      border-radius: 50%; animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Produit header ───────────────────────────────────── */
+    .pos-img      {
+      width: 100%; aspect-ratio: 4/3; object-fit: cover;
+      display: block; background: #f0ebe3;
+    }
+    .pos-img-placeholder {
+      width: 100%; aspect-ratio: 4/3; background: #f0ebe3;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 5rem;
+    }
+    .pos-info     { padding: 20px 20px 0; }
+    .pos-category { font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; color: #999; }
+    .pos-name     { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin: 4px 0 8px; }
+    .pos-desc     { font-size: .88rem; color: #666; line-height: 1.5; margin-bottom: 16px; }
+    .pos-meta     { display: flex; align-items: center; gap: 20px; }
+    .pos-price    { font-size: 1.8rem; font-weight: 700; color: var(--dark, #2d1a0a); }
+    .pos-price span { font-size: 1rem; font-weight: 400; color: #888; }
+    .pos-stock    { font-size: .9rem; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+    .stock-ok     { background: #e8f5e9; color: #2e7d32; }
+    .stock-low    { background: #fff3e0; color: #e65100; }
+    .stock-zero   { background: #fce4ec; color: #c62828; }
+
+    /* ── Section labels ───────────────────────────────────── */
+    .pos-section  { padding: 24px 20px 0; }
+    .pos-label    { font-size: .75rem; font-weight: 600; text-transform: uppercase;
+                    letter-spacing: .1em; color: #999; margin-bottom: 12px; }
+
+    /* ── Quantité ─────────────────────────────────────────── */
+    .qty-row      { display: flex; align-items: center; gap: 0; border-radius: 16px;
+                    overflow: hidden; border: 2px solid #e0d8cc; background: #fff;
+                    width: fit-content; }
+    .qty-btn      {
+      width: 60px; height: 60px; font-size: 1.8rem; font-weight: 300;
+      border: none; background: transparent; cursor: pointer; color: var(--dark, #2d1a0a);
+      transition: background .15s;
+    }
+    .qty-btn:active { background: #f0ebe3; }
+    .qty-btn:disabled { color: #ccc; cursor: default; }
+    .qty-val      { width: 72px; text-align: center; font-size: 1.6rem; font-weight: 600;
+                    border: none; background: transparent; pointer-events: none; }
+    .qty-total    { margin-top: 10px; font-size: 1.1rem; color: #666; }
+    .qty-total strong { color: var(--dark, #2d1a0a); font-size: 1.3rem; }
+
+    /* ── Boutons de sélection (paiement / vendeur) ────────── */
+    .select-grid  { display: flex; gap: 10px; flex-wrap: wrap; }
+    .sel-btn      {
+      flex: 1; min-width: 100px; padding: 14px 10px; border-radius: 14px;
+      border: 2px solid #e0d8cc; background: #fff; cursor: pointer;
+      font-size: .95rem; font-weight: 500; color: #555;
+      transition: all .15s; text-align: center; line-height: 1.3;
+    }
+    .sel-btn .icon { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+    .sel-btn:hover   { border-color: var(--gold, #b8860b); }
+    .sel-btn.active  {
+      border-color: var(--gold, #b8860b);
+      background: #fdf6e3; color: var(--dark, #2d1a0a); font-weight: 600;
+    }
+
+    /* ── Bouton vendre ────────────────────────────────────── */
+    .pos-sell-wrap { padding: 28px 20px 0; }
+    .btn-sell      {
+      width: 100%; padding: 20px; font-size: 1.2rem; font-weight: 700;
+      border-radius: 18px; border: none; cursor: pointer;
+      background: linear-gradient(135deg, #b8860b, #d4a017);
+      color: #fff; letter-spacing: .03em;
+      box-shadow: 0 4px 20px rgba(184,134,11,.35);
+      transition: transform .1s, box-shadow .1s;
+    }
+    .btn-sell:active  { transform: scale(.97); box-shadow: 0 2px 10px rgba(184,134,11,.25); }
+    .btn-sell:disabled { background: #ccc; box-shadow: none; cursor: default; }
+    .sell-error    { color: #c0392b; font-size: .88rem; margin-top: 10px; min-height: 1.2em;
+                     text-align: center; padding: 0 20px; }
+
+    /* ── Écran de succès ──────────────────────────────────── */
+    .success-screen {
+      display: none; position: fixed; inset: 0; z-index: 50;
+      background: var(--cream, #faf6f0);
+      flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 32px;
+      animation: fadeIn .3s ease;
+    }
+    .success-screen.show { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(.95); } to { opacity: 1; transform: scale(1); } }
+    .success-emoji { font-size: 5rem; margin-bottom: 16px; animation: pop .4s ease; }
+    @keyframes pop { 0%,100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+    .success-title { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 8px; }
+    .success-amount{ font-size: 2.4rem; font-weight: 700; color: var(--gold, #b8860b); margin-bottom: 4px; }
+    .success-detail{ color: #666; font-size: .95rem; line-height: 1.8; margin-bottom: 32px; }
+    .success-stock { font-size: .85rem; padding: 6px 16px; border-radius: 20px;
+                     background: #e8f5e9; color: #2e7d32; font-weight: 600; margin-bottom: 32px; }
+    .btn-next      {
+      padding: 16px 40px; border-radius: 14px; border: 2px solid var(--gold, #b8860b);
+      background: transparent; color: var(--dark, #2d1a0a); font-size: 1rem;
+      font-weight: 600; cursor: pointer; transition: all .15s;
+    }
+    .btn-next:hover { background: var(--gold, #b8860b); color: #fff; }
+
+    /* ── Error screen ─────────────────────────────────────── */
+    .error-screen {
+      display: none; flex-direction: column; align-items: center;
+      padding: 80px 20px; text-align: center; gap: 12px;
+    }
+    .error-screen.show { display: flex; }
+    .error-emoji  { font-size: 3rem; }
+    .error-msg    { color: #c0392b; font-size: 1rem; }
+  </style>
+</head>
+<body>
+
+  <!-- ── PIN overlay (première utilisation) ────────────────── -->
+  <div class="pin-overlay" id="pinOverlay">
+    <div class="pin-card">
+      <div class="pin-logo">✨</div>
+      <h1 class="pin-title">Labroche et Gobeil</h1>
+      <p class="pin-sub">Entrez votre PIN pour vendre</p>
+      <input class="pin-input" id="pinInput" type="password"
+             inputmode="numeric" maxlength="10" placeholder="• • • •" autocomplete="off">
+      <p class="pin-error" id="pinError"></p>
+      <button class="btn-sell" id="pinSubmit" style="font-size:1rem;padding:14px">
+        Continuer →
+      </button>
+    </div>
+  </div>
+
+  <!-- ── POS principal ─────────────────────────────────────── -->
+  <div class="pos-wrap" id="posMain" hidden>
+
+    <!-- Chargement -->
+    <div class="pos-loading" id="posLoading">
+      <div class="spinner"></div>
+      <span>Chargement du produit…</span>
+    </div>
+
+    <!-- Erreur produit introuvable -->
+    <div class="error-screen" id="errorScreen">
+      <div class="error-emoji">😕</div>
+      <p class="error-msg" id="errorMsg">Produit introuvable.</p>
+      <a href="boutique.html" class="btn-next" style="text-decoration:none">Voir la boutique</a>
+    </div>
+
+    <!-- Fiche produit + formulaire POS -->
+    <div id="posForm" hidden>
+
+      <!-- Photo -->
+      <div id="productImg"></div>
+
+      <!-- Info produit -->
+      <div class="pos-info">
+        <p class="pos-category" id="productCategory"></p>
+        <h1 class="pos-name" id="productName"></h1>
+        <p class="pos-desc" id="productDesc"></p>
+        <div class="pos-meta">
+          <p class="pos-price" id="productPrice"></p>
+          <span class="pos-stock" id="productStock"></span>
+        </div>
+      </div>
+
+      <!-- Quantité -->
+      <div class="pos-section">
+        <p class="pos-label">Quantité vendue</p>
+        <div class="qty-row">
+          <button class="qty-btn" id="qtyMinus" aria-label="Moins">−</button>
+          <output class="qty-val" id="qtyVal" aria-live="polite">1</output>
+          <button class="qty-btn" id="qtyPlus"  aria-label="Plus">+</button>
+        </div>
+        <p class="qty-total">Total : <strong id="qtyTotal">0,00 $</strong></p>
+      </div>
+
+      <!-- Méthode de paiement -->
+      <div class="pos-section">
+        <p class="pos-label">Méthode de paiement</p>
+        <div class="select-grid" id="paiementGrid">
+          <button class="sel-btn active" data-value="comptant">
+            <span class="icon">💵</span>Comptant
+          </button>
+          <button class="sel-btn" data-value="interac">
+            <span class="icon">📱</span>Interac
+          </button>
+          <button class="sel-btn" data-value="paypal">
+            <span class="icon">🅿️</span>PayPal
+          </button>
+        </div>
+      </div>
+
+      <!-- Vendu par -->
+      <div class="pos-section">
+        <p class="pos-label">Vendu par</p>
+        <div class="select-grid" id="vendeurGrid">
+          <button class="sel-btn active" data-value="Nathan">
+            <span class="icon">🧑</span>Nathan
+          </button>
+          <button class="sel-btn" data-value="Lyam">
+            <span class="icon">🧒</span>Lyam
+          </button>
+        </div>
+      </div>
+
+      <!-- Bouton vendre -->
+      <div class="pos-sell-wrap">
+        <button class="btn-sell" id="btnVendre">✅ Vendre — 0,00 $</button>
+        <p class="sell-error" id="sellError"></p>
+      </div>
+
+    </div><!-- /posForm -->
+  </div>
+
+  <!-- ── Écran succès ───────────────────────────────────────── -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-emoji">🎉</div>
+    <h2 class="success-title">Vendu !</h2>
+    <p class="success-amount" id="successAmount"></p>
+    <p class="success-detail" id="successDetail"></p>
+    <p class="success-stock" id="successStock"></p>
+    <button class="btn-next" id="btnNext">Vente suivante →</button>
+  </div>
+
+<script>
+  const API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? '' : 'https://les-petits-bijoux.vercel.app';
+  const PIN_KEY   = 'pos_pin';
+  const SKU_PARAM = new URLSearchParams(location.search).get('sku') ?? '';
+
+  let product   = null;
+  let qty       = 1;
+  let paiement  = 'comptant';
+  let vendeur   = 'Nathan';
+  let posPin    = localStorage.getItem(PIN_KEY) ?? '';
+
+  // ── Utilitaires ──────────────────────────────────────────
+  function fmt(n) {
+    return Number(n).toLocaleString('fr-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' $';
+  }
+  function escHtml(s) {
+    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ── PIN flow ──────────────────────────────────────────────
+  function showPin() {
+    document.getElementById('pinOverlay').style.display = 'flex';
+  }
+  function hidePin() {
+    document.getElementById('pinOverlay').style.display = 'none';
+    document.getElementById('posMain').hidden = false;
+  }
+
+  document.getElementById('pinInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') submitPin();
+  });
+  document.getElementById('pinSubmit').addEventListener('click', submitPin);
+
+  function submitPin() {
+    const val = document.getElementById('pinInput').value.trim();
+    if (!val) { document.getElementById('pinError').textContent = 'Entre ton PIN.'; return; }
+    posPin = val;
+    localStorage.setItem(PIN_KEY, val);
+    document.getElementById('pinError').textContent = '';
+    hidePin();
+    loadProduct();
+  }
+
+  // ── Chargement produit ────────────────────────────────────
+  async function loadProduct() {
+    if (!SKU_PARAM) { showError('Aucun produit dans l\'URL. Scanne le QR code du bijou.'); return; }
+
+    document.getElementById('posLoading').style.display = 'flex';
+    document.getElementById('posForm').hidden = true;
+    document.getElementById('errorScreen').classList.remove('show');
+
+    try {
+      const res = await fetch(`${API}/api/pos/scan?sku=${encodeURIComponent(SKU_PARAM)}`);
+      if (res.status === 404) { showError('Ce bijou n\'est pas dans la base de données.'); return; }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      product = await res.json();
+      renderProduct();
+
+    } catch (err) {
+      showError('Impossible de charger le produit. Vérifie ta connexion.');
+    } finally {
+      document.getElementById('posLoading').style.display = 'none';
+    }
+  }
+
+  function showError(msg) {
+    document.getElementById('posLoading').style.display = 'none';
+    document.getElementById('posForm').hidden = true;
+    document.getElementById('errorMsg').textContent = msg;
+    document.getElementById('errorScreen').classList.add('show');
+  }
+
+  function renderProduct() {
+    // Image
+    const imgWrap = document.getElementById('productImg');
+    if (product.image_url) {
+      imgWrap.innerHTML = `<img class="pos-img" src="${escHtml(product.image_url)}" alt="${escHtml(product.name)}" loading="lazy">`;
+    } else {
+      const icons = { boucles: '💎', collier: '📿', bracelet: '📿', autre: '🪩' };
+      imgWrap.innerHTML = `<div class="pos-img-placeholder">${icons[product.category] ?? '✨'}</div>`;
+    }
+
+    // Infos
+    const catLabels = { boucles: 'Boucles d\'oreilles', collier: 'Collier', bracelet: 'Bracelet', autre: 'Bijou' };
+    document.getElementById('productCategory').textContent = catLabels[product.category] ?? product.category;
+    document.getElementById('productName').textContent     = product.name;
+    document.getElementById('productDesc').textContent     = product.description ?? '';
+    document.getElementById('productPrice').innerHTML      = `${fmt(product.price_cad)} <span>/ unité</span>`;
+
+    updateStockBadge(product.stock_qty);
+    updateTotal();
+
+    // Bouton plus limité par le stock
+    document.getElementById('qtyPlus').disabled = product.stock_qty <= qty;
+    document.getElementById('btnVendre').disabled = product.stock_qty === 0;
+
+    document.getElementById('posForm').hidden = false;
+  }
+
+  function updateStockBadge(n) {
+    const el  = document.getElementById('productStock');
+    el.textContent = n === 0 ? '0 en stock' : `${n} en stock`;
+    el.className   = 'pos-stock ' + (n === 0 ? 'stock-zero' : n <= 2 ? 'stock-low' : 'stock-ok');
+  }
+
+  // ── Contrôles quantité ────────────────────────────────────
+  document.getElementById('qtyMinus').addEventListener('click', () => {
+    if (qty > 1) { qty--; syncQty(); }
+  });
+  document.getElementById('qtyPlus').addEventListener('click', () => {
+    if (product && qty < product.stock_qty) { qty++; syncQty(); }
+  });
+
+  function syncQty() {
+    document.getElementById('qtyVal').textContent = qty;
+    document.getElementById('qtyMinus').disabled  = qty <= 1;
+    document.getElementById('qtyPlus').disabled   = !product || qty >= product.stock_qty;
+    updateTotal();
+  }
+
+  function updateTotal() {
+    if (!product) return;
+    const total = (product.price_cad * qty).toFixed(2);
+    document.getElementById('qtyTotal').textContent  = fmt(total);
+    document.getElementById('btnVendre').textContent = `✅ Vendre — ${fmt(total)}`;
+  }
+
+  // ── Sélecteurs (paiement / vendeur) ───────────────────────
+  function setupSelector(gridId, setter) {
+    document.getElementById(gridId).addEventListener('click', e => {
+      const btn = e.target.closest('.sel-btn');
+      if (!btn) return;
+      document.querySelectorAll(`#${gridId} .sel-btn`).forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      setter(btn.dataset.value);
+    });
+  }
+  setupSelector('paiementGrid', v => { paiement = v; });
+  setupSelector('vendeurGrid',  v => { vendeur  = v; });
+
+  // ── Vendre ────────────────────────────────────────────────
+  document.getElementById('btnVendre').addEventListener('click', async () => {
+    if (!product || product.stock_qty === 0) return;
+
+    const btn = document.getElementById('btnVendre');
+    btn.disabled = true;
+    btn.textContent = '⏳ Enregistrement…';
+    document.getElementById('sellError').textContent = '';
+
+    try {
+      const res = await fetch(`${API}/api/pos/vente`, {
+        method:  'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Pos-Pin':    posPin,
+        },
+        body: JSON.stringify({
+          product_id: product.id,
+          qty,
+          paiement,
+          vendu_par: vendeur,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.status === 401) {
+        // PIN incorrect — vider le cache et redemander
+        localStorage.removeItem(PIN_KEY);
+        posPin = '';
+        document.getElementById('pinInput').value = '';
+        document.getElementById('pinError').textContent = 'PIN incorrect. Réessaie.';
+        showPin();
+        return;
+      }
+      if (!res.ok) {
+        document.getElementById('sellError').textContent = data.error ?? 'Erreur inconnue.';
+        return;
+      }
+
+      showSuccess(data);
+
+    } catch (err) {
+      document.getElementById('sellError').textContent = 'Erreur réseau. Vérifie ta connexion.';
+    } finally {
+      btn.disabled = false;
+      updateTotal();
+    }
+  });
+
+  // ── Succès ────────────────────────────────────────────────
+  function showSuccess(data) {
+    const paiementLabels = { comptant: '💵 Comptant', interac: '📱 Interac', paypal: '🅿️ PayPal' };
+    document.getElementById('successAmount').textContent = fmt(data.amountCAD);
+    document.getElementById('successDetail').innerHTML   =
+      `${escHtml(product.name)}<br>` +
+      `${qty} unité${qty > 1 ? 's' : ''} • ${paiementLabels[paiement] ?? paiement}<br>` +
+      `Vendu par ${escHtml(vendeur)}`;
+    document.getElementById('successStock').textContent =
+      `📦 Stock restant : ${data.stockRestant}`;
+
+    document.getElementById('successScreen').classList.add('show');
+  }
+
+  document.getElementById('btnNext').addEventListener('click', () => {
+    document.getElementById('successScreen').classList.remove('show');
+    // Réinitialiser pour la vente suivante
+    qty = 1;
+    syncQty();
+    document.getElementById('paiementGrid').querySelectorAll('.sel-btn').forEach((b,i) => b.classList.toggle('active', i === 0));
+    paiement = 'comptant';
+    // Recharger le produit pour avoir le stock à jour
+    loadProduct();
+  });
+
+  // ── Init ──────────────────────────────────────────────────
+  if (posPin) {
+    hidePin();
+    loadProduct();
+  } else {
+    showPin();
+  }
+</script>
+</body>
+</html>

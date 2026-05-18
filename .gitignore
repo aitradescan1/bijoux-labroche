@@ -1,0 +1,52 @@
+# Dépendances
+node_modules/
+.pnp
+.pnp.js
+
+# Secrets — NE JAMAIS COMMITER
+.env
+.env.local
+.env.*.local
+
+# Vercel
+.vercel/
+
+# Python (scripts)
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Fichiers privés locaux
+Factures_investissement_depart/
+workflow/
+MEMOIRE_PROJET_BIJOUX.md
+.venv/
+
+# Claude Code config (local seulement)
+.claude/
+
+# Données financières/comptables privées
+factures_classification.csv
+factures_detailees.csv
+rapport_comptable.md
+rapport_comptable_CAD.md
+documentation_bom.md
+documentation_bom_amort500.md
+documentation_bom_filled.md
+questions_entrepreneurs.md
+pedagogie_pour_enfant.md
+
+# Scripts Python locaux
+scripts/
+
+# Profils IA privés
+assets/ai_profiles/

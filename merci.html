@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Merci ! — Labroche et Gobeil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@400;500;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <img src="assets/svg/sparkle.svg" alt="" class="logo-icon" aria-hidden="true">
+        <span class="logo-text">Labroche et Gobeil</span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html"    class="nav-link">Accueil</a>
+        <a href="boutique.html" class="nav-link">Boutique</a>
+        <a href="histoire.html" class="nav-link">Notre histoire</a>
+        <a href="pedagogie.html" class="nav-link">Pédagogie</a>
+        <a href="geologie.html"  class="nav-link">Géologie</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="merci-main">
+    <div class="merci-card">
+      <div class="merci-icon" aria-hidden="true">
+        <img src="assets/svg/heart.svg" alt="">
+      </div>
+      <h1 class="merci-title">Merci pour ta commande !</h1>
+      <p class="merci-sub" id="merciSub">Ton paiement a bien été reçu. Nathan et Lyam vont polir et préparer ton bijou avec soin 🪨✨</p>
+
+      <div class="merci-detail" id="merciDetail">
+        <!-- Rempli par JS -->
+      </div>
+
+      <p class="merci-note">Tu recevras une confirmation à l'adresse email fournie. Si tu as des questions, contacte-nous.</p>
+
+      <div class="merci-actions">
+        <a href="boutique.html" class="btn-primary">Voir d'autres bijoux</a>
+        <a href="index.html"    class="btn-ghost">Retour à l'accueil</a>
+      </div>
+    </div>
+
+    <!-- Fun: confetti simples CSS -->
+    <div class="confetti-wrap" aria-hidden="true">
+      <div class="confetti c1"></div>
+      <div class="confetti c2"></div>
+      <div class="confetti c3"></div>
+      <div class="confetti c4"></div>
+      <div class="confetti c5"></div>
+      <div class="confetti c6"></div>
+      <div class="confetti c7"></div>
+      <div class="confetti c8"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="assets/svg/sparkle.svg" alt="" class="footer-icon" aria-hidden="true">
+        <span>Labroche et Gobeil</span>
+      </div>
+      <p class="footer-copy">© 2026 Labroche et Gobeil — Bijoux en pierres naturelles</p>
+    </div>
+  </footer>
+
+  <script>
+    const params  = new URLSearchParams(location.search);
+    const orderId = params.get('orderId')  ?? '';
+    const name    = params.get('name')     ?? '';
+    const product = params.get('product')  ?? '';
+    const amount  = params.get('amount')   ?? '';
+
+    function escHtml(str) {
+      return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    if (name) {
+      document.getElementById('merciSub').textContent =
+        `${escHtml(name)}, ton paiement a bien été reçu. Nathan et Lyam vont préparer ton bijou avec soin ✨`;
+    }
+
+    const detail = document.getElementById('merciDetail');
+    if (product || amount || orderId) {
+      detail.innerHTML = `
+        <div class="merci-row"><span>Produit</span><strong>${escHtml(product)}</strong></div>
+        ${amount ? `<div class="merci-row"><span>Montant payé</span><strong>${escHtml(parseFloat(amount).toFixed(2))} $CAD</strong></div>` : ''}
+        ${orderId ? `<div class="merci-row"><span>Référence</span><code>${escHtml(orderId.slice(0,8).toUpperCase())}…</code></div>` : ''}
+      `;
+    }
+  </script>
+
+</body>
+</html>

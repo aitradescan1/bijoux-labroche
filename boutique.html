@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Boutique — Labroche et Gobeil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@400;500;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <img src="assets/svg/sparkle.svg" alt="" class="logo-icon" aria-hidden="true">
+        <span class="logo-text">Labroche et Gobeil</span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html"    class="nav-link">Accueil</a>
+        <a href="boutique.html" class="nav-link active">Boutique</a>
+        <a href="histoire.html" class="nav-link">Notre histoire</a>
+        <a href="pedagogie.html" class="nav-link">Pédagogie</a>        <a href="geologie.html"  class="nav-link">Géologie</a>        <a href="commande.html" class="nav-cta">Commander →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Hero boutique -->
+    <section class="page-hero">
+      <div class="page-hero-inner">
+        <p class="hero-eyebrow">Toutes nos créations</p>
+        <h1 class="page-hero-title">La boutique</h1>
+        <p class="page-hero-sub">Chaque pièce est faite à la main par Nathan et Lyam. Stock limité !</p>
+      </div>
+    </section>
+
+    <!-- Filtres -->
+    <div class="shop-filters" id="filters" role="tablist" aria-label="Filtrer par catégorie">
+      <button class="filter-btn active" data-cat="tous" role="tab" aria-selected="true">Tous</button>
+      <button class="filter-btn" data-cat="boucles" role="tab" aria-selected="false">Boucles d'oreilles</button>
+      <button class="filter-btn" data-cat="collier"  role="tab" aria-selected="false">Colliers</button>
+      <button class="filter-btn" data-cat="bracelet" role="tab" aria-selected="false">Bracelets</button>
+    </div>
+
+    <!-- Grille produits -->
+    <section class="shop-grid-wrap">
+      <div class="shop-grid" id="productGrid" aria-live="polite" aria-busy="true">
+        <!-- Skeletons pendant le chargement -->
+        <div class="product-skeleton" aria-hidden="true"></div>
+        <div class="product-skeleton" aria-hidden="true"></div>
+        <div class="product-skeleton" aria-hidden="true"></div>
+      </div>
+      <p class="shop-empty" id="shopEmpty" hidden>Aucun produit dans cette catégorie pour l'instant.</p>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="assets/svg/sparkle.svg" alt="" class="footer-icon" aria-hidden="true">
+        <span>Labroche et Gobeil</span>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Accueil</a>
+        <a href="boutique.html">Boutique</a>
+        <a href="histoire.html">Notre histoire</a>
+        <a href="pedagogie.html">Pédagogie</a>
+        <a href="geologie.html">Géologie</a>
+      </nav>
+      <p class="footer-copy">© 2026 Labroche et Gobeil — Bijoux en pierres naturelles</p>
+    </div>
+  </footer>
+
+  <script>
+    const API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? '' : 'https://les-petits-bijoux.vercel.app';
+    const grid  = document.getElementById('productGrid');
+    const empty = document.getElementById('shopEmpty');
+    let allProducts = [];
+
+    const CAT_ICONS = { boucles: '💎', collier: '✨', bracelet: '🌸', autre: '🪩' };
+    const FALLBACK_IMGS = {
+      boucles: 'assets/svg/earring.svg',
+      collier: 'assets/svg/necklace.svg',
+      bracelet:'assets/svg/sparkle.svg',
+      autre:   'assets/svg/star.svg',
+    };
+
+    function productCard(p) {
+      const icon = CAT_ICONS[p.category] ?? '🪩';
+      const img  = p.image_url
+        ? `<img src="${escHtml(p.image_url)}" alt="${escHtml(p.name)}" class="product-img" loading="lazy">`
+        : `<div class="product-img product-img-placeholder"><img src="${FALLBACK_IMGS[p.category] ?? 'assets/svg/star.svg'}" alt="" aria-hidden="true"></div>`;
+
+      return `
+        <article class="product-card" data-cat="${escHtml(p.category)}" data-id="${escHtml(p.id)}">
+          <div class="product-img-wrap">${img}</div>
+          <div class="product-info">
+            <span class="product-cat">${icon} ${escHtml(p.category)}</span>
+            <h2 class="product-name">${escHtml(p.name)}</h2>
+            <p class="product-desc">${escHtml(p.description ?? '')}</p>
+            <div class="product-footer">
+              <span class="product-price">${escHtml(p.price_cad.toFixed(2))} $</span>
+              <a href="commande.html?productId=${encodeURIComponent(p.id)}&productName=${encodeURIComponent(p.name)}&price=${encodeURIComponent(p.price_cad)}"
+                 class="btn-primary">Commander</a>
+            </div>
+          </div>
+        </article>`;
+    }
+
+    function escHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function renderProducts(cat) {
+      const filtered = cat === 'tous' ? allProducts : allProducts.filter(p => p.category === cat);
+      grid.innerHTML = filtered.map(productCard).join('');
+      grid.setAttribute('aria-busy', 'false');
+      empty.hidden = filtered.length > 0;
+    }
+
+    // Filtres
+    document.getElementById('filters').addEventListener('click', e => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      renderProducts(btn.dataset.cat);
+    });
+
+    // Produits locaux (affichés si l'API n'est pas encore disponible)
+    const PRODUITS_LOCAUX = [
+      {
+        id: 'LBG-26-001',
+        name: 'Boucles d\'oreilles — Pierre naturelle polie',
+        description: 'Paire de boucles d\'oreilles en pierre naturelle polie à la main par Nathan & Lyam. Chaque paire est unique — la forme et les nuances varient légèrement selon la roche. Monture dorée légère.',
+        price_cad: 12.00,
+        category: 'boucles',
+        image_url: 'assets/Produits/Boucles/LBG-26-001-boucles-pierre-polie.jpg',
+        stock: 1
+      }
+    ];
+
+    // Chargement produits
+    (async () => {
+      try {
+        const res = await fetch(`${API}/api/products`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        allProducts = await res.json();
+        renderProducts('tous');
+      } catch (err) {
+        console.warn('API non disponible, affichage des produits locaux.', err);
+        allProducts = PRODUITS_LOCAUX;
+        renderProducts('tous');
+      }
+    })();
+  </script>
+
+</body>
+</html>

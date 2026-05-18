@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Géologie — Labroche et Gobeil</title>
+  <meta name="description" content="Explore les roches et minéraux : moteur de recherche géologique, roche du jour, quiz, échelle de Mohs et où chercher au Québec.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo" aria-label="Labroche et Gobeil — Accueil">
+        <img src="assets/svg/sparkle.svg" alt="" class="logo-icon" aria-hidden="true">
+        <span class="logo-text">Labroche et Gobeil</span>
+      </a>
+      <nav class="main-nav" aria-label="Navigation principale">
+        <a href="index.html"     class="nav-link">Accueil</a>
+        <a href="boutique.html"  class="nav-link">Boutique</a>
+        <a href="histoire.html"  class="nav-link">Notre histoire</a>
+        <a href="pedagogie.html" class="nav-link">Pédagogie</a>
+        <a href="geologie.html"  class="nav-link active">Géologie</a>
+        <a href="commande.html"  class="nav-cta">Commander →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ═══ HERO ═══ -->
+    <section class="page-hero">
+      <p class="hero-eyebrow">Par Nathan &amp; Lyam</p>
+      <h1 class="page-hero-title">Explorer la géologie</h1>
+      <p class="page-hero-sub">Cherche une roche, découvre ses secrets, teste tes connaissances — et vois comment Nathan &amp; Lyam la transforment en bijou unique.</p>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- MOTEUR DE RECHERCHE                                     -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="geo-search-section">
+      <div class="geo-search-inner">
+        <div class="geo-section-header">
+          <p class="section-tag">Moteur de recherche</p>
+          <h2 class="section-title">Trouve ta roche</h2>
+          <p class="section-sub">Tape un nom, une couleur, une famille ou un lieu. La recherche couvre notre base locale <em>et</em> Wikipédia pour toutes les autres roches.</p>
+        </div>
+
+        <div class="geo-searchbar" role="search">
+          <input type="search" id="rocheSearch" class="geo-search-input"
+            placeholder="Ex : quartz, violet, volcanique, Québec…"
+            autocomplete="off" spellcheck="false"
+            aria-label="Rechercher une roche ou un minéral">
+          <button class="geo-search-btn" id="searchBtn" aria-label="Lancer la recherche">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </button>
+        </div>
+
+        <p class="geo-search-status" id="searchStatus" aria-live="polite"></p>
+
+        <div class="geo-results-grid" id="searchResults" role="list"></div>
+
+        <div class="geo-detail" id="rocheDetail" hidden></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- ROCHE DU JOUR                                           -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="geo-jour-section">
+      <div class="geo-jour-inner">
+        <div class="geo-section-header">
+          <p class="section-tag">Chaque jour une nouvelle découverte</p>
+          <h2 class="section-title">Roche du jour</h2>
+        </div>
+        <div class="geo-jour-card" id="rocheDuJour">
+          <div class="geo-loading-msg">Chargement…</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- QUIZ                                                    -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="geo-quiz-section">
+      <div class="geo-quiz-inner">
+        <div class="geo-section-header">
+          <p class="section-tag">Teste tes connaissances</p>
+          <h2 class="section-title">Quiz — Devine la roche</h2>
+          <p class="section-sub">Regarde la photo, utilise les indices, et trouve de quelle roche il s'agit.</p>
+        </div>
+        <div class="geo-quiz-card" id="quizContainer">
+          <div class="geo-loading-msg">Chargement du quiz…</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- ÉCHELLE DE MOHS                                         -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="geo-mohs-section">
+      <div class="geo-mohs-inner">
+        <div class="geo-section-header">
+          <p class="section-tag geo-tag-light">Comprendre la géologie</p>
+          <h2 class="section-title geo-title-light">Échelle de dureté de Mohs</h2>
+          <p class="section-sub geo-sub-light">Inventée en 1812 par Friedrich Mohs, cette échelle mesure la résistance d'un minéral aux rayures — de 1 (talc, très tendre) à 10 (diamant, le plus dur qui existe).</p>
+        </div>
+        <div class="geo-mohs-scale" id="mohsScale"></div>
+        <p class="geo-mohs-legend">Clique sur une roche pour l'explorer en détail</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- OÙ CHERCHER DES ROCHES AU QUÉBEC                        -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="geo-quebec-section">
+      <div class="geo-quebec-inner">
+        <div class="geo-section-header">
+          <p class="section-tag">Sorties géologiques</p>
+          <h2 class="section-title">Où chercher des roches au Québec ?</h2>
+          <p class="section-sub">Nathan a des endroits favoris. Voici les meilleures régions pour trouver de beaux minéraux.</p>
+        </div>
+        <div class="geo-quebec-grid">
+          <div class="geo-region-card">
+            <div class="geo-region-icon">🏔️</div>
+            <h3>Laurentides</h3>
+            <p>Quartz rose, cristal de roche, feldspath. Le Bouclier canadien regorge de minéraux accessibles le long des rivières et sur les affleurements rocheux.</p>
+            <span class="geo-region-tag">À 1h de Montréal</span>
+          </div>
+          <div class="geo-region-card">
+            <div class="geo-region-icon">🌿</div>
+            <h3>Estrie &amp; Appalaches</h3>
+            <p>Serpentinite, calcite, marbre. Les Appalaches québécoises cachent de superbes minéraux métamorphiques dans les anciennes zones de failles.</p>
+            <span class="geo-region-tag">Sud du Québec</span>
+          </div>
+          <div class="geo-region-card">
+            <div class="geo-region-icon">🌊</div>
+            <h3>Côte-Nord &amp; Saguenay</h3>
+            <p>Gneiss ancien, labradorite, apatite. Certaines des plus vieilles roches de la planète se trouvent ici — des milliards d'années d'histoire sous vos pieds.</p>
+            <span class="geo-region-tag">Nord du Québec</span>
+          </div>
+          <div class="geo-region-card">
+            <div class="geo-region-icon">⛏️</div>
+            <h3>Abitibi-Témiscamingue</h3>
+            <p>Pyrite, quartz, or natif. Région historique minière avec de nombreux sites de collecte accessibles et le Musée de minéralogie de Malartic.</p>
+            <span class="geo-region-tag">Ouest du Québec</span>
+          </div>
+          <div class="geo-region-card">
+            <div class="geo-region-icon">🏛️</div>
+            <h3>Musées &amp; Sites éducatifs</h3>
+            <p>Musée de minéralogie de Malartic, Mine Cristal (Abitibi), Musée de la nature de Sherbrooke, Musée minéralogique de l'Abitibi-Témiscamingue.</p>
+            <span class="geo-region-tag">Partout au Québec</span>
+          </div>
+          <div class="geo-region-card geo-region-tip">
+            <div class="geo-region-icon">💡</div>
+            <h3>Conseil de Nathan</h3>
+            <p>Toujours demander la permission avant de ramasser des roches sur une propriété privée. Apporte un petit marteau de géologue, une loupe × 10 et des sacs ziplock !</p>
+            <span class="geo-region-tag">Pro tip</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ CTA ═══ -->
+    <section class="cta-band">
+      <div class="cta-band-inner">
+        <p class="cta-script">Tu veux un bijou en roche naturelle ?</p>
+        <p style="color:var(--text-muted); margin-bottom:24px;">Maintenant que tu connais les pierres, viens choisir la tienne en boutique.</p>
+        <a href="boutique.html" class="btn-primary btn-large">Voir la boutique</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="assets/svg/sparkle.svg" alt="" class="footer-icon" aria-hidden="true">
+        <span>Labroche et Gobeil</span>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Accueil</a>
+        <a href="boutique.html">Boutique</a>
+        <a href="histoire.html">Notre histoire</a>
+        <a href="pedagogie.html">Pédagogie</a>
+        <a href="geologie.html">Géologie</a>
+      </nav>
+      <p class="footer-copy">© 2026 Labroche et Gobeil — Bijoux en pierres naturelles</p>
+    </div>
+  </footer>
+
+<script>
+'use strict';
+/* ═══════════════════════════════════════════════════════════════
+   ÉTAT
+═══════════════════════════════════════════════════════════════ */
+const ROCHES_DATA = [{"id":"quartz-rose","nom":"Quartz rose","nomWiki":"Quartz_rose","durete":7,"famille":"Silicate","couleurs":["rose","rose pâle","lavande douce"],"description":"Le quartz rose est l'une des pierres semi-précieuses les plus appréciées en bijouterie. Sa teinte caractéristique vient de traces de titane, de fer ou de manganèse dans sa structure cristalline.","anecdote":"On trouve du quartz rose de bonne qualité dans les Laurentides et en Beauce au Québec. Il symbolise l'amour et la tendresse dans de nombreuses cultures depuis l'Antiquité.","labroche":"Nathan & Lyam adorent le quartz rose pour les boucles — sa couleur douce se marie parfaitement avec les montures dorées.","usedByLabroche":true,"trouvableQuebec":true,"quiz":true},{"id":"amethyste","nom":"Améthyste","nomWiki":"Améthyste","durete":7,"famille":"Silicate","couleurs":["violet","mauve","violet profond","lilas"],"description":"Variété violette du quartz, l'améthyste tire sa couleur d'impuretés de fer irradiées naturellement. Elle est l'une des pierres précieuses les plus connues et les plus utilisées depuis l'Antiquité.","anecdote":"Le mot vient du grec ancien « améthystos » qui signifie « qui préserve de l'ivresse ». Les Grecs croyaient qu'elle protégeait contre l'alcool !","labroche":"L'améthyste violette fait des bijoux spectaculaires — Nathan adore ses reflets changeants selon l'angle de lumière.","usedByLabroche":true,"trouvableQuebec":false,"quiz":true},{"id":"obsidienne","nom":"Obsidienne","nomWiki":"Obsidienne","durete":5.5,"famille":"Roche volcanique","couleurs":["noir brillant","brun foncé","arc-en-ciel (doré)"],"description":"L'obsidienne est un verre volcanique naturel formé lors du refroidissement ultra-rapide de la lave. Sa surface lisse et brillante lui donne un aspect fascinant. Taillée en lame, elle peut être plus tranchante qu'une lame chirurgicale en acier.","anecdote":"Les peuples autochtones d'Amérique du Nord l'utilisaient depuis plus de 10 000 ans pour fabriquer des pointes de flèches et des couteaux. C'est l'une des premières pierres taillées par l'humanité.","labroche":"L'obsidienne noire donne des pièces très élégantes — son poli révèle un brillant presque miroir.","usedByLabroche":true,"trouvableQuebec":false,"quiz":true},{"id":"labradorite","nom":"Labradorite","nomWiki":"Labradorite","durete":6,"famille":"Feldspath plagioclase","couleurs":["gris","bleu électrique","vert","or"],"description":"La labradorite est une pierre semi-précieuse aux reflets irisés spectaculaires appelés labradorescence. Ce phénomène optique se produit quand la lumière interfère entre les couches internes de la roche — comme un arc-en-ciel emprisonné dans la pierre.","anecdote":"Elle a été découverte en 1770 sur la péninsule du Labrador (Canada) — un clin d'œil au nom de la compagnie Labroche et Gobeil !","labroche":"La labradorite est le coup de cœur de Nathan : ses reflets bleus et verts qui changent selon la lumière sont absolument incroyables.","usedByLabroche":true,"trouvableQuebec":true,"quiz":true},{"id":"jaspe","nom":"Jaspe","nomWiki":"Jaspe","durete":7,"famille":"Silicate","couleurs":["rouge","brun","jaune","vert"],"description":"Le jaspe est une variété de quartz cryptocristallin opaque. Sa grande variété de couleurs vient de ses nombreuses impuretés (fer, manganèse…). Chaque morceau a un motif unique — c'est une des pierres les plus variées qui existent.","anecdote":"Le jaspe rouge est l'une des premières pierres utilisées en bijouterie par l'humanité, dès la préhistoire. On en a retrouvé dans des tombes égyptiennes vieilles de 5000 ans.","labroche":"Le jaspe est facile à polir avec le tambour — et ses motifs uniques font que chaque bijou est vraiment différent.","usedByLabroche":true,"trouvableQuebec":true,"quiz":true},{"id":"agate","nom":"Agate","nomWiki":"Agate","durete":7,"famille":"Silicate","couleurs":["blanc","gris","bleu","brun"],"description":"L'agate est une variété de calcédoine caractérisée par ses bandes concentriques colorées. Ces couches se sont formées très lentement au fil de milliers d'années dans des cavités rocheuses. En coupe transversale, elle ressemble à un tableau abstrait.","anecdote":"Chaque tranche d'agate est différente — même deux morceaux taillés dans la même roche n'ont pas le même motif. C'est littéralement une pièce unique de la nature.","labroche":"Tranchée puis polie, l'agate révèle des cercles concentriques magnifiques — parfaite pour des pendentifs originaux.","usedByLabroche":false,"trouvableQuebec":false,"quiz":true},{"id":"pyrite","nom":"Pyrite","nomWiki":"Pyrite","durete":6.5,"famille":"Sulfure","couleurs":["or brillant","jaune doré"],"description":"La pyrite est un sulfure de fer à l'éclat métallique or très prononcé. Son ressemblance avec l'or lui a valu le surnom d'« or des fous » (fool's gold en anglais). Malgré cette réputation populaire, elle a une beauté unique et très appréciée.","anecdote":"De nombreux chercheurs d'or du 19e siècle ont cru trouver fortune avec de la pyrite ! Sa densité beaucoup plus faible que l'or (5 vs 19 g/cm³) permet de les distinguer facilement.","labroche":"La pyrite fait des pièces originales avec son éclat doré métallique — très différent des autres roches et très apprécié.","usedByLabroche":false,"trouvableQuebec":true,"quiz":true},{"id":"malachite","nom":"Malachite","nomWiki":"Malachite","durete":3.5,"famille":"Carbonate","couleurs":["vert vif","vert foncé"],"description":"La malachite est un carbonate de cuivre d'un vert intense caractéristique. Ses motifs en bandes ou en cercles concentriques sont formés lors de sa cristallisation dans des zones d'oxydation de gisements de cuivre.","anecdote":"La malachite est tendre (dureté 3,5) — Nathan & Lyam doivent faire attention lors du polissage pour ne pas rayer la surface. Les abrasifs fins sont indispensables.","labroche":"La malachite verte est très demandée — mais sa faible dureté demande une technique de polissage délicate avec des abrasifs très fins.","usedByLabroche":false,"trouvableQuebec":false,"quiz":true},{"id":"hematite","nom":"Hématite","nomWiki":"Hématite","durete":5.5,"famille":"Oxyde","couleurs":["gris acier","noir"],"description":"L'hématite est un oxyde de fer à l'éclat métallique gris-noir. Malgré sa couleur sombre, elle laisse une trace rouge sang quand on la griffe sur une surface dure — d'où son nom (du grec haima, « sang »).","anecdote":"L'hématite est l'un des principaux minerais de fer utilisés dans la sidérurgie. Les mines de minerai de fer au Québec (Sept-Îles, Fermont) extraient principalement de l'hématite.","labroche":"L'hématite polie a un éclat quasi-miroir et un toucher très doux. Parfaite pour des bijoux modernes et élégants.","usedByLabroche":false,"trouvableQuebec":true,"quiz":false},{"id":"fluorite","nom":"Fluorite","nomWiki":"Fluorine","durete":4,"famille":"Halogénure","couleurs":["violet","vert","bleu","jaune"],"description":"La fluorite (ou fluorine) est la pierre la plus colorée qui existe — elle se décline en pratiquement toutes les couleurs. Certains spécimens sont même fluorescents sous lumière ultraviolette, ce qui lui a donné son nom.","anecdote":"Le mot « fluorescence » vient directement de la fluorite, qui a été la première minérale observée avec cette propriété optique. Sous UV, certains spécimens brillent d'un bleu ou violet intense.","labroche":"La fluorite arc-en-ciel est rare et magnifique — mais avec une dureté de 4, elle demande beaucoup de précautions au polissage pour ne pas l'écraser.","usedByLabroche":false,"trouvableQuebec":false,"quiz":true},{"id":"granite","nom":"Granite","nomWiki":"Granite","durete":6.5,"famille":"Roche plutonique","couleurs":["gris","rose","blanc"],"description":"Le granite est la roche la plus commune de la croûte terrestre continentale. Il est formé par le refroidissement lent de magma en profondeur. Son aspect « sel et poivre » vient de l'assemblage de quartz, de feldspath et de mica.","anecdote":"La grande majorité des roches qu'on trouve au Québec sont du granite ou des roches proches — le Bouclier canadien en est fait ! Nathan en a certainement dans sa collection sans le savoir.","labroche":"Le granite du Bouclier canadien est omniprésent au Québec. Poli, il révèle des motifs naturels intéressants et très accessibles.","usedByLabroche":false,"trouvableQuebec":true,"quiz":false},{"id":"serpentinite","nom":"Serpentinite","nomWiki":"Serpentinite","durete":3.5,"famille":"Roche métamorphique","couleurs":["vert foncé","vert"],"description":"La serpentinite est une roche métamorphique vert foncé formée par la transformation de roches du manteau terrestre sous haute pression. Ses veines sombres lui donnent un aspect qui rappelle la peau d'un serpent, d'où son nom.","anecdote":"La serpentinite est abondante dans les Appalaches québécoises — on en trouve facilement en Estrie et en Gaspésie. C'est l'une des roches les plus faciles à collecter localement.","labroche":"Facile à travailler avec sa faible dureté, la serpentinite locale est accessible à Nathan & Lyam sans frais — on en trouve près de chez soi !","usedByLabroche":false,"trouvableQuebec":true,"quiz":false},{"id":"onyx","nom":"Onyx","nomWiki":"Onyx","durete":7,"famille":"Silicate","couleurs":["noir","blanc et noir"],"description":"L'onyx est une variété de calcédoine à bandes parallèles. L'onyx noir, très utilisé en bijouterie, est apprécié pour sa couleur profonde et son poli parfait qui lui donne un éclat quasi-miroir.","anecdote":"L'onyx noir du commerce est souvent de l'agate teintée — mais le résultat est identique et tout aussi magnifique. Les bijoux en onyx étaient très populaires dans la Rome antique.","labroche":"L'onyx noir poli se distingue des autres bijoux — élégant, moderne, intemporel. Un contraste magnifique avec les montures dorées.","usedByLabroche":false,"trouvableQuebec":false,"quiz":false},{"id":"calcite","nom":"Calcite","nomWiki":"Calcite","durete":3,"famille":"Carbonate","couleurs":["blanc","incolore","rose","orange"],"description":"La calcite est l'un des minéraux les plus répandus sur Terre. Elle compose la majorité des calcaires, des marbres et des craies. Elle se dissout dans les acides — une seule goutte de vinaigre la fait bouillonner immédiatement.","anecdote":"La calcite a une propriété optique unique : la double réfraction. Un objet vu à travers un cristal de calcite transparente apparaît en double ! C'est un phénomène appelé biréfringence.","labroche":"La calcite est souvent la première roche étudiée en géologie — parfaite pour Nathan qui aime comprendre les propriétés physiques des minéraux.","usedByLabroche":false,"trouvableQuebec":true,"quiz":false},{"id":"quartz-fume","nom":"Quartz fumé","nomWiki":"Quartz_enfumé","durete":7,"famille":"Silicate","couleurs":["brun fumé","gris transparent"],"description":"Le quartz fumé est une variété de quartz colorée en brun par l'irradiation naturelle de l'aluminium présent dans sa structure. Sa couleur varie du brun doré au presque noir selon l'intensité de l'irradiation.","anecdote":"En Écosse, le quartz fumé est la pierre nationale — le « cairngorm ». Il orne les épées et les broches traditionnelles écossaises depuis des siècles. Toujours aussi apprécié aujourd'hui.","labroche":"Le quartz fumé donne des bijoux originaux — ni noir ni brun, ses teintes chaudes et subtiles plaisent beaucoup.","usedByLabroche":true,"trouvableQuebec":true,"quiz":true},{"id":"marbre","nom":"Marbre","nomWiki":"Marbre","durete":3.5,"famille":"Roche métamorphique","couleurs":["blanc","blanc avec veines grises","rose"],"description":"Le marbre est du calcaire transformé par la chaleur et la pression (métamorphisme). Sa texture cristalline et son poli parfait en font un matériau prisé depuis l'Antiquité pour la sculpture et l'architecture.","anecdote":"Le marbre blanc du Carrare (Italie) utilisé par Michel-Ange pour sculpter le David est exporté dans le monde entier depuis plus de 2000 ans. Le Québec possède aussi ses propres carrières de marbre.","labroche":"Le marbre blanc poli donne un résultat presque lumineux — mais sa faible dureté (3,5) demande des abrasifs très doux pour ne pas le rayer.","usedByLabroche":false,"trouvableQuebec":true,"quiz":false},{"id":"gneiss","nom":"Gneiss","nomWiki":"Gneiss","durete":7,"famille":"Roche métamorphique","couleurs":["gris","rose","blanc"],"description":"Le gneiss est une roche métamorphique formée sous haute pression et haute température. Ses bandes alternées claires et sombres sont sa signature visuelle. Certains gneiss du Québec ont plus de 3 milliards d'années !","anecdote":"Le Gneiss de Nuvvuagittuq, au nord du Québec, est potentiellement la plus vieille roche de la planète : environ 4,28 milliards d'années. Nathan tient peut-être de l'histoire de la Terre dans ses mains.","labroche":"Le gneiss québécois, c'est un morceau de l'histoire ancienne de la Terre — Nathan adore ça pour sa valeur géologique unique.","usedByLabroche":false,"trouvableQuebec":true,"quiz":false},{"id":"turquoise","nom":"Turquoise","nomWiki":"Turquoise_(minéral)","durete":5.5,"famille":"Phosphate","couleurs":["bleu turquoise","bleu-vert","vert"],"description":"La turquoise est l'une des pierres précieuses les plus anciennes. Sa couleur bleu-vert unique vient du cuivre et du fer dans sa composition. Elle est utilisée en bijouterie depuis au moins 6000 ans, des Égyptiens aux Aztèques.","anecdote":"La turquoise ne se trouve pas naturellement au Québec — elle vient principalement du désert d'Arizona, du Mexique, de l'Iran et de la Chine. Son prix a beaucoup augmenté ces dernières années.","labroche":"La turquoise est une roche que Nathan & Lyam pourraient utiliser pour des commandes spéciales — sa couleur unique fait des pièces spectaculaires.","usedByLabroche":false,"trouvableQuebec":false,"quiz":true},{"id":"cristal-de-roche","nom":"Cristal de roche","nomWiki":"Quartz","durete":7,"famille":"Silicate","couleurs":["transparent","incolore"],"description":"Le cristal de roche est du quartz pur et transparent. Ses formes hexagonales parfaites sont définies par sa structure cristalline. Il est l'un des minéraux les plus abondants de la croûte terrestre et le premier minéral étudié en cristallographie.","anecdote":"Dans l'Antiquité, on croyait que le cristal de roche était de la glace pétrifiée par les dieux — d'où son nom grec krustallos (glace). On sait maintenant qu'il se forme à haute température dans des veines de roche.","labroche":"Un cristal de roche brut, non poli, peut déjà être monté en bijou pour montrer sa forme naturelle hexagonale — une beauté géométrique parfaite !","usedByLabroche":false,"trouvableQuebec":true,"quiz":false},{"id":"feldspath","nom":"Feldspath","nomWiki":"Feldspath","durete":6,"famille":"Silicate","couleurs":["blanc","gris","rose crème"],"description":"Le feldspath est le groupe de minéraux le plus abondant de la croûte terrestre — il représente environ 60 % de toutes les roches de surface. Il est présent dans presque tous les granites et de nombreuses roches métamorphiques.","anecdote":"La labradorite (que Nathan adore !) est une variété de feldspath plagioclase. Les deux sont de la même famille minérale ! La moonstone (pierre de lune) est aussi un feldspath.","labroche":"Le feldspath blanc ou rose poli est discret mais élégant — parfait pour des bijoux minimalistes et épurés.","usedByLabroche":false,"trouvableQuebec":true,"quiz":false}];
+
+let roches = ROCHES_DATA;
+let searchTimer = null;
+let quizState  = { roche: null, answered: false };
+
+/* ═══════════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════════ */
+function init() {
+  afficherRocheDuJour();
+  genererQuiz();
+  renderMohsScale();
+  setupSearch();
+  setupEventDelegation();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════════════ */
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function stripAccents(s) {
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+
+function isSafeMediaUrl(url) {
+  try {
+    const h = new URL(url).hostname;
+    return h.endsWith('wikimedia.org') || h.endsWith('wikipedia.org');
+  } catch { return false; }
+}
+
+async function fetchWikiImage(slug) {
+  try {
+    const params = new URLSearchParams({
+      action: 'query', titles: slug, prop: 'pageimages',
+      format: 'json', origin: '*', pithumbsize: '400'
+    });
+    const res = await fetch(`https://fr.wikipedia.org/w/api.php?${params}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const pages = data.query?.pages;
+    if (!pages) return null;
+    const src = Object.values(pages)[0]?.thumbnail?.source;
+    return (src && isSafeMediaUrl(src)) ? src : null;
+  } catch { return null; }
+}
+
+const COULEUR_MAP = {
+  'rose':'#f4a7b9','rose pâle':'#fde8ed','lavande douce':'#d6b8e8',
+  'violet':'#8b5cf6','mauve':'#a78bfa','violet profond':'#6d28d9','lilas':'#c4b5fd',
+  'noir brillant':'#222','noir':'#1a1a1a','brun foncé':'#5c3317',
+  'gris acier':'#6b7280','gris':'#9ca3af','gris transparent':'#d1d5db',
+  'bleu électrique':'#3b82f6','bleu':'#60a5fa','bleu turquoise':'#06b6d4','bleu-vert':'#2dd4bf',
+  'vert vif':'#22c55e','vert foncé':'#15803d','vert':'#4ade80',
+  'or brillant':'#f59e0b','jaune doré':'#fbbf24','jaune':'#fde047',
+  'rouge':'#ef4444','brun':'#92400e',
+  'blanc':'#f1f5f9','incolore':'#e2e8f0','transparent':'#dbeafe','blanc et noir':'#94a3b8',
+  'rose crème':'#fce7f3',
+  'arc-en-ciel (doré)':'linear-gradient(135deg,#f59e0b,#6d28d9)',
+  'brun fumé':'#78350f','presque noir':'#374151','blanc avec veines grises':'#e2e8f0',
+};
+function couleurCSS(nom) { return COULEUR_MAP[nom] || '#c9a84c'; }
+
+function renderMohsMini(durete) {
+  const pct = ((durete - 1) / 9 * 100).toFixed(1);
+  return `<div class="mohs-mini-track" role="progressbar" aria-valuenow="${durete}" aria-valuemin="1" aria-valuemax="10" aria-label="Dureté ${durete} sur 10">
+    <div class="mohs-mini-fill" style="width:${pct}%"></div>
+    <div class="mohs-mini-thumb" style="left:${pct}%"></div>
+  </div>`;
+}
+
+function badgesHtml(r) {
+  return `<span class="geo-durete-badge">${r.durete} Mohs</span>
+    ${r.trouvableQuebec ? '<span class="geo-qc-badge">🍁 Québec</span>' : ''}
+    ${r.usedByLabroche  ? '<span class="geo-lb-badge">🪨 Labroche</span>' : ''}`;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOTEUR DE RECHERCHE
+═══════════════════════════════════════════════════════════════ */
+function setupSearch() {
+  const input = document.getElementById('rocheSearch');
+  const btn   = document.getElementById('searchBtn');
+
+  input.addEventListener('input', (e) => {
+    clearTimeout(searchTimer);
+    const q = e.target.value;
+    if (q.trim().length < 2) { resetSearch(); return; }
+    searchTimer = setTimeout(() => rechercherRoches(q), 300);
+  });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { clearTimeout(searchTimer); rechercherRoches(input.value); }
+  });
+  btn.addEventListener('click', () => rechercherRoches(input.value));
+}
+
+function resetSearch() {
+  document.getElementById('searchResults').innerHTML = '';
+  document.getElementById('searchStatus').textContent = '';
+  document.getElementById('rocheDetail').hidden = true;
+}
+
+function rechercherRoches(query) {
+  const q     = query.trim().toLowerCase();
+  const qNorm = stripAccents(q);
+  if (q.length < 2) { resetSearch(); return; }
+
+  const isQuebec = qNorm.includes('quebec') || q.includes('québec') || q === 'qc';
+
+  const resultats = roches.filter(r => {
+    const nomNorm = stripAccents(r.nom.toLowerCase());
+    return nomNorm.includes(qNorm)
+      || r.nom.toLowerCase().includes(q)
+      || r.famille.toLowerCase().includes(q)
+      || r.couleurs.some(c => stripAccents(c.toLowerCase()).includes(qNorm))
+      || r.description.toLowerCase().includes(q)
+      || r.anecdote.toLowerCase().includes(q)
+      || (isQuebec && r.trouvableQuebec);
+  });
+
+  const status  = document.getElementById('searchStatus');
+  const grid    = document.getElementById('searchResults');
+  document.getElementById('rocheDetail').hidden = true;
+
+  if (resultats.length === 0) {
+    status.textContent = `Aucun résultat pour « ${query} » dans notre base. Essaie : quartz, violet, volcanique…`;
+    grid.innerHTML = '';
+    return;
+  }
+
+  status.textContent = `${resultats.length} roche${resultats.length > 1 ? 's' : ''} trouvée${resultats.length > 1 ? 's' : ''} dans notre base`;
+  grid.innerHTML = resultats.map(r => renderRocheCard(r)).join('');
+}
+
+function renderRocheCard(r) {
+  const couleursHtml = r.couleurs.slice(0, 3).map(c =>
+    `<span class="geo-couleur-dot" style="background:${couleurCSS(c)}" title="${escHtml(c)}"></span>`
+  ).join('');
+  return `
+  <div class="geo-result-card" data-rock-id="${escHtml(r.id)}" tabindex="0" role="listitem" aria-label="${escHtml(r.nom)}">
+    <div class="geo-card-top">
+      <div class="geo-card-img-wrap" id="thumb-${escHtml(r.id)}">
+        <div class="geo-card-img-placeholder">🪨</div>
+      </div>
+      <div class="geo-card-info">
+        <h3 class="geo-card-name">${escHtml(r.nom)}</h3>
+        <p class="geo-card-famille">${escHtml(r.famille)}</p>
+        <div class="geo-card-badges">${badgesHtml(r)}</div>
+        <div class="geo-card-couleurs">${couleursHtml}</div>
+      </div>
+    </div>
+    <p class="geo-card-desc">${escHtml(r.description.slice(0, 110))}…</p>
+  </div>`;
+}
+
+async function afficherDetail(id) {
+  const r = roches.find(x => x.id === id);
+  if (!r) return;
+
+  const detail = document.getElementById('rocheDetail');
+  detail.hidden = false;
+  detail.innerHTML = `<div class="geo-detail-inner"><div class="geo-detail-img-skeleton"></div><div class="geo-detail-body"><p style="color:var(--text-muted);padding:40px">Chargement de l'image…</p></div></div>`;
+  detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  const imgUrl = await fetchWikiImage(r.nomWiki);
+
+  detail.innerHTML = `
+  <div class="geo-detail-inner">
+    <button class="geo-detail-close" data-action="close-detail" aria-label="Fermer">✕</button>
+    <div class="geo-detail-img-wrap">
+      ${imgUrl
+        ? `<img src="${escHtml(imgUrl)}" alt="${escHtml(r.nom)}" class="geo-detail-img" loading="lazy">`
+        : `<div class="geo-detail-img-placeholder">🪨</div>`}
+      ${r.usedByLabroche ? `<div class="geo-detail-lb-ribbon">🪨 Utilisé par Labroche &amp; Gobeil</div>` : ''}
+    </div>
+    <div class="geo-detail-body">
+      <h3 class="geo-detail-title">${escHtml(r.nom)}</h3>
+      <span class="geo-detail-famille">${escHtml(r.famille)}</span>
+      <div class="geo-detail-badges">${badgesHtml(r)}</div>
+      <p class="geo-detail-desc">${escHtml(r.description)}</p>
+      <div class="geo-detail-mohs">
+        <p class="geo-detail-label">Dureté : <strong>${r.durete} / 10</strong></p>
+        ${renderMohsMini(r.durete)}
+      </div>
+      <div class="geo-detail-couleurs">
+        <p class="geo-detail-label">Couleurs :</p>
+        <div class="geo-couleurs-list">
+          ${r.couleurs.map(c => `<span class="geo-couleur-tag"><span class="geo-couleur-dot" style="background:${couleurCSS(c)}"></span>${escHtml(c)}</span>`).join('')}
+        </div>
+      </div>
+      <div class="geo-detail-anecdote">
+        <p class="geo-anecdote-label">Le savais-tu ?</p>
+        <p>${escHtml(r.anecdote)}</p>
+      </div>
+      ${r.usedByLabroche ? `
+      <div class="geo-detail-labroche">
+        <p class="geo-labroche-label">🪨 Chez Labroche &amp; Gobeil :</p>
+        <p>${escHtml(r.labroche)}</p>
+        <a href="boutique.html" class="btn-primary geo-detail-cta">Voir les bijoux →</a>
+      </div>` : ''}
+      <a href="https://fr.wikipedia.org/wiki/${encodeURIComponent(r.nomWiki)}"
+         target="_blank" rel="noopener noreferrer" class="geo-wiki-link">
+        Lire la fiche complète sur Wikipédia →
+      </a>
+    </div>
+  </div>`;
+
+  if (imgUrl) {
+    const thumb = document.getElementById(`thumb-${id}`);
+    if (thumb) thumb.innerHTML = `<img src="${escHtml(imgUrl)}" alt="${escHtml(r.nom)}" loading="lazy" class="geo-card-img">`;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ROCHE DU JOUR
+═══════════════════════════════════════════════════════════════ */
+async function afficherRocheDuJour() {
+  const idx = (new Date().getDate() + new Date().getMonth()) % roches.length;
+  const r   = roches[idx];
+  const el  = document.getElementById('rocheDuJour');
+  const img = await fetchWikiImage(r.nomWiki);
+
+  el.innerHTML = `
+  <div class="geo-jour-content">
+    <div class="geo-jour-img-wrap">
+      ${img
+        ? `<img src="${escHtml(img)}" alt="${escHtml(r.nom)}" class="geo-jour-img" loading="lazy">`
+        : `<div class="geo-jour-img-placeholder">🪨</div>`}
+      ${r.trouvableQuebec ? `<span class="geo-jour-qc">🍁 Trouvable au Québec</span>` : ''}
+    </div>
+    <div class="geo-jour-body">
+      <p class="geo-jour-famille">${escHtml(r.famille)}</p>
+      <h3 class="geo-jour-nom">${escHtml(r.nom)}</h3>
+      <p class="geo-jour-desc">${escHtml(r.description)}</p>
+      <div class="geo-detail-mohs">
+        <p class="geo-detail-label">Dureté : <strong>${r.durete} / 10</strong></p>
+        ${renderMohsMini(r.durete)}
+      </div>
+      <div class="geo-detail-anecdote" style="margin-top:18px">
+        <p class="geo-anecdote-label">Le savais-tu ?</p>
+        <p>${escHtml(r.anecdote)}</p>
+      </div>
+      ${r.usedByLabroche ? `<div class="geo-detail-labroche" style="margin-top:18px"><p class="geo-labroche-label">🪨 Chez Labroche &amp; Gobeil :</p><p>${escHtml(r.labroche)}</p></div>` : ''}
+      <button class="btn-primary geo-detail-cta" data-jour-explore="${escHtml(r.id)}" style="margin-top:20px">Explorer cette roche →</button>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   QUIZ
+═══════════════════════════════════════════════════════════════ */
+async function genererQuiz() {
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = `<div class="geo-loading-msg">Chargement de l'image…</div>`;
+
+  const eligibles = roches.filter(r => r.quiz);
+  const shuffled  = [...eligibles].sort(() => Math.random() - 0.5);
+  const choix     = shuffled.slice(0, 4);
+  const reponse   = choix[Math.floor(Math.random() * 4)];
+
+  quizState = { roche: reponse, answered: false };
+
+  const img = await fetchWikiImage(reponse.nomWiki);
+
+  container.innerHTML = `
+  <div class="geo-quiz-img-wrap">
+    ${img
+      ? `<img src="${escHtml(img)}" alt="Quelle est cette roche ?" class="geo-quiz-img" loading="lazy">`
+      : `<div class="geo-quiz-img-placeholder">🪨<br><small>Famille : ${escHtml(reponse.famille)}</small></div>`}
+    <div class="geo-quiz-overlay">Quelle est cette roche ?</div>
+  </div>
+  <div class="geo-quiz-hints">
+    <span>Famille : <strong>${escHtml(reponse.famille)}</strong></span>
+    <span>Dureté : <strong>${reponse.durete} Mohs</strong></span>
+    <span>Couleur dominante : <strong>${escHtml(reponse.couleurs[0])}</strong></span>
+  </div>
+  <div class="geo-quiz-choix">
+    ${choix.map(c => `
+    <button class="geo-quiz-btn" data-quiz-id="${escHtml(c.id)}">${escHtml(c.nom)}</button>`).join('')}
+  </div>
+  <div class="geo-quiz-resultat" id="quizResultat" hidden></div>`;
+}
+
+function repondreQuiz(id) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  const correct = id === quizState.roche.id;
+
+  document.querySelectorAll('.geo-quiz-btn').forEach(btn => {
+    btn.disabled = true;
+    if (btn.dataset.quizId === quizState.roche.id) btn.classList.add('geo-quiz-correct');
+    else if (btn.dataset.quizId === id && !correct) btn.classList.add('geo-quiz-wrong');
+  });
+
+  const el = document.getElementById('quizResultat');
+  el.hidden = false;
+  el.className = `geo-quiz-resultat ${correct ? 'geo-quiz-res-correct' : 'geo-quiz-res-wrong'}`;
+  el.innerHTML = `
+  <div class="geo-quiz-res-icon">${correct ? '🎉' : '❌'}</div>
+  <div class="geo-quiz-res-text">
+    <p><strong>${correct ? 'Bravo, bonne réponse !' : `C'était : ${escHtml(quizState.roche.nom)}`}</strong></p>
+    <p>${escHtml(quizState.roche.anecdote)}</p>
+    ${quizState.roche.usedByLabroche ? `<p class="geo-labroche-label">🪨 ${escHtml(quizState.roche.labroche)}</p>` : ''}
+  </div>
+  <button class="btn-primary geo-quiz-retry" data-action="retry-quiz">Nouvelle question →</button>`;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ÉCHELLE DE MOHS
+═══════════════════════════════════════════════════════════════ */
+const MOHS_REFS = [
+  {n:1,  ref:'Talc',             emoji:''},
+  {n:2,  ref:'Gypse',           emoji:''},
+  {n:3,  ref:'Calcite / Pièce', emoji:'🪙'},
+  {n:4,  ref:'Fluorite',        emoji:''},
+  {n:5,  ref:'Apatite / Verre', emoji:'🪟'},
+  {n:6,  ref:'Feldspath',       emoji:''},
+  {n:7,  ref:'Quartz / Acier',  emoji:'⚙️'},
+  {n:8,  ref:'Topaze',          emoji:''},
+  {n:9,  ref:'Corindon (Saphir)',emoji:'💎'},
+  {n:10, ref:'Diamant',         emoji:'💍'},
+];
+
+function renderMohsScale() {
+  const container = document.getElementById('mohsScale');
+  const byLevel   = {};
+  roches.forEach(r => {
+    const lvl = Math.round(r.durete);
+    if (!byLevel[lvl]) byLevel[lvl] = [];
+    byLevel[lvl].push(r);
+  });
+
+  let html = '<div class="mohs-track">';
+  for (let i = 1; i <= 10; i++) {
+    const ref   = MOHS_REFS.find(x => x.n === i);
+    const ici   = byLevel[i] || [];
+    html += `
+    <div class="mohs-step">
+      <div class="mohs-step-roches">
+        ${ici.map(r => `<button class="mohs-roche-btn" data-mohs-id="${escHtml(r.id)}">${escHtml(r.nom)}</button>`).join('')}
+      </div>
+      <div class="mohs-step-bar" style="height:${i * 16 + 24}px"></div>
+      <div class="mohs-step-num">${i}</div>
+      <div class="mohs-step-ref">${ref?.emoji ? ref.emoji + '<br>' : ''}<span>${escHtml(ref?.ref || '')}</span></div>
+    </div>`;
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DÉLÉGATION D'ÉVÉNEMENTS (1 seul listener)
+═══════════════════════════════════════════════════════════════ */
+function setupEventDelegation() {
+  document.addEventListener('click', async (e) => {
+    // Résultat de recherche
+    const card = e.target.closest('.geo-result-card[data-rock-id]');
+    if (card) { afficherDetail(card.dataset.rockId); return; }
+
+    // Fermer le détail
+    if (e.target.dataset.action === 'close-detail') {
+      document.getElementById('rocheDetail').hidden = true;
+      return;
+    }
+
+    // Roche du jour → explorer
+    const jourBtn = e.target.closest('[data-jour-explore]');
+    if (jourBtn) {
+      const id = jourBtn.dataset.jourExplore;
+      const r  = roches.find(x => x.id === id);
+      if (r) {
+        document.getElementById('rocheSearch').value = r.nom;
+        rechercherRoches(r.nom);
+        document.querySelector('.geo-search-section').scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => afficherDetail(id), 600);
+      }
+      return;
+    }
+
+    // Mohs → explorer
+    const mohsBtn = e.target.closest('.mohs-roche-btn[data-mohs-id]');
+    if (mohsBtn) {
+      const id = mohsBtn.dataset.mohsId;
+      const r  = roches.find(x => x.id === id);
+      if (r) {
+        document.getElementById('rocheSearch').value = r.nom;
+        rechercherRoches(r.nom);
+        document.querySelector('.geo-search-section').scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => afficherDetail(id), 600);
+      }
+      return;
+    }
+
+    // Quiz → répondre
+    const quizBtn = e.target.closest('.geo-quiz-btn[data-quiz-id]');
+    if (quizBtn) { repondreQuiz(quizBtn.dataset.quizId); return; }
+
+    // Quiz → nouvelle question
+    if (e.target.dataset.action === 'retry-quiz') { genererQuiz(); return; }
+  });
+
+  // Accessibilité clavier pour les cartes de résultats
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const card = e.target.closest('.geo-result-card[data-rock-id]');
+      if (card) afficherDetail(card.dataset.rockId);
+    }
+  });
+}
+
+/* ─── START ─────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

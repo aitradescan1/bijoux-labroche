@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Commander — Labroche et Gobeil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@400;500;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- PayPal SDK — remplacer YOUR_PAYPAL_CLIENT_ID par la vraie valeur (variable non secrète) -->
+  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=CAD&locale=fr_CA" defer></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <img src="assets/svg/sparkle.svg" alt="" class="logo-icon" aria-hidden="true">
+        <span class="logo-text">Labroche et Gobeil</span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html"     class="nav-link">Accueil</a>
+        <a href="boutique.html"  class="nav-link">Boutique</a>
+        <a href="histoire.html"  class="nav-link">Notre histoire</a>
+        <a href="pedagogie.html" class="nav-link">Pédagogie</a>
+        <a href="geologie.html"  class="nav-link">Géologie</a>
+        <a href="commande.html"  class="nav-cta active">Commander →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="checkout-main">
+
+    <div class="checkout-wrap">
+
+      <!-- Gauche: Récap commande -->
+      <aside class="checkout-summary">
+        <h2 class="checkout-section-title">Votre commande</h2>
+        <div class="summary-card">
+          <div class="summary-product" id="summaryProduct">
+            <img src="assets/svg/sparkle.svg" alt="" id="summaryImg" class="summary-img" aria-hidden="true">
+            <div>
+              <p class="summary-name"  id="summaryName">—</p>
+              <p class="summary-price" id="summaryPrice">—</p>
+            </div>
+          </div>
+          <div class="summary-line">
+            <span>Quantité</span>
+            <strong id="summaryQty">1</strong>
+          </div>
+          <div class="summary-line summary-total">
+            <span>Total</span>
+            <strong id="summaryTotal">—</strong>
+          </div>
+          <p class="summary-note">🪨 Roche naturelle façonnée par Nathan &amp; Lyam</p>
+        </div>
+      </aside>
+
+      <!-- Droite: Formulaire + PayPal -->
+      <div class="checkout-form-wrap">
+        <h1 class="checkout-title">Finaliser la commande</h1>
+
+        <form id="orderForm" class="checkout-form" novalidate>
+
+          <div class="form-group">
+            <label for="customerName">Votre nom complet *</label>
+            <input type="text" id="customerName" name="customerName"
+                   autocomplete="name" maxlength="100" required
+                   placeholder="Prénom Nom">
+            <span class="field-error" id="nameErr" role="alert" hidden></span>
+          </div>
+
+          <div class="form-group">
+            <label for="customerEmail">Votre email *</label>
+            <input type="email" id="customerEmail" name="customerEmail"
+                   autocomplete="email" maxlength="254" required
+                   placeholder="vous@exemple.com">
+            <span class="field-error" id="emailErr" role="alert" hidden></span>
+          </div>
+
+          <div class="form-group form-group-row">
+            <div>
+              <label for="qty">Quantité *</label>
+              <input type="number" id="qty" name="qty" value="1" min="1" max="20" required>
+            </div>
+            <div class="form-group form-group-fill">
+              <label for="notes">Message (optionnel)</label>
+              <input type="text" id="notes" name="notes" maxlength="500"
+                     placeholder="Ex: Pour un cadeau, couleur préférée…">
+            </div>
+          </div>
+
+          <!-- Zone PayPal (apparaît après validation du formulaire) -->
+          <div class="paypal-zone" id="paypalZone" hidden>
+            <p class="paypal-zone-label">Paiement sécurisé via PayPal</p>
+            <div id="paypal-button-container"></div>
+          </div>
+
+          <!-- Bouton "Continuer" — masqué une fois PayPal affiché -->
+          <button type="submit" class="btn-primary btn-checkout" id="continueBtn">
+            Continuer vers le paiement →
+          </button>
+
+          <p class="form-error" id="formError" role="alert" hidden></p>
+        </form>
+
+        <p class="checkout-secure">🔒 Paiement traité par PayPal — Les Petits Bijoux ne stocke pas vos données bancaires.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="assets/svg/sparkle.svg" alt="" class="footer-icon" aria-hidden="true">
+        <span>Les Petits Bijoux</span>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Accueil</a>
+        <a href="boutique.html">Boutique</a>
+      </nav>
+      <p class="footer-copy">© 2026 Labroche et Gobeil</p>
+    </div>
+  </footer>
+
+  <script>
+    const API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? '' : 'https://les-petits-bijoux.vercel.app';
+
+    // ── Lire les paramètres URL (pré-remplissage depuis boutique.html) ──
+    const params      = new URLSearchParams(location.search);
+    const productId   = params.get('productId')   ?? '';
+    const productName = params.get('productName') ?? 'Bijou artisanal';
+    const priceCAD    = parseFloat(params.get('price') ?? '0');
+
+    // ── Mettre à jour le récap ──────────────────────────────
+    document.getElementById('summaryName').textContent  = productName;
+    document.getElementById('summaryPrice').textContent = priceCAD > 0 ? `${priceCAD.toFixed(2)} $ / unité` : '—';
+    updateTotals();
+
+    document.getElementById('qty').addEventListener('input', updateTotals);
+
+    function updateTotals() {
+      const qty   = parseInt(document.getElementById('qty').value, 10) || 1;
+      const total = priceCAD * qty;
+      document.getElementById('summaryQty').textContent   = qty;
+      document.getElementById('summaryTotal').textContent = total > 0 ? `${total.toFixed(2)} $CAD` : '—';
+    }
+
+    function escHtml(str) {
+      return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // ── Validation formulaire ──────────────────────────────
+    function validateForm() {
+      let ok = true;
+      const name  = document.getElementById('customerName').value.trim();
+      const email = document.getElementById('customerEmail').value.trim();
+      const qty   = parseInt(document.getElementById('qty').value, 10);
+
+      const nameErr  = document.getElementById('nameErr');
+      const emailErr = document.getElementById('emailErr');
+      nameErr.hidden  = true;
+      emailErr.hidden = true;
+
+      if (name.length < 2) {
+        nameErr.textContent = 'Veuillez entrer votre nom complet.';
+        nameErr.hidden = false;
+        ok = false;
+      }
+      if (!email.includes('@') || email.length > 254) {
+        emailErr.textContent = 'Adresse email invalide.';
+        emailErr.hidden = false;
+        ok = false;
+      }
+      if (!Number.isInteger(qty) || qty < 1 || qty > 20) {
+        ok = false;
+      }
+      if (!productId) {
+        showFormError('Aucun produit sélectionné. Retourne à la boutique.');
+        ok = false;
+      }
+      return ok;
+    }
+
+    function showFormError(msg) {
+      const el = document.getElementById('formError');
+      el.textContent = msg;
+      el.hidden = false;
+    }
+
+    let internalOrderId = null;
+
+    // ── Soumission du formulaire ────────────────────────────
+    document.getElementById('orderForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      document.getElementById('formError').hidden = true;
+
+      if (!validateForm()) return;
+
+      const continueBtn = document.getElementById('continueBtn');
+      continueBtn.disabled    = true;
+      continueBtn.textContent = 'Chargement…';
+
+      try {
+        const res = await fetch(`${API}/api/orders/create`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customerName:  document.getElementById('customerName').value.trim(),
+            customerEmail: document.getElementById('customerEmail').value.trim(),
+            productId,
+            qty:    parseInt(document.getElementById('qty').value, 10),
+            notes:  document.getElementById('notes').value.trim(),
+          }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error ?? `Erreur ${res.status}`);
+        }
+
+        const { orderId, paypalOrderId, amountCAD } = await res.json();
+        internalOrderId = orderId;
+
+        // Afficher le bouton PayPal
+        continueBtn.hidden = true;
+        document.getElementById('paypalZone').hidden = false;
+
+        // Désactiver le formulaire
+        ['customerName','customerEmail','qty','notes'].forEach(id => {
+          document.getElementById(id).disabled = true;
+        });
+
+        // Rendu bouton PayPal
+        paypal.Buttons({
+          createOrder: () => paypalOrderId,
+
+          onApprove: async () => {
+            const capRes = await fetch(`${API}/api/orders/capture`, {
+              method:  'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ paypalOrderId }),
+            });
+
+            if (!capRes.ok) {
+              const err = await capRes.json().catch(() => ({}));
+              showFormError(err.error ?? 'Erreur lors de la confirmation. Contactez-nous.');
+              return;
+            }
+
+            // Redirection vers page de confirmation
+            window.location.href = `merci.html?orderId=${encodeURIComponent(orderId)}&name=${encodeURIComponent(document.getElementById('customerName').value.trim())}&product=${encodeURIComponent(productName)}&amount=${encodeURIComponent(amountCAD)}`;
+          },
+
+          onError: err => {
+            console.error('[PayPal]', err);
+            showFormError('Le paiement a échoué. Réessaie ou contacte-nous.');
+          },
+
+          onCancel: () => {
+            document.getElementById('paypalZone').hidden = true;
+            continueBtn.hidden    = false;
+            continueBtn.disabled  = false;
+            continueBtn.textContent = 'Continuer vers le paiement →';
+          },
+
+          style: { layout: 'vertical', color: 'gold', shape: 'pill', label: 'pay' },
+        }).render('#paypal-button-container');
+
+      } catch (err) {
+        console.error(err);
+        showFormError(err.message ?? 'Erreur inattendue. Réessaie.');
+        continueBtn.disabled    = false;
+        continueBtn.textContent = 'Continuer vers le paiement →';
+      }
+    });
+  </script>
+
+</body>
+</html>

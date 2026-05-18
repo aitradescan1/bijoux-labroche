@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin — Labroche et Gobeil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <style>
+    /* ── Onglets admin ──────────────────────────────────────── */
+    .admin-tabs   { display:flex; gap:4px; padding:0 0 0 24px; border-bottom:2px solid #e8e0d0;
+                    margin-bottom:24px; }
+    .tab-btn      { padding:10px 22px; border:none; background:none; font-size:.95rem;
+                    font-weight:500; color:#888; cursor:pointer; border-bottom:3px solid transparent;
+                    margin-bottom:-2px; transition:color .15s; }
+    .tab-btn.active { color:var(--dark,#2d1a0a); border-bottom-color:var(--gold,#b8860b); font-weight:600; }
+
+    /* ── Table inventaire ───────────────────────────────────── */
+    .inv-img      { width:48px; height:48px; object-fit:cover; border-radius:8px; }
+    .inv-img-ph   { width:48px; height:48px; border-radius:8px; background:#f0ebe3;
+                    display:flex; align-items:center; justify-content:center; font-size:1.3rem; }
+    .stock-badge  { display:inline-block; padding:3px 10px; border-radius:10px; font-weight:600; font-size:.82rem; }
+    .s-ok   { background:#e8f5e9; color:#2e7d32; }
+    .s-low  { background:#fff3e0; color:#e65100; }
+    .s-zero { background:#fce4ec; color:#c62828; }
+
+    .restock-btns { display:flex; gap:6px; flex-wrap:wrap; }
+    .btn-restock  { padding:5px 10px; font-size:.78rem; border-radius:8px; border:1px solid #d4a017;
+                    background:#fdf6e3; color:#8a6200; cursor:pointer; font-weight:600;
+                    transition:background .15s; }
+    .btn-restock:hover { background:#d4a017; color:#fff; }
+    .btn-qr       { padding:5px 10px; font-size:.78rem; border-radius:8px; border:1px solid #9e9e9e;
+                    background:#fafafa; color:#555; cursor:pointer; font-weight:500;
+                    transition:background .15s; }
+    .btn-qr:hover { background:#555; color:#fff; }
+
+    /* ── Modal QR ───────────────────────────────────────────── */
+    .modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:200;
+                      display:none; align-items:center; justify-content:center; }
+    .modal-backdrop.open { display:flex; }
+    .modal-card   { background:#fff; border-radius:20px; padding:32px 28px;
+                    text-align:center; max-width:340px; width:90%;
+                    box-shadow:0 16px 48px rgba(0,0,0,.2); }
+    .modal-card h3 { font-family:'Playfair Display',serif; font-size:1.2rem; margin-bottom:4px; }
+    .modal-sku    { font-size:.8rem; color:#888; margin-bottom:16px; }
+    #qrCanvas     { margin:0 auto 8px; display:block; }
+    .qr-url-text  { font-size:.72rem; word-break:break-all; color:#aaa; margin-bottom:16px; }
+    .modal-actions { display:flex; gap:10px; justify-content:center; }
+    .btn-modal-close { padding:10px 20px; border-radius:12px; border:2px solid #ddd;
+                       background:none; cursor:pointer; font-weight:500; }
+    .btn-modal-print { padding:10px 20px; border-radius:12px; border:none;
+                       background:var(--gold,#b8860b); color:#fff; font-weight:600; cursor:pointer; }
+
+    /* ── Ventes locales ─────────────────────────────────────── */
+    .ventes-stats { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
+    .v-stat       { background:#fff; border-radius:12px; padding:14px 20px; flex:1; min-width:120px;
+                    box-shadow:0 2px 8px rgba(0,0,0,.06); text-align:center; }
+    .v-stat-num   { font-size:1.6rem; font-weight:700; color:var(--dark,#2d1a0a); }
+    .v-stat-lbl   { font-size:.78rem; color:#888; }
+  </style>
+</head>
+<body class="admin-body">
+
+  <!-- Écran de connexion -->
+  <div class="admin-login" id="loginScreen">
+    <div class="admin-login-card">
+      <img src="assets/svg/sparkle.svg" alt="" class="admin-login-icon" aria-hidden="true">
+      <h1 class="admin-login-title">Administration</h1>
+      <p class="admin-login-sub">Labroche et Gobeil — Accès réservé</p>
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label for="adminToken">Mot de passe admin</label>
+          <input type="password" id="adminToken" autocomplete="current-password" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn-primary" style="width:100%">Se connecter</button>
+        <p class="form-error" id="loginErr" role="alert" hidden>Mot de passe incorrect.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="admin-dash" id="dashScreen" hidden>
+
+    <header class="admin-header">
+      <div class="admin-header-inner">
+        <div class="admin-brand">
+          <img src="assets/svg/sparkle.svg" alt="" aria-hidden="true">
+          <span>Labroche et Gobeil — Admin</span>
+        </div>
+        <button class="btn-ghost admin-logout" id="logoutBtn">Se déconnecter</button>
+      </div>
+    </header>
+
+    <main class="admin-main">
+
+      <!-- Onglets -->
+      <div class="admin-tabs" role="tablist">
+        <button class="tab-btn active" role="tab" data-tab="commandes">Commandes</button>
+        <button class="tab-btn"        role="tab" data-tab="inventaire">Inventaire</button>
+        <button class="tab-btn"        role="tab" data-tab="ventes">Ventes boutique</button>
+      </div>
+
+      <!-- ═══ ONGLET COMMANDES ═══════════════════════════════ -->
+      <div id="tab-commandes">
+
+      <!-- Stats rapides -->
+      <div class="admin-stats" id="adminStats">
+        <div class="stat-card"><span class="stat-num" id="statTotal">—</span><span class="stat-label">Commandes totales</span></div>
+        <div class="stat-card stat-paid"><span class="stat-num" id="statPaid">—</span><span class="stat-label">Payées</span></div>
+        <div class="stat-card"><span class="stat-num" id="statPending">—</span><span class="stat-label">En attente</span></div>
+        <div class="stat-card stat-rev"><span class="stat-num" id="statRevenue">—</span><span class="stat-label">Revenus ($CAD)</span></div>
+      </div>
+
+      <!-- Filtres -->
+      <div class="admin-toolbar">
+        <div class="admin-filters" role="group" aria-label="Filtrer les commandes">
+          <button class="filter-btn active" data-status="tous">Toutes</button>
+          <button class="filter-btn" data-status="paid">Payées</button>
+          <button class="filter-btn" data-status="pending">En attente</button>
+          <button class="filter-btn" data-status="cancelled">Annulées</button>
+        </div>
+        <button class="btn-ghost" id="refreshBtn">↻ Rafraîchir</button>
+      </div>
+
+      <!-- Table commandes -->
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="ordersTable">
+          <thead>
+            <tr>
+              <th>Réf.</th>
+              <th>Client</th>
+              <th>Email</th>
+              <th>Produit</th>
+              <th>Qté</th>
+              <th>Montant</th>
+              <th>Statut</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody">
+            <tr><td colspan="8" class="admin-loading">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="admin-pagination" id="pagination" hidden>
+        <button class="btn-ghost" id="prevPage" disabled>← Précédent</button>
+        <span id="pageInfo"></span>
+        <button class="btn-ghost" id="nextPage">Suivant →</button>
+      </div>
+
+      </div><!-- /tab-commandes -->
+
+      <!-- ═══ ONGLET INVENTAIRE ══════════════════════════════ -->
+      <div id="tab-inventaire" hidden>
+        <div class="admin-toolbar">
+          <span style="font-weight:600">Stock en temps réel</span>
+          <button class="btn-ghost" id="refreshInvBtn">↻ Rafraîchir</button>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="invTable">
+            <thead>
+              <tr>
+                <th></th>
+                <th>SKU</th>
+                <th>Produit</th>
+                <th>Catégorie</th>
+                <th>Prix</th>
+                <th>Stock</th>
+                <th>Réappro.</th>
+                <th>QR Code</th>
+              </tr>
+            </thead>
+            <tbody id="invBody">
+              <tr><td colspan="8" class="admin-loading">Chargement…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div><!-- /tab-inventaire -->
+
+      <!-- ═══ ONGLET VENTES BOUTIQUE ═════════════════════════ -->
+      <div id="tab-ventes" hidden>
+        <div class="ventes-stats" id="ventesStats">
+          <div class="v-stat"><div class="v-stat-num" id="vStatTotal">—</div><div class="v-stat-lbl">Ventes boutique</div></div>
+          <div class="v-stat"><div class="v-stat-num" id="vStatRev">—</div><div class="v-stat-lbl">Revenus boutique</div></div>
+          <div class="v-stat"><div class="v-stat-num" id="vStatNathan">—</div><div class="v-stat-lbl">Nathan</div></div>
+          <div class="v-stat"><div class="v-stat-num" id="vStatLyam">—</div><div class="v-stat-lbl">Lyam</div></div>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="ventesTable">
+            <thead>
+              <tr>
+                <th>Réf.</th>
+                <th>Produit</th>
+                <th>Qté</th>
+                <th>Montant</th>
+                <th>Paiement</th>
+                <th>Vendu par</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="ventesBody">
+              <tr><td colspan="7" class="admin-loading">Chargement…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div><!-- /tab-ventes -->
+
+    </main>
+
+    <!-- ── Modal QR Code ──────────────────────────────────── -->
+    <div class="modal-backdrop" id="qrModal">
+      <div class="modal-card">
+        <h3 id="qrProductName"></h3>
+        <p class="modal-sku" id="qrProductSku"></p>
+        <canvas id="qrCanvas"></canvas>
+        <p class="qr-url-text" id="qrUrlText"></p>
+        <div class="modal-actions">
+          <button class="btn-modal-close" id="qrClose">Fermer</button>
+          <button class="btn-modal-print" id="qrPrint">🖨 Imprimer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? '' : 'https://les-petits-bijoux.vercel.app';
+    const LIMIT     = 20;
+    let token         = '';
+    let currentStatus = 'tous';
+    let offset        = 0;
+    let totalOrders   = 0;
+    let currentTab    = 'commandes';
+
+    function escHtml(str) {
+      return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    const STATUS_LABELS = { paid: '✅ Payée', pending: '⏳ Attente', cancelled: '❌ Annulée', refunded: '↩ Remboursée' };
+    const STATUS_CLASS  = { paid: 'badge-paid', pending: 'badge-pending', cancelled: 'badge-cancelled', refunded: 'badge-refunded' };
+
+    function formatDate(iso) {
+      const d = new Date(iso);
+      return d.toLocaleDateString('fr-CA', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+    }
+
+    // ── Onglets ────────────────────────────────────────────
+    document.querySelectorAll('.admin-tabs .tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.admin-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTab = btn.dataset.tab;
+        ['commandes','inventaire','ventes'].forEach(t => {
+          document.getElementById(`tab-${t}`).hidden = (t !== currentTab);
+        });
+        if (currentTab === 'inventaire') loadInventory();
+        if (currentTab === 'ventes')     loadVentes();
+      });
+    });
+
+    // ── Connexion ──────────────────────────────────────────
+    document.getElementById('loginForm').addEventListener('submit', e => {
+      e.preventDefault();
+      token = document.getElementById('adminToken').value.trim();
+      if (!token) return;
+      loadOrders();
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      token  = '';
+      offset = 0;
+      document.getElementById('loginScreen').hidden = false;
+      document.getElementById('dashScreen').hidden  = true;
+      document.getElementById('adminToken').value   = '';
+    });
+
+    // ── Filtres ────────────────────────────────────────────
+    document.querySelectorAll('.admin-filters .filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.admin-filters .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentStatus = btn.dataset.status;
+        offset = 0;
+        loadOrders();
+      });
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', () => loadOrders());
+    document.getElementById('prevPage').addEventListener('click', () => { offset = Math.max(0, offset - LIMIT); loadOrders(); });
+    document.getElementById('nextPage').addEventListener('click', () => { offset += LIMIT; loadOrders(); });
+
+    // ── Chargement commandes ───────────────────────────────
+    async function loadOrders() {
+      const tbody = document.getElementById('ordersBody');
+      tbody.innerHTML = '<tr><td colspan="8" class="admin-loading">Chargement…</td></tr>';
+
+      const statusParam = currentStatus !== 'tous' ? `&status=${currentStatus}` : '';
+      const url = `${API}/api/admin/orders?limit=${LIMIT}&offset=${offset}${statusParam}`;
+
+      try {
+        const res = await fetch(url, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.status === 401) {
+          document.getElementById('loginErr').hidden  = false;
+          document.getElementById('loginScreen').hidden = false;
+          document.getElementById('dashScreen').hidden  = true;
+          return;
+        }
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const { orders, total } = await res.json();
+        totalOrders = total ?? 0;
+
+        // Afficher le dashboard
+        document.getElementById('loginScreen').hidden = true;
+        document.getElementById('dashScreen').hidden  = false;
+        document.getElementById('loginErr').hidden    = true;
+
+        updateStats(orders, total);
+        renderOrders(orders);
+        updatePagination(total);
+
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="8" class="shop-error">Erreur: ${escHtml(err.message)}</td></tr>`;
+      }
+    }
+
+    function updateStats(orders, total) {
+      document.getElementById('statTotal').textContent   = total ?? '—';
+      document.getElementById('statPaid').textContent    = orders.filter(o => o.status === 'paid').length;
+      document.getElementById('statPending').textContent = orders.filter(o => o.status === 'pending').length;
+      const rev = orders.filter(o => o.status === 'paid').reduce((s, o) => s + parseFloat(o.amount_cad), 0);
+      document.getElementById('statRevenue').textContent = rev > 0 ? `${rev.toFixed(2)} $` : '0.00 $';
+    }
+
+    function renderOrders(orders) {
+      const tbody = document.getElementById('ordersBody');
+      if (!orders.length) {
+        tbody.innerHTML = '<tr><td colspan="8" class="admin-loading">Aucune commande.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = orders.map(o => `
+        <tr>
+          <td><code class="order-ref">${escHtml(o.id.slice(0,8).toUpperCase())}</code></td>
+          <td>${escHtml(o.customer_name)}</td>
+          <td><a href="mailto:${escHtml(o.customer_email)}">${escHtml(o.customer_email)}</a></td>
+          <td>${escHtml(o.product_name)}</td>
+          <td>${escHtml(o.qty)}</td>
+          <td><strong>${escHtml(parseFloat(o.amount_cad).toFixed(2))} $</strong></td>
+          <td><span class="status-badge ${STATUS_CLASS[o.status] ?? ''}">${STATUS_LABELS[o.status] ?? o.status}</span></td>
+          <td>${escHtml(formatDate(o.created_at))}</td>
+        </tr>`).join('');
+    }
+
+    function updatePagination(total) {
+      const pagination = document.getElementById('pagination');
+      if (total <= LIMIT) { pagination.hidden = true; return; }
+      pagination.hidden = false;
+      document.getElementById('pageInfo').textContent = `${offset + 1}–${Math.min(offset + LIMIT, total)} / ${total}`;
+      document.getElementById('prevPage').disabled = offset === 0;
+      document.getElementById('nextPage').disabled = offset + LIMIT >= total;
+    }
+
+    // ── Inventaire ─────────────────────────────────────────
+    document.getElementById('refreshInvBtn').addEventListener('click', loadInventory);
+
+    async function loadInventory() {
+      const tbody = document.getElementById('invBody');
+      tbody.innerHTML = '<tr><td colspan="8" class="admin-loading">Chargement…</td></tr>';
+      try {
+        const res = await fetch(`${API}/api/inventory`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const products = await res.json();
+        renderInventory(products);
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="8" class="shop-error">Erreur: ${escHtml(err.message)}</td></tr>`;
+      }
+    }
+
+    function renderInventory(products) {
+      const tbody = document.getElementById('invBody');
+      if (!products.length) {
+        tbody.innerHTML = '<tr><td colspan="8" class="admin-loading">Aucun produit.</td></tr>';
+        return;
+      }
+      const catIcons = { boucles:'💎', collier:'📿', bracelet:'📿', autre:'🪩' };
+      tbody.innerHTML = products.map(p => {
+        const stockClass = p.stock_qty === 0 ? 's-zero' : p.stock_qty <= 2 ? 's-low' : 's-ok';
+        const img = p.image_url
+          ? `<img class="inv-img" src="${escHtml(p.image_url)}" alt="">`
+          : `<div class="inv-img-ph">${catIcons[p.category] ?? '✨'}</div>`;
+        return `<tr>
+          <td>${img}</td>
+          <td><code>${escHtml(p.sku ?? '—')}</code></td>
+          <td><strong>${escHtml(p.name)}</strong></td>
+          <td>${escHtml(p.category)}</td>
+          <td>${parseFloat(p.price_cad).toFixed(2)} $</td>
+          <td><span class="stock-badge ${stockClass}">${p.stock_qty}</span></td>
+          <td>
+            <div class="restock-btns">
+              <button class="btn-restock" onclick="restock('${escHtml(p.id)}',5)">+5</button>
+              <button class="btn-restock" onclick="restock('${escHtml(p.id)}',10)">+10</button>
+              <button class="btn-restock" onclick="restock('${escHtml(p.id)}',20)">+20</button>
+            </div>
+          </td>
+          <td>
+            ${p.sku ? `<button class="btn-qr" onclick="openQr('${escHtml(p.id)}','${escHtml(p.sku)}','${escHtml(p.name)}')">📱 QR</button>` : '—'}
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    async function restock(productId, qty) {
+      try {
+        const res = await fetch(`${API}/api/inventory`, {
+          method:  'POST',
+          headers: { 'Content-Type':'application/json', 'Authorization': `Bearer ${token}` },
+          body:    JSON.stringify({ product_id: productId, add_qty: qty }),
+        });
+        const data = await res.json();
+        if (!res.ok) { alert(`Erreur: ${data.error}`); return; }
+        alert(`✅ Stock mis à jour : ${data.stock_qty} unités`);
+        loadInventory();
+      } catch { alert('Erreur réseau.'); }
+    }
+
+    // ── QR Code ────────────────────────────────────────────
+    function openQr(id, sku, name) {
+      const url = `${location.origin}/vendre.html?sku=${encodeURIComponent(sku)}`;
+      document.getElementById('qrProductName').textContent = name;
+      document.getElementById('qrProductSku').textContent  = sku;
+      document.getElementById('qrUrlText').textContent     = url;
+      const canvas = document.getElementById('qrCanvas');
+      QRCode.toCanvas(canvas, url, { width: 240, margin: 2, color: { dark: '#2d1a0a', light: '#ffffff' } });
+      document.getElementById('qrModal').classList.add('open');
+    }
+
+    document.getElementById('qrClose').addEventListener('click', () => {
+      document.getElementById('qrModal').classList.remove('open');
+    });
+    document.getElementById('qrModal').addEventListener('click', e => {
+      if (e.target === document.getElementById('qrModal')) document.getElementById('qrModal').classList.remove('open');
+    });
+
+    document.getElementById('qrPrint').addEventListener('click', () => {
+      const canvas  = document.getElementById('qrCanvas');
+      const name    = document.getElementById('qrProductName').textContent;
+      const sku     = document.getElementById('qrProductSku').textContent;
+      const url     = document.getElementById('qrUrlText').textContent;
+      const dataUrl = canvas.toDataURL();
+      const w = window.open('', '_blank');
+      w.document.write(`<!doctype html><html><head><title>QR — ${name}</title>
+        <style>
+          body { font-family:sans-serif; text-align:center; padding:24px; }
+          img  { display:block; margin:0 auto 12px; width:220px; height:220px; }
+          h2   { font-size:1.1rem; margin:0 0 4px; }
+          p    { font-size:.75rem; color:#666; word-break:break-all; margin:0 0 8px; }
+          .brand { font-size:.85rem; font-weight:700; color:#b8860b; margin-bottom:16px; }
+        </style></head><body>
+        <div class="brand">✨ Labroche et Gobeil</div>
+        <img src="${dataUrl}" alt="QR Code">
+        <h2>${name}</h2>
+        <p>${sku}</p>
+        <p style="font-size:.65rem;color:#aaa">${url}</p>
+        <script>window.onload=()=>{ window.print(); }<\/script>
+        </body></html>`);
+    });
+
+    // ── Ventes locales ─────────────────────────────────────
+    async function loadVentes() {
+      const tbody = document.getElementById('ventesBody');
+      tbody.innerHTML = '<tr><td colspan="7" class="admin-loading">Chargement…</td></tr>';
+      try {
+        // On utilise l'endpoint admin/orders pour l'instant — ventes via supabase direct
+        // Pour les ventes_locales, on passe par une requête Supabase via l'API inventory
+        // Note: dans une prochaine version, ajouter /api/admin/ventes
+        const res = await fetch(`${API}/api/admin/orders?limit=100&offset=0`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const { orders } = await res.json();
+        renderVentesPlaceholder();
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" class="shop-error">Erreur: ${escHtml(err.message)}</td></tr>`;
+      }
+    }
+
+    function renderVentesPlaceholder() {
+      const tbody = document.getElementById('ventesBody');
+      tbody.innerHTML = `<tr><td colspan="7" class="admin-loading" style="padding:40px">
+        ℹ️ Les ventes boutique apparaîtront ici une fois l'endpoint <code>/api/admin/ventes</code> ajouté.<br>
+        <small>Les données sont déjà enregistrées dans la table <code>ventes_locales</code> de Supabase.</small>
+      </td></tr>`;
+      // Stats placeholder
+      document.getElementById('vStatTotal').textContent  = '—';
+      document.getElementById('vStatRev').textContent    = '—';
+      document.getElementById('vStatNathan').textContent = '—';
+      document.getElementById('vStatLyam').textContent   = '—';
+    }
+  </script>
+
+</body>
+</html>
