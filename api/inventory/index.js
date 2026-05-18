@@ -6,7 +6,7 @@
 import { getSupabase }                  from '../../lib/supabase.js';
 import { timingSafeEqual, createHash }  from 'crypto';
 
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN ?? '*';
+const ALLOWED_ORIGIN = (process.env.ALLOWED_ORIGIN ?? '*').trim();
 const ADMIN_SECRET   = process.env.ADMIN_SECRET   ?? '';
 
 function cors(res) {

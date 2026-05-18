@@ -7,7 +7,7 @@ import { getSupabase }                  from '../../lib/supabase.js';
 import { timingSafeEqual, createHash }  from 'crypto';
 import { sendVentePOS }                 from '../../lib/mail.js';
 
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN ?? '*';
+const ALLOWED_ORIGIN = (process.env.ALLOWED_ORIGIN ?? '*').trim();
 const POS_PIN        = process.env.POS_PIN ?? '';
 
 function cors(res) {

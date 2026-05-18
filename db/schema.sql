@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS orders (
   qty              INTEGER NOT NULL DEFAULT 1 CHECK (qty > 0 AND qty <= 20),
   amount_cad       NUMERIC(8,2) NOT NULL CHECK (amount_cad > 0),
   paypal_order_id  TEXT    UNIQUE,                          -- NULL jusqu'au retour PayPal
+  paypal_capture_id TEXT,                                   -- rempli après capture (utile pour remboursements)
   status           TEXT    NOT NULL DEFAULT 'pending'
                            CHECK (status IN ('pending','paid','cancelled','refunded')),
   livraison        TEXT    NOT NULL DEFAULT 'collecte'

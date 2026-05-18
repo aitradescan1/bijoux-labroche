@@ -5,7 +5,7 @@
 
 import { getSupabase } from '../../lib/supabase.js';
 
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN ?? '*';
+const ALLOWED_ORIGIN = (process.env.ALLOWED_ORIGIN ?? '*').trim();
 const DEFAULT_LIMIT  = 50;
 const MAX_LIMIT      = 200;
 

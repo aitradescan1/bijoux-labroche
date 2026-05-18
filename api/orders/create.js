@@ -7,7 +7,7 @@ import { getSupabase }       from '../../lib/supabase.js';
 import { createPayPalOrder } from '../../lib/paypal.js';
 import { sendOrderReceived } from '../../lib/mail.js';
 
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN ?? '*';
+const ALLOWED_ORIGIN = (process.env.ALLOWED_ORIGIN ?? '*').trim();
 const MAX_NAME_LEN   = 100;
 const MAX_EMAIL_LEN  = 254;
 const MAX_QTY        = 20;
@@ -66,12 +66,17 @@ export default async function handler(req, res) {
     // ── Récupérer le produit (source of truth pour le prix) ──
     const { data: product, error: pErr } = await supabase
       .from('products')
-      .select('id, name, price_cad, in_stock')
+      .select('id, name, price_cad, in_stock, stock_qty')
       .eq('id', productId)
       .single();
 
     if (pErr || !product) return res.status(404).json({ error: 'Produit introuvable' });
-    if (!product.in_stock) return res.status(409).json({ error: 'Produit en rupture de stock' });
+    if (!product.in_stock || product.stock_qty < 1) return res.status(409).json({ error: 'Produit en rupture de stock' });
+    if (product.stock_qty < qty) {
+      return res.status(409).json({
+        error: `Stock insuffisant — seulement ${product.stock_qty} disponible${product.stock_qty !== 1 ? 's' : ''}`,
+      });
+    }
 
     // ── Calcul du montant côté serveur (jamais confiance au client) ──
     const fraisLivraison  = FRAIS_LIVRAISON[livraison];

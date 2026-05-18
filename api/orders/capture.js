@@ -7,7 +7,7 @@ import { getSupabase }        from '../../lib/supabase.js';
 import { capturePayPalOrder } from '../../lib/paypal.js';
 import { sendPaymentConfirmedClient, sendPaymentConfirmedAdmin } from '../../lib/mail.js';
 
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN ?? '*';
+const ALLOWED_ORIGIN = (process.env.ALLOWED_ORIGIN ?? '*').trim();
 
 function cors(res) {
   res.setHeader('Access-Control-Allow-Origin',  ALLOWED_ORIGIN);
@@ -61,13 +61,30 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Montant incorrect' });
     }
 
-    // ── Mettre à jour le statut en DB ───────────────────────
+    // ── Mettre à jour le statut + capture_id en DB ──────────
     const { error: updateErr } = await supabase
       .from('orders')
-      .update({ status: 'paid' })
+      .update({ status: 'paid', paypal_capture_id: capture.captureId })
       .eq('id', order.id);
 
     if (updateErr) throw updateErr;
+
+    // ── Décrémenter le stock du produit ─────────────────────
+    if (order.product_id) {
+      const { data: prod } = await supabase
+        .from('products')
+        .select('stock_qty')
+        .eq('id', order.product_id)
+        .single();
+
+      if (prod) {
+        const newQty = Math.max(0, prod.stock_qty - order.qty);
+        await supabase
+          .from('products')
+          .update({ stock_qty: newQty, in_stock: newQty > 0 })
+          .eq('id', order.product_id);
+      }
+    }
 
     // Emails confirmation — fire-and-forget (erreur email ne bloque pas la réponse)
     const paidOrder = { ...order, status: 'paid' };

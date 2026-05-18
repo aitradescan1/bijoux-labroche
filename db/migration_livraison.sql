@@ -23,3 +23,9 @@ ALTER TABLE orders
 
 COMMENT ON COLUMN orders.rabais IS
   'Rabais automatique de 5,00$ appliqué quand sous-total articles >= 35,00$ (déjà déduit de amount_cad)';
+
+ALTER TABLE orders
+  ADD COLUMN IF NOT EXISTS paypal_capture_id TEXT;
+
+COMMENT ON COLUMN orders.paypal_capture_id IS
+  'ID de la capture PayPal — nécessaire pour les remboursements';
