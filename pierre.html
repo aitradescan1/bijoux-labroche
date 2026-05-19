@@ -162,13 +162,13 @@
     },
     miel: {
       icone: '✨',
-      famille: 'Résine fossilisée ou Quartz (citrine)',
-      formule: 'Ambre : C₁₀H₁₆O  /  Citrine : SiO₂',
-      durete: 'Ambre : 2–2,5 Mohs  /  Citrine : 7 Mohs',
-      origine: 'Régions baltiques (ambre), Brésil et Madagascar (citrine)',
-      formation: 'L\'ambre est une résine végétale fossilisée sur des millions d\'années — certains morceaux renferment des insectes préhistoriques parfaitement conservés. La citrine est un quartz dont la couleur dorée vient de traces d\'oxyde de fer.',
-      histoire: 'L\'ambre est l\'un des tout premiers matériaux utilisés en bijouterie, depuis plus de 30 000 ans. Les Grecs anciens l\'appelaient "elektron" — en le frottant, ils produisaient de l\'électricité statique (d\'où le mot électricité!). Une petite statuette en ambre valait, chez les Romains, plus cher qu\'un esclave. Les Vikings le commerçaient à travers toute l\'Europe.',
-      proprietes: ['Chaleur et énergie positive', 'Clarté mentale', 'Joie et optimisme', 'Connexion à la nature ancienne'],
+      famille: 'Calcite — Calcite miel (Honey Calcite)',
+      formule: 'CaCO₃ (carbonate de calcium)',
+      durete: '3 Mohs',
+      origine: 'Mexique, USA (Colorado), Pakistan, Afrique du Sud',
+      formation: 'La calcite miel se forme dans les cavités des roches sédimentaires et hydrothermales. Sa teinte chaude dorée-ambrée est due à des inclusions d\'oxyde de fer. Elle cristallise lentement dans des eaux riches en calcium, créant des masses translucides aux reflets de miel chaud.',
+      histoire: 'La calcite est l\'un des minéraux les plus répandus sur Terre — elle constitue le marbre, le calcaire et les coquilles marines. Sa variété miel (honey calcite) était utilisée par les artisans aztèques et mayas pour des sculptures et offrandes. Le nom "calcite" vient du latin "calx" (chaux) — la base de la construction depuis l\'Antiquité romaine.',
+      proprietes: ['Chaleur et énergie positive', 'Clarté mentale', 'Joie et optimisme', 'Amplification de la volonté'],
     },
     jaspe_brun: {
       icone: '🌍',
@@ -210,15 +210,15 @@
       histoire: 'L\'amazonite a été retrouvée dans le tombeau de Toutânkhamon (1323 av. J.-C.)! Elle était utilisée en Mésopotamie il y a 3 000 ans. Curiosité : bien que nommée pour le fleuve Amazone, on n\'y a jamais trouvé d\'amazonite — les premières identifiées provenaient des monts Oural en Russie, une erreur historique qui lui a valu ce nom exotique.',
       proprietes: ['Espoir et vérité', 'Communication authentique', 'Équilibre et harmonie', 'Courage d\'expression'],
     },
-    quartz: {
-      icone: '🤍',
-      famille: 'Quartz — Quartz laiteux',
-      formule: 'SiO₂ (dioxyde de silicium)',
-      durete: '7 Mohs',
-      origine: 'Mondial — Brésil, Madagascar, USA, Suisse (Alpes), Inde',
-      formation: 'Le quartz laiteux est la forme la plus abondante de quartz sur Terre. Sa teinte blanche laiteuse résulte de minuscules inclusions d\'eau ou de gaz emprisonnées lors de la cristallisation. Il se forme dans les veines de roches métamorphiques et ignées, partout dans le monde, sur des millions d\'années.',
-      histoire: 'Le quartz est la pierre la plus universelle de l\'histoire humaine. Les Grecs lui donnaient le nom "krystallos" (cristal de glace), croyant qu\'il était de l\'eau glacée pétrifiée par les dieux. Les Japonais le nommaient "tama" et le considéraient comme le souffle figé d\'un dragon céleste. Les Celtes en fabriquaient des billes et amulettes. Au 20ᵉ siècle, le quartz a révolutionné la technologie : il oscille à fréquence précise et régule les montres à quartz et les circuits électroniques.',
-      proprietes: ['Clarté et pureté', 'Amplification de l\'énergie', 'Équilibre et harmonie', 'Clarté d\'esprit'],
+    pierre_de_lune: {
+      icone: '🌙',
+      famille: 'Feldspath — Orthoclase',
+      formule: 'KAlSi₃O₈ (silicate d\'aluminium et de potassium)',
+      durete: '6 – 6,5 Mohs',
+      origine: 'Madagascar (Andilamena), Sri Lanka, Inde, Myanmar',
+      formation: 'La pierre de lune est un feldspath composé de couches alternées de deux minéraux (orthoclase et albite). Lorsque la lumière pénètre ces couches microscopiques, elle se diffracte et crée un reflet bleuté mobile appelé adularescence — l\'effet unique qui fait "flotter" la lumière sous la surface de la pierre.',
+      histoire: 'Vénérée depuis l\'Antiquité romaine et grecque, la pierre de lune était considérée comme un fragment de lune solidifié. En Inde, elle est sacrée depuis des millénaires et se porte pour favoriser les rêves prophétiques. À l\'époque Art Nouveau (fin 19ᵉ s.), René Lalique et autres maîtres joailliers en raffolaient. Les pierres de lune de Madagascar, découvertes à Andilamena, sont aujourd\'hui parmi les plus recherchées au monde pour leur adularescence bleue exceptionnelle.',
+      proprietes: ['Intuition et sensibilité', 'Douceur et bienveillance', 'Cycles et renouveau', 'Connexion féminine'],
     },
   };
 
@@ -232,7 +232,7 @@
     if (n.includes('chalcédoine') || n.includes('calcedoine') || n.includes('gris')) return PIERRES.calcedoine;
     if (n.includes('jaspe rouge') || n.includes('rouge')) return PIERRES.jaspe_rouge;
     if (n.includes('amazonite'))  return PIERRES.amazonite;
-    if (n.includes('quartz'))     return PIERRES.quartz;
+    if (n.includes('lune'))        return PIERRES.pierre_de_lune;
     return null;
   }
 
