@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ma Pierre — Labroche et Gobeil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    :root { --gold:#b8860b; --dark:#2d1a0a; --cream:#fffdf8; --light:#f5f0e8; }
+
+    body { background:var(--cream); }
+
+    /* ── Header ───────────────────────────────────────── */
+    .pierre-header { background:var(--dark); color:#fff; padding:16px 24px;
+                     display:flex; align-items:center; gap:12px; }
+    .pierre-header img { width:32px; height:32px; }
+    .pierre-header-brand { font-family:'Playfair Display',serif; font-size:1.1rem; }
+    .pierre-header-sub { font-size:.78rem; color:#c4b090; }
+
+    /* ── Search ───────────────────────────────────────── */
+    .search-wrap { background:var(--gold); padding:20px 24px; }
+    .search-inner { max-width:480px; margin:0 auto; display:flex; gap:10px; }
+    .search-inner input { flex:1; padding:12px 16px; border-radius:12px; border:none;
+                          font-size:1rem; font-weight:600; letter-spacing:1px;
+                          text-transform:uppercase; outline:none; }
+    .search-inner button { padding:12px 20px; border-radius:12px; border:none;
+                           background:var(--dark); color:#fff; font-weight:600;
+                           cursor:pointer; white-space:nowrap; }
+
+    /* ── État vide / erreur ───────────────────────────── */
+    .pierre-empty { text-align:center; padding:60px 24px; color:#aaa; }
+    .pierre-empty h2 { font-size:1.1rem; margin-bottom:8px; color:#888; }
+
+    /* ── Fiche produit ────────────────────────────────── */
+    .fiche { max-width:640px; margin:0 auto; padding:0 0 60px; }
+
+    /* Hero */
+    .pierre-hero { position:relative; }
+    .pierre-img  { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; }
+    .pierre-img-ph { width:100%; aspect-ratio:4/3; background:var(--light);
+                     display:flex; align-items:center; justify-content:center;
+                     font-size:4rem; }
+    .stock-pill { position:absolute; top:16px; right:16px; padding:6px 14px;
+                  border-radius:20px; font-size:.8rem; font-weight:700; }
+    .stock-ok   { background:#e8f5e9; color:#2e7d32; }
+    .stock-zero { background:#fce4ec; color:#c62828; }
+
+    /* Titre */
+    .pierre-title-wrap { padding:24px 24px 0; }
+    .pierre-sku   { font-size:.75rem; font-weight:700; letter-spacing:2px;
+                    color:var(--gold); margin-bottom:4px; }
+    .pierre-name  { font-family:'Playfair Display',serif; font-size:1.8rem;
+                    color:var(--dark); margin:0 0 8px; line-height:1.2; }
+    .pierre-price { font-size:1.4rem; font-weight:700; color:var(--dark); margin:0; }
+    .pierre-price-vendu { font-size:1rem; color:#c62828; font-style:italic; }
+
+    /* Sections */
+    .section { padding:24px; border-top:1px solid #e8ddd0; }
+    .section-title { font-family:'Playfair Display',serif; font-size:1.1rem;
+                     color:var(--dark); margin:0 0 12px; display:flex;
+                     align-items:center; gap:8px; }
+    .section p { color:#555; line-height:1.7; margin:0 0 10px; font-size:.95rem; }
+
+    /* Fiche géologique */
+    .geo-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .geo-item { background:var(--light); border-radius:12px; padding:12px 14px; }
+    .geo-label { font-size:.72rem; font-weight:700; color:var(--gold); text-transform:uppercase;
+                 letter-spacing:1px; margin-bottom:3px; }
+    .geo-val   { font-size:.88rem; color:var(--dark); font-weight:500; }
+
+    /* Propriétés */
+    .props { display:flex; flex-wrap:wrap; gap:8px; }
+    .prop-tag { background:var(--dark); color:#fff; padding:6px 14px;
+                border-radius:20px; font-size:.82rem; font-weight:500; }
+
+    /* Histoire */
+    .histoire-text { color:#555; line-height:1.7; font-size:.93rem; }
+
+    /* CTA */
+    .cta-section { padding:32px 24px; background:var(--dark); margin-top:32px; text-align:center; }
+    .cta-section h3 { font-family:'Playfair Display',serif; color:#fff; font-size:1.2rem; margin:0 0 8px; }
+    .cta-section p  { color:#c4b090; font-size:.88rem; margin:0 0 20px; }
+    .btn-cta { display:inline-block; background:var(--gold); color:#fff; padding:14px 32px;
+               border-radius:14px; font-weight:700; text-decoration:none; font-size:1rem; }
+    .btn-commander { display:block; width:calc(100% - 48px); margin:0 24px 0; padding:16px;
+                     background:var(--dark); color:#fff; border:none; border-radius:14px;
+                     font-size:1rem; font-weight:700; cursor:pointer; text-align:center;
+                     text-decoration:none; }
+    .btn-commander:hover { background:#1a0d04; }
+
+    /* Icône pierre */
+    .pierre-icone { font-size:2.5rem; display:block; margin:0 0 8px; }
+  </style>
+</head>
+<body>
+
+  <header class="pierre-header">
+    <img src="assets/svg/sparkle.svg" alt="">
+    <div>
+      <div class="pierre-header-brand">Labroche et Gobeil</div>
+      <div class="pierre-header-sub">Bijoux artisanaux — Nathan & Lyam</div>
+    </div>
+  </header>
+
+  <!-- Barre de recherche SKU -->
+  <div class="search-wrap">
+    <div class="search-inner">
+      <input type="text" id="skuInput" placeholder="SKU ex: LBG-26-003"
+             maxlength="20" autocomplete="off" autocapitalize="characters">
+      <button id="searchBtn">Chercher</button>
+    </div>
+  </div>
+
+  <!-- Contenu dynamique -->
+  <div id="pierreContent">
+    <div class="pierre-empty">
+      <h2>Scannez le QR de votre bijou ou entrez le SKU ci-dessus</h2>
+      <p>Le SKU est gravé sur votre boîte Labroche et Gobeil.</p>
+    </div>
+  </div>
+
+  <script>
+  const API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? '' : 'https://bijoux-labroche-aitradescan1s-projects.vercel.app';
+
+  const BASE_IMG = 'https://aitradescan1.github.io/bijoux-labroche/';
+
+  // ── Données géologiques et historiques ─────────────────
+  const PIERRES = {
+    cornaline: {
+      icone: '🔥',
+      famille: 'Quartz — Calcédoine',
+      formule: 'SiO₂ + oxyde de fer',
+      durete: '6,5 – 7 Mohs',
+      origine: 'Brésil, Inde, Madagascar, Uruguay',
+      formation: 'La cornaline se forme dans les cavités des roches volcaniques et sédimentaires, où des solutions riches en silice s\'infiltrent lentement sur des millions d\'années. Sa couleur orangée provient de traces d\'oxyde de fer.',
+      histoire: 'Utilisée depuis plus de 4 000 ans, la cornaline était la pierre préférée des pharaons égyptiens — le tombeau de Toutânkhamon en contenait plus de 500 pièces. Les soldats romains la portaient gravée de leurs initiales pour sceller leurs documents. La tradition islamique rapporte que le prophète Muhammad portait une bague en cornaline à l\'annulaire droit.',
+      proprietes: ['Vitalité et confiance', 'Créativité et passion', 'Courage face aux défis', 'Énergie et motivation'],
+    },
+    aventurine: {
+      icone: '🍀',
+      famille: 'Quartz — Aventurine',
+      formule: 'SiO₂ + Fuchsite (mica vert)',
+      durete: '6,5 – 7 Mohs',
+      origine: 'Brésil, Inde, Russie (Oural), Tanzanie',
+      formation: 'Ses reflets scintillants caractéristiques — l\'aventurescence — viennent de millions de paillettes de mica fuchsite emprisonnées dans le quartz. Elle se forme dans des roches métamorphiques sur des centaines de millions d\'années.',
+      histoire: 'Découverte au 18ᵉ siècle par des verriers de Murano (Italie) qui créèrent accidentellement un verre scintillant nommé "a ventura" (par hasard). Au Tibet, elle était utilisée pour les yeux des statues sacrées. En Asie, on la confondait souvent avec le précieux jade impérial.',
+      proprietes: ['Chance et prospérité', 'Optimisme et croissance', 'Calme émotionnel', 'Nouvelles opportunités'],
+    },
+    dalmatien: {
+      icone: '🐾',
+      famille: 'Quartz — Jaspe',
+      formule: 'SiO₂ + Arfvedsonite (amphibole noire)',
+      durete: '6,5 – 7 Mohs',
+      origine: 'Mexique (région de Chihuahua)',
+      formation: 'Ses taches noires sont des cristaux d\'arfvedsonite ou de tourmaline, emprisonnés lors du refroidissement lent de la lave volcanique. Chaque motif est unique — il n\'existe pas deux pièces identiques dans la nature.',
+      histoire: 'Découvert au début du 20ᵉ siècle au Mexique, le jaspe dalmatien doit son nom à sa ressemblance avec la robe du célèbre chien. Bien que jeune dans le monde de la joaillerie, la famille des jaspes est utilisée par l\'humanité depuis plus de 250 000 ans — parmi les premières pierres travaillées par nos ancêtres.',
+      proprietes: ['Joie et légèreté', 'Loyauté et amitié', 'Équilibre intérieur', 'Connexion à l\'enfant intérieur'],
+    },
+    miel: {
+      icone: '✨',
+      famille: 'Résine fossilisée ou Quartz (citrine)',
+      formule: 'Ambre : C₁₀H₁₆O  /  Citrine : SiO₂',
+      durete: 'Ambre : 2–2,5 Mohs  /  Citrine : 7 Mohs',
+      origine: 'Régions baltiques (ambre), Brésil et Madagascar (citrine)',
+      formation: 'L\'ambre est une résine végétale fossilisée sur des millions d\'années — certains morceaux renferment des insectes préhistoriques parfaitement conservés. La citrine est un quartz dont la couleur dorée vient de traces d\'oxyde de fer.',
+      histoire: 'L\'ambre est l\'un des tout premiers matériaux utilisés en bijouterie, depuis plus de 30 000 ans. Les Grecs anciens l\'appelaient "elektron" — en le frottant, ils produisaient de l\'électricité statique (d\'où le mot électricité!). Une petite statuette en ambre valait, chez les Romains, plus cher qu\'un esclave. Les Vikings le commerçaient à travers toute l\'Europe.',
+      proprietes: ['Chaleur et énergie positive', 'Clarté mentale', 'Joie et optimisme', 'Connexion à la nature ancienne'],
+    },
+    jaspe_brun: {
+      icone: '🌍',
+      famille: 'Quartz — Jaspe',
+      formule: 'SiO₂ + oxydes de fer et manganèse',
+      durete: '6,5 – 7 Mohs',
+      origine: 'Mondial — Australie, USA, Russie, Afrique du Sud, France',
+      formation: 'Le jaspe brun se forme dans les roches sédimentaires et métamorphiques. Sa couleur terreuse vient de concentrations d\'oxyde de fer (hématite, goethite) et de matières organiques piégées lors de la formation des sédiments, il y a des centaines de millions d\'années.',
+      histoire: 'Le jaspe est l\'une des pierres les plus anciennes de l\'humanité — des outils en jaspe ont été retrouvés datant de 250 000 ans. Les Amérindiens l\'utilisaient pour leurs amulettes et rituels. Le mot jaspe vient du grec "iaspis", lui-même de l\'hébreu "yashfeh" — cité dans la Bible comme l\'une des 12 pierres du pectoral du Grand Prêtre.',
+      proprietes: ['Ancrage et stabilité', 'Connexion à la terre', 'Endurance et persévérance', 'Sécurité émotionnelle'],
+    },
+    calcedoine: {
+      icone: '💧',
+      famille: 'Quartz — Calcédoine',
+      formule: 'SiO₂ microcrystallin',
+      durete: '6 – 7 Mohs',
+      origine: 'Turquie (Kadıköy), USA, Namibie, Madagascar',
+      formation: 'La calcédoine se forme dans les fissures des roches volcaniques et sédimentaires, par dépôt lent de silice à basse température. Sa texture microfibreuse, invisible à l\'œil nu, lui confère sa douceur et son aspect laiteux caractéristiques.',
+      histoire: 'Nommée d\'après l\'ancienne cité grecque de Chalcédoine (aujourd\'hui Kadıköy, Istanbul), cette pierre est connue depuis l\'Antiquité. Les Romains en faisaient des coupes et des camées. Les marins crétois la portaient pour se protéger en mer. Pline l\'Ancien la décrivait dans son Historia Naturalis au 1ᵉʳ siècle.',
+      proprietes: ['Communication et expression', 'Sérénité et paix', 'Harmonie relationnelle', 'Réduction du stress'],
+    },
+    jaspe_rouge: {
+      icone: '⚔️',
+      famille: 'Quartz — Jaspe',
+      formule: 'SiO₂ + hématite (Fe₂O₃)',
+      durete: '6,5 – 7 Mohs',
+      origine: 'USA (Oregon), Afrique du Sud, Australie, Russie',
+      formation: 'Le jaspe rouge doit sa couleur intense à de fortes concentrations d\'hématite (oxyde de fer) dans sa structure siliceuse. Il se forme dans des environnements sédimentaires marins anciens, riches en fer, sur des centaines de millions d\'années.',
+      histoire: 'Pierre des guerriers par excellence, le jaspe rouge était porté par les légions romaines pour le courage au combat. Les Égyptiens l\'associaient à Isis et le plaçaient sur les momies. Dans la Bible, il figure parmi les 12 pierres du pectoral d\'Aaron. Les Amérindiens le nommaient "le sang de la Terre-Mère".',
+      proprietes: ['Force et courage', 'Protection et ancrage', 'Persévérance', 'Énergie physique et vitalité'],
+    },
+    amazonite: {
+      icone: '🌊',
+      famille: 'Feldspath — Microline',
+      formule: 'KAlSi₃O₈ + traces de plomb et eau',
+      durete: '6 – 6,5 Mohs',
+      origine: 'Brésil, Madagascar, USA (Colorado), Russie (Oural)',
+      formation: 'L\'amazonite est un feldspath potassique dont la teinte turquoise-vert résulte de la présence de plomb et d\'eau dans sa structure cristalline. Elle se forme dans des pegmatites granitiques — des roches à gros cristaux créées lors du refroidissement très lent du magma en profondeur.',
+      histoire: 'L\'amazonite a été retrouvée dans le tombeau de Toutânkhamon (1323 av. J.-C.)! Elle était utilisée en Mésopotamie il y a 3 000 ans. Curiosité : bien que nommée pour le fleuve Amazone, on n\'y a jamais trouvé d\'amazonite — les premières identifiées provenaient des monts Oural en Russie, une erreur historique qui lui a valu ce nom exotique.',
+      proprietes: ['Espoir et vérité', 'Communication authentique', 'Équilibre et harmonie', 'Courage d\'expression'],
+    },
+  };
+
+  function detectPierre(name) {
+    const n = name.toLowerCase();
+    if (n.includes('cornaline'))  return PIERRES.cornaline;
+    if (n.includes('aventurine')) return PIERRES.aventurine;
+    if (n.includes('dalmatien'))  return PIERRES.dalmatien;
+    if (n.includes('miel'))       return PIERRES.miel;
+    if (n.includes('jaspe brun') || n.includes('brun')) return PIERRES.jaspe_brun;
+    if (n.includes('chalcédoine') || n.includes('calcedoine') || n.includes('gris')) return PIERRES.calcedoine;
+    if (n.includes('jaspe rouge') || n.includes('rouge')) return PIERRES.jaspe_rouge;
+    if (n.includes('amazonite'))  return PIERRES.amazonite;
+    return null;
+  }
+
+  function escHtml(s) {
+    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function renderFiche(p) {
+    const pierre  = detectPierre(p.name);
+    const imgSrc  = p.image_url
+      ? (p.image_url.startsWith('http') ? p.image_url : BASE_IMG + p.image_url)
+      : null;
+    const enStock = p.in_stock && p.stock_qty > 0;
+    const commandeUrl = `commande.html?sku=${encodeURIComponent(p.sku)}`;
+
+    let html = `<div class="fiche">
+      <div class="pierre-hero">
+        ${imgSrc
+          ? `<img class="pierre-img" src="${escHtml(imgSrc)}" alt="${escHtml(p.name)}">`
+          : `<div class="pierre-img-ph">${pierre ? pierre.icone : '💎'}</div>`}
+        <span class="stock-pill ${enStock ? 'stock-ok' : 'stock-zero'}">
+          ${enStock ? `✅ Disponible — ${p.stock_qty} en stock` : '❌ Épuisé'}
+        </span>
+      </div>
+
+      <div class="pierre-title-wrap">
+        <div class="pierre-sku">${escHtml(p.sku)}</div>
+        <h1 class="pierre-name">${escHtml(p.name)}</h1>
+        ${enStock
+          ? `<p class="pierre-price">${parseFloat(p.price_cad).toFixed(2)} $CAD</p>`
+          : `<p class="pierre-price-vendu">Cette pièce est épuisée — voir nos autres bijoux ↓</p>`}
+      </div>`;
+
+    // Description
+    if (p.description) {
+      html += `<div class="section">
+        <h2 class="section-title">${pierre ? pierre.icone : '💎'} À propos de ce bijou</h2>
+        <p>${escHtml(p.description)}</p>
+      </div>`;
+    }
+
+    // Fiche géologique
+    if (pierre) {
+      html += `<div class="section">
+        <h2 class="section-title">🔬 Fiche géologique</h2>
+        <div class="geo-grid">
+          <div class="geo-item"><div class="geo-label">Famille</div><div class="geo-val">${escHtml(pierre.famille)}</div></div>
+          <div class="geo-item"><div class="geo-label">Formule</div><div class="geo-val">${escHtml(pierre.formule)}</div></div>
+          <div class="geo-item"><div class="geo-label">Dureté</div><div class="geo-val">${escHtml(pierre.durete)}</div></div>
+          <div class="geo-item"><div class="geo-label">Origine</div><div class="geo-val">${escHtml(pierre.origine)}</div></div>
+        </div>
+        <p style="margin-top:14px">${escHtml(pierre.formation)}</p>
+      </div>`;
+
+      html += `<div class="section">
+        <h2 class="section-title">📜 Histoire & Culture</h2>
+        <p class="histoire-text">${escHtml(pierre.histoire)}</p>
+      </div>`;
+
+      html += `<div class="section">
+        <h2 class="section-title">✨ Propriétés symboliques</h2>
+        <div class="props">
+          ${pierre.proprietes.map(pr => `<span class="prop-tag">${escHtml(pr)}</span>`).join('')}
+        </div>
+      </div>`;
+    }
+
+    // Entretien
+    html += `<div class="section">
+      <h2 class="section-title">🧴 Entretien de votre bijou</h2>
+      <p>Essuyez votre bijou avec un chiffon doux et sec. Évitez le contact avec les produits chimiques (parfums, crèmes, produits ménagers). Rangez-le dans sa boîte Labroche et Gobeil pour le protéger des rayures. La plupart des pierres semi-précieuses peuvent être rincées à l\'eau tiède — évitez les ultrasons.</p>
+    </div>`;
+
+    // Bouton commander
+    if (enStock) {
+      html += `<div style="padding:16px 0 0">
+        <a href="${commandeUrl}" class="btn-commander">Commander ce bijou — ${parseFloat(p.price_cad).toFixed(2)} $</a>
+      </div>`;
+    }
+
+    // CTA boutique
+    html += `<div class="cta-section">
+      <h3>Découvrez toute la collection</h3>
+      <p>Chaque bijou Labroche et Gobeil est unique, fait à la main par Nathan et Lyam avec des pierres collectées localement.</p>
+      <a href="boutique.html" class="btn-cta">Voir la boutique →</a>
+    </div>`;
+
+    html += `</div>`; // .fiche
+    return html;
+  }
+
+  async function chargerProduit(sku) {
+    const content = document.getElementById('pierreContent');
+    content.innerHTML = `<div class="pierre-empty"><p>Chargement…</p></div>`;
+    try {
+      const res = await fetch(`${API}/api/produit?sku=${encodeURIComponent(sku.toUpperCase())}`);
+      if (res.status === 404) {
+        content.innerHTML = `<div class="pierre-empty">
+          <h2>Produit introuvable</h2>
+          <p>Le SKU « ${escHtml(sku)} » n\'existe pas dans notre catalogue.<br>Vérifiez la gravure sur votre boîte.</p>
+        </div>`;
+        return;
+      }
+      if (!res.ok) throw new Error('Erreur serveur');
+      const produit = await res.json();
+      content.innerHTML = renderFiche(produit);
+    } catch (e) {
+      content.innerHTML = `<div class="pierre-empty"><h2>Erreur de chargement</h2><p>${escHtml(e.message)}</p></div>`;
+    }
+  }
+
+  // ── Lire le SKU depuis l\'URL ───────────────────────────
+  const params = new URLSearchParams(location.search);
+  const skuUrl = params.get('sku');
+  if (skuUrl) {
+    document.getElementById('skuInput').value = skuUrl.toUpperCase();
+    chargerProduit(skuUrl);
+  }
+
+  // ── Recherche manuelle ─────────────────────────────────
+  document.getElementById('searchBtn').addEventListener('click', () => {
+    const sku = document.getElementById('skuInput').value.trim();
+    if (!sku) return;
+    const url = new URL(location.href);
+    url.searchParams.set('sku', sku.toUpperCase());
+    history.pushState({}, '', url);
+    chargerProduit(sku);
+  });
+
+  document.getElementById('skuInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('searchBtn').click();
+  });
+  </script>
+
+</body>
+</html>
