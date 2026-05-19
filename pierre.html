@@ -93,6 +93,11 @@
 
     /* Icône pierre */
     .pierre-icone { font-size:2.5rem; display:block; margin:0 0 8px; }
+
+    /* Bouton courriel correction */
+    .btn-courriel { display:inline-block; background:#b8860b; color:#fff; padding:11px 22px;
+                    border-radius:12px; font-weight:600; font-size:.88rem; text-decoration:none; }
+    .btn-courriel:hover { opacity:.88; }
   </style>
 </head>
 <body>
@@ -323,6 +328,13 @@
         <a href="${commandeUrl}" class="btn-commander">Commander ce bijou — ${parseFloat(p.price_cad).toFixed(2)} $</a>
       </div>`;
     }
+
+    // Correction identification
+    html += `<div class="section" style="background:#fffaf3;border-top:2px solid #e8d9b0;">
+      <h2 class="section-title">🔍 Vous pensez qu'on s'est trompé ?</h2>
+      <p style="margin-bottom:12px">L'identification des pierres semi-précieuses peut être subtile — deux pierres du même type peuvent paraître très différentes, et vice-versa. Si vous pensez que la pierre de votre bijou ne correspond pas à la description, écrivez-nous ! Ça nous fera un plaisir de vérifier et de corriger si nécessaire.</p>
+      <a href="mailto:bijoux.labroche@gmail.com?subject=Identification%20pierre%20${encodeURIComponent(p.sku)}&body=Bonjour%2C%20je%20pense%20que%20la%20pierre%20de%20mon%20bijou%20${encodeURIComponent(p.sku)}%20pourrait%20être%20%3A%20" class="btn-courriel">✉️ Écrire à bijoux.labroche@gmail.com</a>
+    </div>`;
 
     // CTA boutique
     html += `<div class="cta-section">
