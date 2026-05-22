@@ -99,6 +99,10 @@
         ? `<img src="${escHtml(p.image_url)}" alt="${escHtml(p.name)}" class="product-img" loading="lazy">`
         : `<div class="product-img product-img-placeholder"><img src="${FALLBACK_IMGS[p.category] ?? 'assets/svg/star.svg'}" alt="" aria-hidden="true"></div>`;
 
+      const noticeRepro = p.piece_unique === false
+        ? `<p class="notice-photo-rep">Photo représentative — <a href="mailto:bijoux.labroche@gmail.com">écrivez-nous</a> pour voir les paires disponibles.</p>`
+        : '';
+
       return `
         <article class="product-card" data-cat="${escHtml(p.category)}" data-id="${escHtml(p.id)}">
           <div class="product-img-wrap">${img}</div>
@@ -106,6 +110,7 @@
             <span class="product-cat">${icon} ${escHtml(p.category)}</span>
             <h2 class="product-name">${escHtml(p.name)}</h2>
             <p class="product-desc">${escHtml(p.description ?? '')}</p>
+            ${noticeRepro}
             <div class="product-footer">
               <span class="product-price">${escHtml(p.price_cad.toFixed(2))} $</span>
               <a href="commande.html?productId=${encodeURIComponent(p.id)}&productName=${encodeURIComponent(p.name)}&price=${encodeURIComponent(p.price_cad)}"

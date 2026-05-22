@@ -149,14 +149,15 @@ const aInserer = nouveaux.map(img => {
   const imageUrl    = `assets/Produits/${img.dossier}/${img.fichier}`;
   console.log(`  + ${img.sku.padEnd(14)} ${nom.slice(0, 40).padEnd(42)} ${String(prix.toFixed(2)).padStart(5)} $  stock: 1`);
   return {
-    sku:         img.sku,
-    name:        nom,
+    sku:          img.sku,
+    name:         nom,
     description,
-    price_cad:   prix,
-    category:    img.categorie,
-    image_url:   imageUrl,
-    stock_qty:   1,
-    in_stock:    true,
+    price_cad:    prix,
+    category:     img.categorie,
+    image_url:    imageUrl,
+    stock_qty:    1,
+    in_stock:     true,
+    piece_unique: true,   // 1 photo = 1 paire exacte reçue par le client
   };
 });
 
