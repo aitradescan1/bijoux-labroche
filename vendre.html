@@ -343,12 +343,12 @@
     if (product.image_url) {
       imgWrap.innerHTML = `<img class="pos-img" src="${escHtml(product.image_url)}" alt="${escHtml(product.name)}" loading="lazy">`;
     } else {
-      const icons = { boucles: '💎', collier: '📿', bracelet: '📿', autre: '🪩' };
+      const icons = { boucles: '💎', collier: '📿', bracelet: '📿', accessoire: '🎀', autre: '🪩' };
       imgWrap.innerHTML = `<div class="pos-img-placeholder">${icons[product.category] ?? '✨'}</div>`;
     }
 
     // Infos
-    const catLabels = { boucles: 'Boucles d\'oreilles', collier: 'Collier', bracelet: 'Bracelet', autre: 'Bijou' };
+    const catLabels = { boucles: 'Boucles d\'oreilles', collier: 'Collier', bracelet: 'Bracelet', accessoire: 'Accessoire', autre: 'Bijou' };
     document.getElementById('productCategory').textContent = catLabels[product.category] ?? product.category;
     document.getElementById('productName').textContent     = product.name;
     document.getElementById('productDesc').textContent     = product.description ?? '';

@@ -28,14 +28,15 @@ const IMG_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 
 // Dossiers → catégorie Supabase
 const DOSSIERS = {
-  Boucles:   'boucles',
-  Colliers:  'collier',
-  Bracelets: 'bracelet',
-  Autre:     'autre',
+  Boucles:      'boucles',
+  Colliers:     'collier',
+  Bracelets:    'bracelet',
+  Accessoires:  'accessoire',
+  Autre:        'autre',
 };
 
-const CAT_LABEL  = { boucles: "Boucles d'oreilles", collier: 'Collier', bracelet: 'Bracelet', autre: 'Bijou' };
-const CAT_PREFIX = { boucles: ['boucles', 'boucle'], collier: ['collier', 'colliers'], bracelet: ['bracelet', 'bracelets'] };
+const CAT_LABEL  = { boucles: "Boucles d'oreilles", collier: 'Collier', bracelet: 'Bracelet', accessoire: 'Accessoire', autre: 'Bijou' };
+const CAT_PREFIX = { boucles: ['boucles', 'boucle'], collier: ['collier', 'colliers'], bracelet: ['bracelet', 'bracelets'], accessoire: ['accessoire', 'accessoires'] };
 
 // Mots-clés dans le nom de fichier → prix $12 (sinon $10 par défaut)
 const MOTS_CLES_12 = ['cornaline', 'pierre-miel', 'oeil-de-tigre', 'amethyste', 'obsidienne', 'quartz-rose', 'amazonite', 'pendantes', 'labradorite', 'pierre-de-lune'];

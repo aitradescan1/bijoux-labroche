@@ -43,9 +43,10 @@
     <!-- Filtres -->
     <div class="shop-filters" id="filters" role="tablist" aria-label="Filtrer par catégorie">
       <button class="filter-btn active" data-cat="tous" role="tab" aria-selected="true">Tous</button>
-      <button class="filter-btn" data-cat="boucles" role="tab" aria-selected="false">Boucles d'oreilles</button>
-      <button class="filter-btn" data-cat="collier"  role="tab" aria-selected="false">Colliers</button>
-      <button class="filter-btn" data-cat="bracelet" role="tab" aria-selected="false">Bracelets</button>
+      <button class="filter-btn" data-cat="boucles"     role="tab" aria-selected="false">Boucles d'oreilles</button>
+      <button class="filter-btn" data-cat="collier"     role="tab" aria-selected="false">Colliers</button>
+      <button class="filter-btn" data-cat="bracelet"    role="tab" aria-selected="false">Bracelets</button>
+      <button class="filter-btn" data-cat="accessoire"  role="tab" aria-selected="false">Accessoires</button>
     </div>
 
     <!-- Grille produits -->
@@ -85,11 +86,12 @@
     const empty = document.getElementById('shopEmpty');
     let allProducts = [];
 
-    const CAT_ICONS = { boucles: '💎', collier: '✨', bracelet: '🌸', autre: '🪩' };
+    const CAT_ICONS = { boucles: '💎', collier: '✨', bracelet: '🌸', accessoire: '🎀', autre: '🪩' };
     const FALLBACK_IMGS = {
-      boucles: 'assets/svg/earring.svg',
-      collier: 'assets/svg/necklace.svg',
-      bracelet:'assets/svg/sparkle.svg',
+      boucles:    'assets/svg/earring.svg',
+      collier:    'assets/svg/necklace.svg',
+      bracelet:   'assets/svg/sparkle.svg',
+      accessoire: 'assets/svg/star.svg',
       autre:   'assets/svg/star.svg',
     };
 
