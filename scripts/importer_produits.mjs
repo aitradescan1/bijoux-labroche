@@ -95,6 +95,8 @@ const DESCRIPTIONS = {
   'LBG-26-054': "Ensemble de 2 identifieurs pour coupe à vin — anneaux dorés minimalistes. Le plus sobre et élégant de la collection.",
   'LBG-26-055': "Ensemble de 2 identifieurs pour coupe à vin — pierre ambrée ovale et étoile rouge émaillée. Un duo chaud et festif, parfait pour les célébrations.",
 
+  'LBG-26-060': "Boucles d'oreilles en améthyste claire aux tons rose-mauve apaisants — cabochons polis présentés dans leur boîte en bois gravée Labroche et Gobeil. Une pierre de sérénité et d'intuition.",
+
   // ── Bracelets ─────────────────────────────────────────────
   'LBG-26-056': "Bracelet chaîne fine avec pendentif cœur doré — délicat et intemporel. Présenté dans sa boîte en bois gravée Labroche et Gobeil.",
   'LBG-26-057': "Bracelet orné de pierres cornaline orangées et d'un charm soleil doré — chaleureux et lumineux. Chaque pierre est naturelle et unique. Présenté dans sa boîte en bois gravée.",
