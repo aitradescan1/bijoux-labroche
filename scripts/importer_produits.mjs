@@ -38,12 +38,15 @@ const DOSSIERS = {
 const CAT_LABEL  = { boucles: "Boucles d'oreilles", collier: 'Collier', bracelet: 'Bracelet', accessoire: 'Accessoire', autre: 'Bijou' };
 const CAT_PREFIX = { boucles: ['boucles', 'boucle'], collier: ['collier', 'colliers'], bracelet: ['bracelet', 'bracelets'], accessoire: ['accessoire', 'accessoires'] };
 
-// Mots-clés dans le nom de fichier → prix $12 (sinon $10 par défaut)
+// Mots-clés dans le nom de fichier → prix
+const MOTS_CLES_3  = ['identifieur'];
 const MOTS_CLES_12 = ['cornaline', 'pierre-miel', 'oeil-de-tigre', 'amethyste', 'obsidienne', 'quartz-rose', 'amazonite', 'pendantes', 'labradorite', 'pierre-de-lune'];
 
 function prixDepuisFichier(fichier) {
   const slug = fichier.toLowerCase();
-  return MOTS_CLES_12.some(mot => slug.includes(mot)) ? 12.00 : 10.00;
+  if (MOTS_CLES_3.some(mot => slug.includes(mot)))  return 3.00;
+  if (MOTS_CLES_12.some(mot => slug.includes(mot))) return 12.00;
+  return 10.00;
 }
 
 // Descriptions par SKU (générées manuellement pour les nouvelles pièces)
@@ -72,6 +75,25 @@ const DESCRIPTIONS = {
   'LBG-26-036': "Cornaline saumon marbrée aux motifs naturels uniques. Chaque paire est différente — c'est la signature de la nature.",
   'LBG-26-037': "Œil de tigre doré taillé en cœur — le chatoyement naturel de cette pierre prend tout son sens dans cette forme romantique.",
   'LBG-26-038': "Obsidienne noire au poli parfait — ce verre volcanique naturel capte la lumière comme un miroir. Élégant et intemporel.",
+
+  // ── Identifieurs à coupe de vin (ensembles de 2) ─────────
+  'LBG-26-039': "Ensemble de 2 identifieurs pour coupe à vin — cœur doré et pendentif pierre verte. Plus jamais de verre confondu en soirée !",
+  'LBG-26-040': "Ensemble de 2 identifieurs pour coupe à vin — figurines royales dorées aux détails finement travaillés. Élégant et original.",
+  'LBG-26-041': "Ensemble de 2 identifieurs pour coupe à vin — libellules dorées aux ailes délicates. Un duo nature et légèreté pour vos soirées d'été.",
+  'LBG-26-042': "Ensemble de 2 identifieurs pour coupe à vin — étoile dorée et perle sombre. Simple, élégant, efficace.",
+  'LBG-26-043': "Ensemble de 2 identifieurs pour coupe à vin — éléphant doré porte-bonheur et étoile de mer. Pour les esprits curieux et aventuriers.",
+  'LBG-26-044': "Ensemble de 2 identifieurs pour coupe à vin — cœur celtique en filigrane et lune croissant dorés. Un duo mystérieux et romantique.",
+  'LBG-26-045': "Ensemble de 2 identifieurs pour coupe à vin — grands cœurs en filigrane doré aux détails ajourés. Pour les romantiques.",
+  'LBG-26-046': "Ensemble de 2 identifieurs pour coupe à vin — feuille dorée et petite fleur. Un duo nature et douceur tout en légèreté.",
+  'LBG-26-047': "Ensemble de 2 identifieurs pour coupe à vin — lunes croissant dorées, simples et élégantes. Parfait pour une ambiance mystérieuse.",
+  'LBG-26-048': "Ensemble de 2 identifieurs pour coupe à vin — diamant doré et lune croissant. Brillant et féminin.",
+  'LBG-26-049': "Ensemble de 2 identifieurs pour coupe à vin — cœur doré et pierre ambrée ovale. La chaleur de l'ambre dans un format délicat.",
+  'LBG-26-050': "Ensemble de 2 identifieurs pour coupe à vin — lune croissant et pierre orange en pendentif. Un duo coloré et mystérieux.",
+  'LBG-26-051': "Ensemble de 2 identifieurs pour coupe à vin — lune et étoile dorées. Un classique céleste pour distinguer votre verre.",
+  'LBG-26-052': "Ensemble de 2 identifieurs pour coupe à vin — petits pendentifs minimalistes dorés. Discrets et polyvalents.",
+  'LBG-26-053': "Ensemble de 2 identifieurs pour coupe à vin — petites étoiles dorées. Simple, clair, efficace.",
+  'LBG-26-054': "Ensemble de 2 identifieurs pour coupe à vin — anneaux dorés minimalistes. Le plus sobre et élégant de la collection.",
+  'LBG-26-055': "Ensemble de 2 identifieurs pour coupe à vin — pierre ambrée ovale et étoile rouge émaillée. Un duo chaud et festif, parfait pour les célébrations.",
 };
 
 // Génère un nom lisible depuis le nom de fichier
