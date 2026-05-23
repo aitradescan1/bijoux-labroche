@@ -36,6 +36,30 @@
     .pin-input:focus { border-color: var(--gold, #b8860b); outline: none; }
     .pin-error    { color: #c0392b; font-size: .85rem; margin-bottom: 12px; min-height: 1.2em; }
 
+    /* ── SKU overlay ─────────────────────────────────────── */
+    .sku-overlay  {
+      position: fixed; inset: 0; z-index: 90;
+      background: var(--cream, #faf6f0);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .sku-card     {
+      background: #fff; border-radius: 20px;
+      padding: 36px 28px; width: 340px; text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+    }
+    .sku-logo     { font-size: 2.4rem; margin-bottom: 8px; }
+    .sku-title    { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 4px; }
+    .sku-sub      { color: #888; font-size: .88rem; margin-bottom: 20px; }
+    .sku-input    {
+      width: 100%; padding: 14px; font-size: 1.3rem; text-align: center;
+      text-transform: uppercase; letter-spacing: .08em;
+      border: 2px solid #ddd; border-radius: 12px;
+      margin-bottom: 10px; background: #fafafa; box-sizing: border-box;
+    }
+    .sku-input:focus { border-color: var(--gold, #b8860b); outline: none; }
+    .sku-hint     { color: #aaa; font-size: .78rem; margin-bottom: 16px; }
+    .sku-error    { color: #c0392b; font-size: .85rem; margin-bottom: 12px; min-height: 1.2em; }
+
     /* ── Skeleton / loading ───────────────────────────────── */
     .pos-loading  {
       display: flex; flex-direction: column; align-items: center;
@@ -172,6 +196,22 @@
     </div>
   </div>
 
+  <!-- ── SKU overlay ──────────────────────────────────────── -->
+  <div class="sku-overlay" id="skuOverlay" style="display:none">
+    <div class="sku-card">
+      <div class="sku-logo">🏷️</div>
+      <h2 class="sku-title">Quel bijou ?</h2>
+      <p class="sku-sub">Entre le numéro sur l'étiquette</p>
+      <input class="sku-input" id="skuInput" type="text"
+             inputmode="text" maxlength="20" placeholder="LBG-26-001" autocomplete="off" autocapitalize="characters">
+      <p class="sku-hint">ex. LBG-26-001, LBG-26-015…</p>
+      <p class="sku-error" id="skuError"></p>
+      <button class="btn-sell" id="skuSubmit" style="font-size:1rem;padding:14px">
+        Charger le produit →
+      </button>
+    </div>
+  </div>
+
   <!-- ── POS principal ─────────────────────────────────────── -->
   <div class="pos-wrap" id="posMain" hidden>
 
@@ -242,6 +282,12 @@
           <button class="sel-btn" data-value="Lyam">
             <span class="icon">🧒</span>Lyam
           </button>
+          <button class="sel-btn" data-value="Michael">
+            <span class="icon">👨</span>Michael
+          </button>
+          <button class="sel-btn" data-value="Karine">
+            <span class="icon">👩</span>Karine
+          </button>
         </div>
       </div>
 
@@ -266,14 +312,14 @@
 
 <script>
   const API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? '' : 'https://bijoux-labroche-aitradescan1s-projects.vercel.app';
-  const PIN_KEY   = 'pos_pin';
-  const SKU_PARAM = new URLSearchParams(location.search).get('sku') ?? '';
+  const PIN_KEY = 'pos_pin';
 
-  let product   = null;
-  let qty       = 1;
-  let paiement  = 'comptant';
-  let vendeur   = 'Nathan';
-  let posPin    = localStorage.getItem(PIN_KEY) ?? '';
+  let product  = null;
+  let qty      = 1;
+  let paiement = 'comptant';
+  let vendeur  = 'Nathan';
+  let posPin   = localStorage.getItem(PIN_KEY) ?? '';
+  let skuActif = '';
 
   // ── Utilitaires ──────────────────────────────────────────
   function fmt(n) {
@@ -304,20 +350,48 @@
     localStorage.setItem(PIN_KEY, val);
     document.getElementById('pinError').textContent = '';
     hidePin();
+    showSku();
+  }
+
+  // ── SKU flow ──────────────────────────────────────────────
+  function showSku() {
+    document.getElementById('skuOverlay').style.display = 'flex';
+    setTimeout(() => document.getElementById('skuInput').focus(), 50);
+  }
+  function hideSku() {
+    document.getElementById('skuOverlay').style.display = 'none';
+  }
+
+  document.getElementById('skuInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') submitSku();
+  });
+  document.getElementById('skuSubmit').addEventListener('click', submitSku);
+
+  function submitSku() {
+    const val = document.getElementById('skuInput').value.trim().toUpperCase();
+    if (!val) { document.getElementById('skuError').textContent = 'Entre le numéro du bijou.'; return; }
+    skuActif = val;
+    document.getElementById('skuError').textContent = '';
+    hideSku();
     loadProduct();
   }
 
   // ── Chargement produit ────────────────────────────────────
   async function loadProduct() {
-    if (!SKU_PARAM) { showError('Aucun produit dans l\'URL. Scanne le QR code du bijou.'); return; }
+    if (!skuActif) { showSku(); return; }
 
     document.getElementById('posLoading').style.display = 'flex';
     document.getElementById('posForm').hidden = true;
     document.getElementById('errorScreen').classList.remove('show');
 
     try {
-      const res = await fetch(`${API}/api/pos/scan?sku=${encodeURIComponent(SKU_PARAM)}`);
-      if (res.status === 404) { showError('Ce bijou n\'est pas dans la base de données.'); return; }
+      const res = await fetch(`${API}/api/pos/scan?sku=${encodeURIComponent(skuActif)}`);
+      if (res.status === 404) {
+        document.getElementById('skuError').textContent = `"${skuActif}" introuvable — vérifie le numéro.`;
+        skuActif = '';
+        showSku();
+        return;
+      }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       product = await res.json();
@@ -471,19 +545,21 @@
 
   document.getElementById('btnNext').addEventListener('click', () => {
     document.getElementById('successScreen').classList.remove('show');
-    // Réinitialiser pour la vente suivante
     qty = 1;
+    paiement = 'comptant';
+    skuActif = '';
     syncQty();
     document.getElementById('paiementGrid').querySelectorAll('.sel-btn').forEach((b,i) => b.classList.toggle('active', i === 0));
-    paiement = 'comptant';
-    // Recharger le produit pour avoir le stock à jour
-    loadProduct();
+    document.getElementById('skuInput').value = '';
+    document.getElementById('skuError').textContent = '';
+    document.getElementById('posForm').hidden = true;
+    showSku();
   });
 
   // ── Init ──────────────────────────────────────────────────
   if (posPin) {
     hidePin();
-    loadProduct();
+    showSku();
   } else {
     showPin();
   }
