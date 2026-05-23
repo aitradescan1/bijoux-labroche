@@ -40,7 +40,7 @@ const CAT_PREFIX = { boucles: ['boucles', 'boucle'], collier: ['collier', 'colli
 
 // Mots-clés dans le nom de fichier → prix
 const MOTS_CLES_3  = ['identifieur'];
-const MOTS_CLES_12 = ['cornaline', 'pierre-miel', 'oeil-de-tigre', 'amethyste', 'obsidienne', 'quartz-rose', 'amazonite', 'pendantes', 'labradorite', 'pierre-de-lune'];
+const MOTS_CLES_12 = ['cornaline', 'pierre-miel', 'oeil-de-tigre', 'amethyste', 'obsidienne', 'quartz-rose', 'amazonite', 'pendantes', 'labradorite', 'pierre-de-lune', 'aventurine'];
 
 function prixDepuisFichier(fichier) {
   const slug = fichier.toLowerCase();
@@ -94,6 +94,12 @@ const DESCRIPTIONS = {
   'LBG-26-053': "Ensemble de 2 identifieurs pour coupe à vin — petites étoiles dorées. Simple, clair, efficace.",
   'LBG-26-054': "Ensemble de 2 identifieurs pour coupe à vin — anneaux dorés minimalistes. Le plus sobre et élégant de la collection.",
   'LBG-26-055': "Ensemble de 2 identifieurs pour coupe à vin — pierre ambrée ovale et étoile rouge émaillée. Un duo chaud et festif, parfait pour les célébrations.",
+
+  // ── Bracelets ─────────────────────────────────────────────
+  'LBG-26-056': "Bracelet chaîne fine avec pendentif cœur doré — délicat et intemporel. Présenté dans sa boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-057': "Bracelet orné de pierres cornaline orangées et d'un charm soleil doré — chaleureux et lumineux. Chaque pierre est naturelle et unique. Présenté dans sa boîte en bois gravée.",
+  'LBG-26-058': "Bracelet œil de tigre aux reflets dorés-bruns avec charm étoile — le chatoyement naturel de cette pierre en fait une pièce remarquable. Présenté dans sa boîte en bois gravée.",
+  'LBG-26-059': "Bracelet chaîne dorée avec pendentif aventurine verte — la pierre de la chance et de la prospérité dans un format élégant. Présenté dans sa boîte en bois gravée Labroche et Gobeil.",
 };
 
 // Génère un nom lisible depuis le nom de fichier
