@@ -114,12 +114,19 @@
       el.parentElement.innerHTML = `<div class="product-img product-img-placeholder"><img src="${fallbackSrc(cat)}" alt="" aria-hidden="true"></div>`;
     }
 
+    // Positions chargées depuis data/image-positions.json (clé = SKU)
+    let imgPos = {};
+
+    function objPos(p) {
+      return imgPos[p.sku] ?? 'center 40%';
+    }
+
     function productCard(p, index) {
       const icon    = CAT_ICONS[p.category] ?? '🪩';
       const label   = CAT_LABEL_FR[p.category] ?? p.category;
       const loading = index < 4 ? 'eager' : 'lazy';
       const img = p.image_url
-        ? `<img src="${escHtml(p.image_url)}" alt="${escHtml(p.name)}" class="product-img" loading="${loading}" onerror="imgError(this,'${escHtml(p.category)}')">`
+        ? `<img src="${escHtml(p.image_url)}" alt="${escHtml(p.name)}" class="product-img" loading="${loading}" style="object-position:${objPos(p)}" onerror="imgError(this,'${escHtml(p.category)}')">`
         : `<div class="product-img product-img-placeholder"><img src="${fallbackSrc(p.category)}" alt="" aria-hidden="true"></div>`;
 
       const noticeRepro = p.piece_unique === false
@@ -170,7 +177,7 @@
       const epuise = !p.in_stock;
 
       const imgHtml = p.image_url
-        ? `<img src="${escHtml(p.image_url)}" alt="${escHtml(p.name)}" class="detail-img" onerror="this.onerror=null;this.src='${fallbackSrc(p.category)}'">`
+        ? `<img src="${escHtml(p.image_url)}" alt="${escHtml(p.name)}" class="detail-img" style="object-position:${objPos(p)}" onerror="this.onerror=null;this.src='${fallbackSrc(p.category)}'">`
         : `<div class="detail-img-placeholder"><img src="${fallbackSrc(p.category)}" alt="" aria-hidden="true"></div>`;
 
       const noticeRepro = p.piece_unique === false
@@ -223,6 +230,7 @@
     const PRODUITS_LOCAUX = [
       {
         id: 'LBG-26-001',
+        sku: 'LBG-26-001',
         name: "Boucles d'oreilles — Cornaline saumon",
         description: "Ces boucles irradient une chaleur rare. Taillées et polies à la main par Nathan & Lyam, elles sont façonnées dans ce que les créateurs ont identifié comme de la cornaline — une pierre semi-précieuse aux tons orange-saumon lumineux.",
         price_cad: 12.00,
@@ -232,21 +240,29 @@
       }
     ];
 
-    // Chargement produits + fiche ?sku=
+    // Chargement produits + positions + fiche ?sku=
     (async () => {
       const urlSku = new URLSearchParams(location.search).get('sku');
       if (urlSku) fetchSku(urlSku);
 
-      try {
-        const res = await fetch(`${API}/api/products`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        allProducts = await res.json();
-        renderProducts('tous');
-      } catch (err) {
-        console.warn('API non disponible, affichage des produits locaux.', err);
-        allProducts = PRODUITS_LOCAUX;
-        renderProducts('tous');
+      // Charger positions et produits en parallèle
+      const [posRes, prodRes] = await Promise.allSettled([
+        fetch('data/image-positions.json'),
+        fetch(`${API}/api/products`),
+      ]);
+
+      if (posRes.status === 'fulfilled' && posRes.value.ok) {
+        try { imgPos = await posRes.value.json(); } catch {}
       }
+
+      if (prodRes.status === 'fulfilled' && prodRes.value.ok) {
+        allProducts = await prodRes.value.json();
+      } else {
+        console.warn('API non disponible, affichage des produits locaux.');
+        allProducts = PRODUITS_LOCAUX;
+      }
+
+      renderProducts('tous');
     })();
   </script>
 

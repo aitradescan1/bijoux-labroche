@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     const supabase = getSupabase();
     const { data, error } = await supabase
       .from('products')
-      .select('id, name, description, price_cad, category, image_url, piece_unique')
+      .select('id, sku, name, description, price_cad, category, image_url, piece_unique')
       .eq('in_stock', true)
       .order('category')
       .order('name');

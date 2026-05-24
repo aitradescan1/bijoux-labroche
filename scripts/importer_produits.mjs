@@ -7,7 +7,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import dotenv           from 'dotenv';
-import { readdirSync, existsSync } from 'fs';
+import { readdirSync, existsSync, writeFileSync } from 'fs';
 import { join, extname, basename } from 'path';
 import { fileURLToPath }           from 'url';
 
@@ -126,6 +126,97 @@ const DESCRIPTIONS = {
   'LBG-26-080': "Boucles d'oreilles amazonite grand cabochon turquoise — les grands cabochons mettent en valeur la couleur caractéristique de cette pierre aux tons caraïbes. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
 };
 
+// Position de cadrage par SKU (object-position CSS)
+// Déterminée visuellement — mettre à jour lors de chaque import de nouvelles photos
+const IMAGE_POSITIONS = {
+  // Boucles lot 001-014 — paysage 4000x3000 (orient.=1), débordement ~5px → centre suffit
+  'LBG-26-001': 'center center',
+  'LBG-26-002': 'center center',
+  'LBG-26-003': 'center center',
+  'LBG-26-004': 'center center',
+  'LBG-26-005': 'center center',
+  'LBG-26-006': 'center center',
+  'LBG-26-007': 'center center',
+  'LBG-26-008': 'center center',
+  'LBG-26-009': 'center center',
+  'LBG-26-010': 'center center',
+  'LBG-26-011': 'center center',
+  'LBG-26-012': 'center center',
+  'LBG-26-013': 'center center',
+  'LBG-26-014': 'center center',
+  // Boucles lot 015-038 — portrait 3000x4000 (orient.=6), X inutile, seul Y compte
+  // Boîte ouverte latéralement, boucles posées sur le couvercle (haut du cadre)
+  'LBG-26-015': 'center 28%',
+  'LBG-26-016': 'center 23%',
+  'LBG-26-017': 'center 28%',
+  'LBG-26-018': 'center 28%',
+  'LBG-26-019': 'center 28%',
+  'LBG-26-020': 'center 28%',
+  'LBG-26-021': 'center 30%',
+  'LBG-26-022': 'center 26%',
+  'LBG-26-023': 'center 17%',
+  'LBG-26-024': 'center 20%',
+  'LBG-26-025': 'center 17%',
+  'LBG-26-026': 'center 50%',
+  'LBG-26-027': 'center 17%',
+  'LBG-26-028': 'center 17%',
+  'LBG-26-029': 'center 17%',
+  'LBG-26-030': 'center 28%',
+  'LBG-26-031': 'center 12%',
+  'LBG-26-032': 'center 17%',
+  'LBG-26-033': 'center 22%',
+  'LBG-26-034': 'center 17%',
+  'LBG-26-035': 'center 17%',
+  'LBG-26-036': 'center 17%',
+  'LBG-26-037': 'center 25%',
+  'LBG-26-038': 'center 17%',
+  // Accessoires — identifieurs coupe à vin, portrait, charm en bas du verre
+  'LBG-26-039': 'center 75%',
+  'LBG-26-040': 'center 75%',
+  'LBG-26-041': 'center 75%',
+  'LBG-26-042': 'center 75%',
+  'LBG-26-043': 'center 75%',
+  'LBG-26-044': 'center 75%',
+  'LBG-26-045': 'center 75%',
+  'LBG-26-046': 'center 75%',
+  'LBG-26-047': 'center 75%',
+  'LBG-26-048': 'center 75%',
+  'LBG-26-049': 'center 75%',
+  'LBG-26-050': 'center 75%',
+  'LBG-26-051': 'center 75%',
+  'LBG-26-052': 'center 75%',
+  'LBG-26-053': 'center 75%',
+  'LBG-26-054': 'center 75%',
+  'LBG-26-055': 'center 75%',
+  // Bracelets — portrait, deux boîtes, bracelet dans la boîte ouverte (droite)
+  'LBG-26-056': 'center 54%',
+  'LBG-26-057': 'center 61%',
+  'LBG-26-058': 'center 54%',
+  'LBG-26-059': 'center 68%',
+  'LBG-26-060': 'center 39%',
+  'LBG-26-061': 'center 50%',
+  'LBG-26-062': 'center 32%',
+  'LBG-26-063': 'center 59%',
+  'LBG-26-064': 'center 54%',
+  // Boucles lot 065-080 — portrait, boîte sombre ouverte de face, boucles à l'intérieur
+  'LBG-26-065': 'center 17%',
+  'LBG-26-066': 'center 23%',
+  'LBG-26-067': 'center 19%',
+  'LBG-26-068': 'center 28%',
+  'LBG-26-069': 'center 32%',
+  'LBG-26-070': 'center 28%',
+  'LBG-26-071': 'center 23%',
+  'LBG-26-072': 'center 39%',
+  'LBG-26-073': 'center 28%',
+  'LBG-26-074': 'center 28%',
+  'LBG-26-075': 'center 43%',
+  'LBG-26-076': 'center 34%',
+  'LBG-26-077': 'center 32%',
+  'LBG-26-078': 'center 32%',
+  'LBG-26-079': 'center 23%',
+  'LBG-26-080': 'center 28%',
+};
+
 // Génère un nom lisible depuis le nom de fichier
 // ex: "LBG-26-003-boucles-aventurine.jpg" → "Boucles d'oreilles Aventurine"
 function nomDepuisFichier(fichier, categorie) {
@@ -190,16 +281,20 @@ const nouveaux = imagesUniques.filter(img => !skusEnBase.has(img.sku));
 if (nouveaux.length === 0) {
   console.log('\n✅  Tous les produits sont déjà en base. Rien à importer.\n');
   console.log('   Astuce: node scripts/importer_produits.mjs --list\n');
+  // Mettre à jour le JSON des positions même s'il n'y a rien à importer
+  const jsonPath0 = join(ROOT, 'data', 'image-positions.json');
+  writeFileSync(jsonPath0, JSON.stringify(IMAGE_POSITIONS, null, 2) + '\n', 'utf8');
+  console.log('   ✅  data/image-positions.json mis à jour.\n');
   process.exit(0);
 }
 
 console.log(`\n📸  ${nouveaux.length} nouveau(x) produit(s) détecté(s):\n`);
 
 const aInserer = nouveaux.map(img => {
-  const nom         = nomDepuisFichier(img.fichier, img.categorie);
-  const prix        = prixDepuisFichier(img.fichier);
-  const description = DESCRIPTIONS[img.sku] ?? null;
-  const imageUrl    = `assets/Produits/${img.dossier}/${img.fichier}`;
+  const nom            = nomDepuisFichier(img.fichier, img.categorie);
+  const prix           = prixDepuisFichier(img.fichier);
+  const description    = DESCRIPTIONS[img.sku] ?? null;
+  const imageUrl       = `assets/Produits/${img.dossier}/${img.fichier}`;
   console.log(`  + ${img.sku.padEnd(14)} ${nom.slice(0, 40).padEnd(42)} ${String(prix.toFixed(2)).padStart(5)} $  stock: 1`);
   return {
     sku:          img.sku,
@@ -210,7 +305,7 @@ const aInserer = nouveaux.map(img => {
     image_url:    imageUrl,
     stock_qty:    1,
     in_stock:     true,
-    piece_unique: true,   // 1 photo = 1 paire exacte reçue par le client
+    piece_unique: true,
   };
 });
 
@@ -229,3 +324,8 @@ if (error) {
 console.log(`\n🎉  ${aInserer.length} produit(s) ajouté(s) !`);
 console.log('   → Complète prix et descriptions dans le panneau admin si besoin.\n');
 console.log('   Vérifier: node scripts/importer_produits.mjs --list\n');
+
+// Toujours régénérer data/image-positions.json depuis IMAGE_POSITIONS
+const jsonPath = join(ROOT, 'data', 'image-positions.json');
+writeFileSync(jsonPath, JSON.stringify(IMAGE_POSITIONS, null, 2) + '\n', 'utf8');
+console.log('   ✅  data/image-positions.json mis à jour.\n');
