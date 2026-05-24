@@ -106,6 +106,24 @@ const DESCRIPTIONS = {
   'LBG-26-062': "Bracelet chaîne argentée avec charm étoile noire — minimaliste et élégant, parfait au quotidien. Présenté dans sa boîte en bois gravée Labroche et Gobeil.",
   'LBG-26-063': "Bracelet chaîne dorée orné de deux pendentifs cœur et d'une pierre améthyste mauve — romantique et délicat. Présenté dans sa boîte en bois gravée Labroche et Gobeil.",
   'LBG-26-064': "Bracelet chaîne argentée avec pierre cornaline rouge — la chaleur et l'énergie de cette pierre semi-précieuse dans un format élégant. Présenté dans sa boîte en bois gravée Labroche et Gobeil.",
+
+  // ── Boucles (lot 20260523) ─────────────────────────────────
+  'LBG-26-065': "Boucles d'oreilles œil de tigre aux grands cabochons — leurs reflets dorés et chatoyants capturent la lumière de façon hypnotique. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-066': "Boucles d'oreilles jaspe dalmatien brun tacheté — les taches naturelles uniques de cette pierre rappellent le pelage du dalmatien. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-067': "Boucles d'oreilles obsidienne noire au poli miroir — ce verre volcanique naturel capte la lumière avec une élégance sombre et intemporelle. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-068': "Boucles d'oreilles quartz translucide aux inclusions naturelles — chaque paire est unique grâce aux voiles et nuages emprisonnés dans la pierre. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-069': "Boucles d'oreilles labradorite gris-bleu aux reflets irisés — sa labradorescence révèle des éclats de bleu, vert et or selon la lumière. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-070': "Boucles d'oreilles améthyste fumée brute aux cristaux sombres — la version mystérieuse de l'améthyste, avec des teintes violettes profondes presque noires. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-071': "Boucles d'oreilles quartz blanc aux taches vertes naturelles — une pierre aux inclusions chloritiques qui lui donnent un caractère botanique unique. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-072': "Boucles d'oreilles quartz blanc ivoire au poli lisse — la pureté classique du quartz blanc dans un format délicat et polyvalent. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-073': "Boucles d'oreilles jaspe vert foncé — une pierre terreuse aux tons profonds de forêt, douce et élégante au quotidien. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-074': "Boucles d'oreilles quartz rose pâle translucide — la pierre de l'amour et de la tendresse dans sa version la plus lumineuse. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-075': "Boucles d'oreilles jaspe dalmatien clair crème aux taches délicates — une version plus douce et lumineuse du jaspe dalmatien. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-076': "Boucles d'oreilles jaspe dalmatien classique aux taches noires — original et reconnaissable, chaque paire est un morceau de nature unique. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-077': "Boucles d'oreilles lapis lazuli bleu nuit — une des pierres les plus anciennes au monde, avec ses éclats dorés de pyrite sur fond bleu profond. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-078': "Boucles d'oreilles citrine orange ensoleillée — la pierre du soleil et de la positivité, aux teintes chaudes et lumineuses. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-079': "Boucles d'oreilles amazonite turquoise pâle — cette pierre apaisante aux tons eau-de-mer apporte fraîcheur et sérénité. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-080': "Boucles d'oreilles amazonite grand cabochon turquoise — les grands cabochons mettent en valeur la couleur caractéristique de cette pierre aux tons caraïbes. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
 };
 
 // Génère un nom lisible depuis le nom de fichier
