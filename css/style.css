@@ -678,7 +678,7 @@ footer:not(.site-footer) {
 }
 .product-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
 
-.product-img-wrap { overflow: hidden; height: 220px; }
+.product-img-wrap { overflow: hidden; height: 280px; }
 .product-img {
   width: 100%; height: 100%;
   object-fit: cover;
