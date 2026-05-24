@@ -4,371 +4,144 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Labroche et Gobeil — Bijoux en pierres naturelles</title>
-  <meta name="description" content="Bijoux en pierres naturelles faits à la main par Nathan et Lyam. Ouverture prochaine.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@400;500;600&family=Caveat:wght@700&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --cream:      #FFF8F0;
-      --cream-dark: #F5EDE0;
-      --gold:       #C9A84C;
-      --gold-deep:  #8a6200;
-      --rose:       #D4607A;
-      --dark:       #1E0D00;
-      --text:       #3A1F0D;
-      --muted:      #8A6555;
-    }
-
-    html { height: 100%; }
-    body {
-      min-height: 100%;
-      font-family: 'Inter', Arial, sans-serif;
-      background: var(--cream);
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 32px 20px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* ── Décors flottants ─────────────────────────────── */
-    .deco {
-      position: fixed;
-      pointer-events: none;
-      opacity: .18;
-      animation: float 6s ease-in-out infinite;
-    }
-    .deco img { width: 100%; }
-    .d1 { width: 90px;  top:  6%; left:  4%; animation-duration: 7s; --r: -12deg; }
-    .d2 { width: 60px;  top: 12%; right: 8%; animation-duration: 5s; --r:  18deg; animation-delay: -2s; }
-    .d3 { width: 75px;  bottom: 15%; left: 7%; animation-duration: 8s; --r: -8deg; animation-delay: -1s; }
-    .d4 { width: 55px;  bottom: 10%; right: 5%; animation-duration: 6s; --r: 22deg; animation-delay: -3s; }
-    .d5 { width: 45px;  top: 45%; left: 2%; animation-duration: 9s; --r: -5deg; animation-delay: -4s; }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0)     rotate(var(--r, 0deg)); }
-      50%       { transform: translateY(-14px) rotate(var(--r, 0deg)); }
-    }
-
-    /* ── Carte centrale ───────────────────────────────── */
-    .card {
-      background: #fff;
-      border-radius: 28px;
-      padding: 52px 44px 44px;
-      max-width: 520px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 20px 60px rgba(60,20,0,.13);
-      position: relative;
-      animation: fadeUp .7s ease both;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .sparkle-top {
-      font-size: 2.8rem;
-      margin-bottom: 12px;
-      animation: twinkle 3s ease-in-out infinite;
-    }
-    @keyframes twinkle {
-      0%, 100% { transform: scale(1)    rotate(0deg); }
-      50%       { transform: scale(1.15) rotate(12deg); }
-    }
-
-    .brand {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 1.9rem;
-      font-weight: 700;
-      color: var(--dark);
-      margin-bottom: 6px;
-      letter-spacing: -.02em;
-    }
-
-    .brand-sub {
-      font-size: .85rem;
-      color: var(--muted);
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      margin-bottom: 32px;
-    }
-
-    .divider {
-      width: 60px;
-      height: 3px;
-      background: linear-gradient(90deg, var(--gold), var(--rose));
-      border-radius: 99px;
-      margin: 0 auto 32px;
-    }
-
-    .soon-label {
-      font-family: 'Caveat', cursive;
-      font-size: 2.2rem;
-      color: var(--gold-deep);
-      margin-bottom: 16px;
-      line-height: 1.1;
-    }
-
-    .message {
-      font-size: 1.05rem;
-      color: var(--text);
-      line-height: 1.7;
-      margin-bottom: 32px;
-    }
-
-    .message strong {
-      color: var(--dark);
-      font-weight: 600;
-    }
-
-    /* ── Badges ────────────────────────────────────────── */
-    .badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 36px;
-    }
-    .badge {
-      background: var(--cream-dark);
-      border-radius: 99px;
-      padding: 8px 18px;
-      font-size: .82rem;
-      font-weight: 600;
-      color: var(--gold-deep);
-      letter-spacing: .03em;
-    }
-
-    /* ── Email capture ─────────────────────────────────── */
-    .notify-label {
-      font-size: .88rem;
-      color: var(--muted);
-      margin-bottom: 14px;
-    }
-
-    .notify-form {
-      display: flex;
-      gap: 8px;
-      max-width: 380px;
-      margin: 0 auto 28px;
-    }
-    .notify-form input {
-      flex: 1;
-      padding: 13px 18px;
-      border: 2px solid var(--cream-dark);
-      border-radius: 14px;
-      font-size: .95rem;
-      font-family: inherit;
-      outline: none;
-      background: var(--cream);
-      color: var(--dark);
-      transition: border-color .2s;
-    }
-    .notify-form input:focus { border-color: var(--gold); }
-    .notify-form button {
-      padding: 13px 22px;
-      background: linear-gradient(135deg, var(--gold), #d4a017);
-      color: #fff;
-      border: none;
-      border-radius: 14px;
-      font-size: .95rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: opacity .2s;
-    }
-    .notify-form button:hover { opacity: .88; }
-    .notify-confirm {
-      display: none;
-      color: #2e7d32;
-      font-size: .9rem;
-      font-weight: 600;
-      margin-bottom: 28px;
-    }
-
-    .footer-note {
-      font-size: .78rem;
-      color: var(--muted);
-      border-top: 1px solid var(--cream-dark);
-      padding-top: 20px;
-      margin-top: 4px;
-    }
-
-    /* ── SKU lookup ──────────────────────────────────────── */
-    .section-sep { width: 100%; height: 1px; background: var(--cream-dark); margin: 4px 0 26px; }
-    .sku-section {
-      background: var(--cream);
-      border-radius: 16px;
-      padding: 20px 20px 16px;
-      margin-bottom: 28px;
-      border: 1.5px solid var(--gold);
-      text-align: left;
-    }
-    .sku-title {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 1rem;
-      color: var(--dark);
-      margin-bottom: 5px;
-      text-align: center;
-    }
-    .sku-hint {
-      font-size: .78rem;
-      color: var(--muted);
-      margin-bottom: 14px;
-      line-height: 1.5;
-      text-align: center;
-    }
-    .sku-form { display: flex; gap: 8px; }
-    .sku-form input {
-      flex: 1;
-      padding: 11px 14px;
-      border: 2px solid var(--cream-dark);
-      border-radius: 12px;
-      font-size: .95rem;
-      font-family: 'Inter', monospace;
-      background: #fff;
-      color: var(--dark);
-      outline: none;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      transition: border-color .2s;
-    }
-    .sku-form input:focus { border-color: var(--gold); }
-    .sku-form input::placeholder { letter-spacing: .03em; text-transform: none; color: #b9a090; }
-    .sku-form button {
-      padding: 11px 18px;
-      background: var(--dark);
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      font-size: .88rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: opacity .2s;
-    }
-    .sku-form button:hover { opacity: .82; }
-    .sku-error {
-      display: none;
-      font-size: .76rem;
-      color: #c0392b;
-      margin-top: 6px;
-      text-align: center;
-    }
-    .boutique-cta {
-      display: block;
-      margin-top: 10px;
-      font-size: .78rem;
-      color: var(--muted);
-      text-align: center;
-    }
-    .boutique-cta a { color: var(--gold-deep); text-decoration: underline; font-weight: 600; }
-
-    @media (max-width: 480px) {
-      .card { padding: 40px 24px 32px; }
-      .brand { font-size: 1.6rem; }
-      .soon-label { font-size: 1.9rem; }
-      .notify-form { flex-direction: column; }
-      .sku-form { flex-direction: column; }
-      .d1, .d3, .d5 { display: none; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@400;500;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- Décors -->
-  <div class="deco d1" aria-hidden="true"><img src="assets/svg/sparkle.svg" alt=""></div>
-  <div class="deco d2" aria-hidden="true"><img src="assets/svg/star.svg"    alt=""></div>
-  <div class="deco d3" aria-hidden="true"><img src="assets/svg/heart.svg"   alt=""></div>
-  <div class="deco d4" aria-hidden="true"><img src="assets/svg/earring.svg" alt=""></div>
-  <div class="deco d5" aria-hidden="true"><img src="assets/svg/sparkle.svg" alt=""></div>
+  <!-- ═══ HEADER ═══ -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <img src="assets/svg/sparkle.svg" alt="" class="logo-icon" aria-hidden="true">
+        <span class="logo-text">Labroche et Gobeil</span>
+      </a>
+      <nav class="main-nav">
+        <a href="index.html"     class="nav-link active">Accueil</a>
+        <a href="boutique.html"  class="nav-link">Boutique</a>
+        <a href="pierre.html"    class="nav-link">Ma pierre</a>
+        <a href="histoire.html"  class="nav-link">Notre histoire</a>
+        <a href="pedagogie.html" class="nav-link">Pédagogie</a>
+        <a href="geologie.html"  class="nav-link">Géologie</a>
+        <a href="commande.html"  class="nav-cta">Commander →</a>
+      </nav>
+    </div>
+  </header>
 
-  <div class="card">
+  <main>
 
-    <div class="sparkle-top" aria-hidden="true">✨</div>
+    <!-- ═══ HERO ═══ -->
+    <section class="hero">
+      <div class="hero-bg-blob" aria-hidden="true"></div>
+      <div class="hero-deco deco-1" aria-hidden="true"><img src="assets/svg/star.svg" alt=""></div>
+      <div class="hero-deco deco-2" aria-hidden="true"><img src="assets/svg/heart.svg" alt=""></div>
+      <div class="hero-deco deco-3" aria-hidden="true"><img src="assets/svg/sparkle.svg" alt=""></div>
 
-    <h1 class="brand">Labroche et Gobeil</h1>
-    <p class="brand-sub">Bijoux en pierres naturelles</p>
+      <div class="hero-content">
+        <p class="hero-eyebrow">Créations artisanales · Canada 🍁</p>
+        <h1 class="hero-title">
+          Bijoux en pierres<br>
+          <em>naturelles</em><br>
+          faits à la main.
+        </h1>
+        <p class="hero-sub">Chaque pièce est unique — façonnée à partir de vraies roches collectées, fracassées et polies par Nathan et Lyam. Boucles, colliers, bracelets : 100 % naturels.</p>
+        <div class="hero-actions">
+          <a href="#" class="btn-primary">Voir la boutique</a>
+          <a href="pedagogie.html" class="btn-ghost">Comment c'est fait ?</a>
+        </div>
+        <div class="hero-badge">
+          <img src="assets/svg/kid-badge.svg" alt="" aria-hidden="true">
+          <span>Roches naturelles · Pièces uniques</span>
+        </div>
+      </div>
 
-    <div class="divider"></div>
+      <div class="hero-visual">
+        <div class="hero-img-wrap">
+          <img src="assets/Produits/Boucles/20260511_150410.jpg" alt="Boucles d'oreilles artisanales faites main" class="hero-photo">
+          <div class="hero-tag" aria-hidden="true">Boucles d'oreilles · 8 $</div>
+        </div>
+        <div class="float-icon fi-necklace" aria-hidden="true"><img src="assets/svg/necklace.svg" alt=""></div>
+        <div class="float-icon fi-earring" aria-hidden="true"><img src="assets/svg/earring.svg" alt=""></div>
+      </div>
+    </section>
 
-    <p class="soon-label">Bientôt disponible !</p>
-
-    <p class="message">
-      <strong>Nathan et Lyam</strong> préparent leur boutique en ligne avec soin.<br>
-      Chaque bijou est taillé et poli à la main — la qualité prend du temps !
-    </p>
-
-    <div class="badges">
-      <span class="badge">🪨 Pierres naturelles</span>
-      <span class="badge">✋ Fait à la main</span>
-      <span class="badge">💛 Local &amp; authentique</span>
+    <!-- ═══ BANDEROLE DÉFILANTE ═══ -->
+    <div class="craft-strip" aria-hidden="true">
+      <div class="craft-track">
+        <span>✦ Fait main</span>
+        <span>✦ Pièces uniques</span>
+        <span>✦ Livraison Canada</span>
+        <span>✦ Bijoux hypoallergéniques</span>
+        <span>✦ Créateur de 10 ans</span>
+        <span>✦ Fait main</span>
+        <span>✦ Pièces uniques</span>
+        <span>✦ Livraison Canada</span>
+        <span>✦ Bijoux hypoallergéniques</span>
+        <span>✦ Créateur de 10 ans</span>
+      </div>
     </div>
 
-    <div class="section-sep"></div>
+    <!-- ═══ VALEURS ═══ -->
+    <section class="values">
+      <div class="values-header">
+        <p class="section-tag">Notre approche</p>
+        <h2 class="section-title">Pourquoi choisir<br>Les Petits Bijoux ?</h2>
+      </div>
+      <div class="values-inner">
+        <div class="value-card">
+          <div class="value-icon">
+            <img src="assets/svg/heart.svg" alt="">
+          </div>
+          <h3>Fait main</h3>
+          <p>Chaque bijou est fabriqué à la main, pièce par pièce, avec des matériaux soigneusement choisis.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">
+            <img src="assets/svg/sparkle.svg" alt="">
+          </div>
+          <h3>Unique</h3>
+          <p>Pas de production en série. Chaque création est différente — aucun bijou n'est identique à un autre.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">
+            <img src="assets/svg/star.svg" alt="">
+          </div>
+          <h3>Accessible</h3>
+          <p>Des bijoux beaux et abordables, conçus pour être portés tous les jours avec style et fierté.</p>
+        </div>
+      </div>
+    </section>
 
-    <!-- Retrouver son bijou par SKU -->
-    <div class="sku-section">
-      <p class="sku-title">💎 Retrouvez votre bijou</p>
-      <p class="sku-hint">Entrez le code SKU de votre pièce (ex : <strong>LBG-26-001</strong>) pour revoir sa description et sa photo.</p>
-      <form class="sku-form" id="skuForm" autocomplete="off">
-        <input type="text" id="skuInput" placeholder="LBG-26-001" maxlength="12" spellcheck="false" inputmode="text">
-        <button type="submit">Voir →</button>
-      </form>
-      <p class="sku-error" id="skuError">Format invalide — essaie LBG-26-001</p>
-      <p class="boutique-cta">Ou <a href="boutique.html">parcourez toute la boutique →</a></p>
+    <!-- ═══ CTA ═══ -->
+    <section class="cta-band">
+      <div class="cta-band-inner">
+        <p class="cta-script">Prête à trouver ta pièce parfaite ?</p>
+        <a href="#" class="btn-primary btn-large">Explorer la boutique</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="assets/svg/sparkle.svg" alt="" class="footer-icon" aria-hidden="true">
+        <span>Labroche et Gobeil</span>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Accueil</a>
+        <a href="boutique.html">Boutique</a>
+        <a href="pierre.html">Ma pierre</a>
+        <a href="histoire.html">Notre histoire</a>
+        <a href="pedagogie.html">Pédagogie</a>
+        <a href="geologie.html">Géologie</a>
+      </nav>
+      <p class="footer-copy">© 2026 Labroche et Gobeil — Bijoux en pierres naturelles</p>
     </div>
-
-    <p class="notify-label">Sois avisé des nouveautés :</p>
-
-    <form class="notify-form" id="notifyForm">
-      <input type="email" placeholder="ton@courriel.com" id="notifyEmail" autocomplete="email" required>
-      <button type="submit">M'aviser</button>
-    </form>
-    <p class="notify-confirm" id="notifyConfirm">✅ On te tiendra au courant !</p>
-
-    <p class="footer-note">© 2026 Labroche et Gobeil — Ouverture prochaine</p>
-
-  </div>
-
-  <script>
-    document.getElementById('notifyForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      this.style.display = 'none';
-      document.querySelector('.notify-label').style.display = 'none';
-      document.getElementById('notifyConfirm').style.display = 'block';
-    });
-
-    // Chercher un bijou par SKU
-    const skuInput = document.getElementById('skuInput');
-    const skuError = document.getElementById('skuError');
-
-    skuInput.addEventListener('input', function() {
-      const pos = this.selectionStart;
-      this.value = this.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
-      this.setSelectionRange(pos, pos);
-      skuError.style.display = 'none';
-    });
-
-    document.getElementById('skuForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const sku = skuInput.value.trim();
-      if (!/^LBG-\d{2}-\d{3}$/.test(sku)) {
-        skuError.style.display = 'block';
-        skuInput.focus();
-        return;
-      }
-      location.href = 'boutique.html?sku=' + encodeURIComponent(sku);
-    });
-  </script>
+  </footer>
 
 </body>
 </html>
