@@ -29,8 +29,8 @@ const IMG_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 // Dossiers → catégorie Supabase
 const DOSSIERS = {
   Boucles:      'boucles',
-  Colliers:     'collier',
-  Bracelets:    'bracelet',
+  colliers:     'collier',
+  bracelets:    'bracelet',
   Accessoires:  'accessoire',
   Autre:        'autre',
 };

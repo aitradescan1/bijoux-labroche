@@ -8,6 +8,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@400;500;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    .featured-section { padding: 3rem 1rem 2rem; }
+    .featured-header { text-align: center; margin-bottom: 1.5rem; }
+    .featured-scroll-wrap { overflow-x: auto; padding: 0.25rem 0.5rem 1rem; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+    .featured-scroll { display: flex; gap: 1rem; width: max-content; padding: 0.25rem 1rem; }
+    .feat-card { width: 170px; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 14px rgba(0,0,0,.09); flex-shrink: 0; text-decoration: none; color: inherit; transition: transform .2s, box-shadow .2s; }
+    .feat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,.14); }
+    .feat-card img { width: 170px; height: 170px; object-fit: contain; background: #faf7f3; display: block; }
+    .feat-card-body { padding: 0.65rem 0.75rem 0.85rem; }
+    .feat-card-name { font-size: 0.8rem; font-weight: 600; margin: 0 0 0.2rem; color: #1a1a1a; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .feat-card-price { font-size: 0.88rem; font-weight: 700; color: #a07850; margin: 0; }
+    .featured-cta { text-align: center; margin-top: 1.75rem; }
+  </style>
 </head>
 <body>
 
@@ -48,7 +61,7 @@
         </h1>
         <p class="hero-sub">Chaque pièce est unique — façonnée à partir de vraies roches collectées, fracassées et polies par Nathan et Lyam. Boucles, colliers, bracelets : 100 % naturels.</p>
         <div class="hero-actions">
-          <a href="#" class="btn-primary">Voir la boutique</a>
+          <a href="boutique.html" class="btn-primary">Voir la boutique</a>
           <a href="pedagogie.html" class="btn-ghost">Comment c'est fait ?</a>
         </div>
         <div class="hero-badge">
@@ -59,8 +72,8 @@
 
       <div class="hero-visual">
         <div class="hero-img-wrap">
-          <img src="assets/Produits/Boucles/20260511_150410.jpg" alt="Boucles d'oreilles artisanales faites main" class="hero-photo">
-          <div class="hero-tag" aria-hidden="true">Boucles d'oreilles · 8 $</div>
+          <img src="assets/Produits/Boucles/LBG-26-096-boucles-quartz-rose-facette.jpg" alt="Boucles d'oreilles artisanales faites main" class="hero-photo">
+          <div class="hero-tag" aria-hidden="true">Boucles d'oreilles · 10 – 12 $</div>
         </div>
         <div class="float-icon fi-necklace" aria-hidden="true"><img src="assets/svg/necklace.svg" alt=""></div>
         <div class="float-icon fi-earring" aria-hidden="true"><img src="assets/svg/earring.svg" alt=""></div>
@@ -82,6 +95,22 @@
         <span>✦ Créateur de 10 ans</span>
       </div>
     </div>
+
+    <!-- ═══ PRODUITS EN VEDETTE ═══ -->
+    <section class="featured-section">
+      <div class="featured-header">
+        <p class="section-tag">Nos créations</p>
+        <h2 class="section-title">Quelques pièces du moment</h2>
+      </div>
+      <div class="featured-scroll-wrap">
+        <div class="featured-scroll" id="featuredScroll">
+          <!-- chargé via JS -->
+        </div>
+      </div>
+      <div class="featured-cta">
+        <a href="boutique.html" class="btn-primary">Voir toute la boutique →</a>
+      </div>
+    </section>
 
     <!-- ═══ VALEURS ═══ -->
     <section class="values">
@@ -118,7 +147,7 @@
     <section class="cta-band">
       <div class="cta-band-inner">
         <p class="cta-script">Prête à trouver ta pièce parfaite ?</p>
-        <a href="#" class="btn-primary btn-large">Explorer la boutique</a>
+        <a href="boutique.html" class="btn-primary btn-large">Explorer la boutique</a>
       </div>
     </section>
 
@@ -143,5 +172,27 @@
     </div>
   </footer>
 
+  <script>
+    (async function () {
+      const API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? '' : 'https://bijoux-labroche-aitradescan1s-projects.vercel.app';
+      const scroll = document.getElementById('featuredScroll');
+      try {
+        const res = await fetch(API + '/api/products');
+        if (!res.ok) throw new Error();
+        const products = await res.json();
+        // Mélanger et prendre 14
+        const sample = products.sort(() => Math.random() - 0.5).slice(0, 14);
+        scroll.innerHTML = sample.map(p => {
+          const img = p.image_url
+            ? `<img src="${p.image_url}" alt="${p.name.replace(/"/g,'')}" loading="lazy" onerror="this.style.display='none'">`
+            : '';
+          return `<a href="boutique.html" class="feat-card">${img}<div class="feat-card-body"><p class="feat-card-name">${p.name}</p><p class="feat-card-price">${p.price_cad.toFixed(2)} $</p></div></a>`;
+        }).join('');
+      } catch (e) {
+        document.querySelector('.featured-section').hidden = true;
+      }
+    })();
+  </script>
 </body>
 </html>
