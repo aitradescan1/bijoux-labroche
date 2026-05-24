@@ -102,6 +102,10 @@ const DESCRIPTIONS = {
   'LBG-26-057': "Bracelet orné de pierres cornaline orangées et d'un charm soleil doré — chaleureux et lumineux. Chaque pierre est naturelle et unique. Présenté dans sa boîte en bois gravée.",
   'LBG-26-058': "Bracelet œil de tigre aux reflets dorés-bruns avec charm étoile — le chatoyement naturel de cette pierre en fait une pièce remarquable. Présenté dans sa boîte en bois gravée.",
   'LBG-26-059': "Bracelet chaîne dorée avec pendentif aventurine verte — la pierre de la chance et de la prospérité dans un format élégant. Présenté dans sa boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-061': "Bracelet chaîne dorée avec pendentif œil de tigre brun ambré — le chatoyement naturel de cette pierre en fait une pièce unique. Présenté dans sa boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-062': "Bracelet chaîne argentée avec charm étoile noire — minimaliste et élégant, parfait au quotidien. Présenté dans sa boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-063': "Bracelet chaîne dorée orné de deux pendentifs cœur et d'une pierre améthyste mauve — romantique et délicat. Présenté dans sa boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-064': "Bracelet chaîne argentée avec pierre cornaline rouge — la chaleur et l'énergie de cette pierre semi-précieuse dans un format élégant. Présenté dans sa boîte en bois gravée Labroche et Gobeil.",
 };
 
 // Génère un nom lisible depuis le nom de fichier
