@@ -704,6 +704,44 @@ footer:not(.site-footer) {
 .product-price  { font-size: 1.08rem; font-weight: 700; color: var(--dark); }
 .product-footer .btn-primary { padding: 8px 16px; font-size: .8rem; }
 
+/* ── Fiche produit (accès direct ?sku=) ─────────────────── */
+.product-detail-wrap { max-width: 800px; margin: 0 auto 40px; padding: 0 24px; }
+.product-detail-card {
+  position: relative;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  border: 2px solid var(--gold);
+}
+.detail-img-wrap { overflow: hidden; }
+.detail-img { width: 100%; height: 100%; min-height: 300px; object-fit: cover; display: block; }
+.detail-img-placeholder { display: flex; align-items: center; justify-content: center; background: var(--rose-light); min-height: 300px; }
+.detail-img-placeholder img { width: 80px; height: 80px; opacity: .5; }
+.detail-body { padding: 28px 28px 24px; display: flex; flex-direction: column; gap: 10px; }
+.detail-name { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); margin: 4px 0 0; }
+.detail-desc { font-size: .88rem; line-height: 1.65; color: var(--text-muted); flex: 1; }
+.detail-close {
+  position: absolute; top: 12px; right: 12px;
+  background: rgba(30,13,0,.12); border: none; border-radius: 50%;
+  width: 30px; height: 30px; cursor: pointer; font-size: .8rem;
+  display: flex; align-items: center; justify-content: center; color: var(--dark);
+  z-index: 2;
+}
+.detail-close:hover { background: rgba(30,13,0,.22); }
+.badge-epuise {
+  display: inline-block; background: var(--text-muted); color: var(--white);
+  padding: 7px 18px; border-radius: 30px; font-size: .82rem; font-weight: 600;
+}
+@media (max-width: 640px) {
+  .product-detail-card { grid-template-columns: 1fr; }
+  .detail-img { min-height: 220px; }
+  .detail-img-placeholder { min-height: 220px; }
+  .detail-body { padding: 20px; }
+}
+
 /* ==========================================================
    COMMANDE (CHECKOUT)
    ========================================================== */

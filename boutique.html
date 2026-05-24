@@ -40,6 +40,9 @@
       </div>
     </section>
 
+    <!-- Fiche produit (chargée via ?sku=) -->
+    <div class="product-detail-wrap" id="detailWrap" hidden></div>
+
     <!-- Filtres -->
     <div class="shop-filters" id="filters" role="tablist" aria-label="Filtrer par catégorie">
       <button class="filter-btn active" data-cat="tous" role="tab" aria-selected="true">Tous</button>
@@ -87,19 +90,37 @@
     let allProducts = [];
 
     const CAT_ICONS = { boucles: '💎', collier: '✨', bracelet: '🌸', accessoire: '🎀', autre: '🪩' };
+    const CAT_LABEL_FR = { boucles: "Boucles d'oreilles", collier: 'Collier', bracelet: 'Bracelet', accessoire: 'Accessoire', autre: 'Bijou' };
     const FALLBACK_IMGS = {
       boucles:    'assets/svg/earring.svg',
       collier:    'assets/svg/necklace.svg',
       bracelet:   'assets/svg/sparkle.svg',
       accessoire: 'assets/svg/star.svg',
-      autre:   'assets/svg/star.svg',
+      autre:      'assets/svg/star.svg',
     };
 
-    function productCard(p) {
-      const icon = CAT_ICONS[p.category] ?? '🪩';
-      const img  = p.image_url
-        ? `<img src="${escHtml(p.image_url)}" alt="${escHtml(p.name)}" class="product-img" loading="lazy">`
-        : `<div class="product-img product-img-placeholder"><img src="${FALLBACK_IMGS[p.category] ?? 'assets/svg/star.svg'}" alt="" aria-hidden="true"></div>`;
+    function escHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function fallbackSrc(cat) {
+      return FALLBACK_IMGS[cat] ?? 'assets/svg/star.svg';
+    }
+
+    function imgError(el, cat) {
+      el.onerror = null;
+      el.parentElement.innerHTML = `<div class="product-img product-img-placeholder"><img src="${fallbackSrc(cat)}" alt="" aria-hidden="true"></div>`;
+    }
+
+    function productCard(p, index) {
+      const icon    = CAT_ICONS[p.category] ?? '🪩';
+      const label   = CAT_LABEL_FR[p.category] ?? p.category;
+      const loading = index < 4 ? 'eager' : 'lazy';
+      const img = p.image_url
+        ? `<img src="${escHtml(p.image_url)}" alt="${escHtml(p.name)}" class="product-img" loading="${loading}" onerror="imgError(this,'${escHtml(p.category)}')">`
+        : `<div class="product-img product-img-placeholder"><img src="${fallbackSrc(p.category)}" alt="" aria-hidden="true"></div>`;
 
       const noticeRepro = p.piece_unique === false
         ? `<p class="notice-photo-rep">Photo représentative — <a href="mailto:bijoux.labroche@gmail.com">écrivez-nous</a> pour voir les paires disponibles.</p>`
@@ -109,7 +130,7 @@
         <article class="product-card" data-cat="${escHtml(p.category)}" data-id="${escHtml(p.id)}">
           <div class="product-img-wrap">${img}</div>
           <div class="product-info">
-            <span class="product-cat">${icon} ${escHtml(p.category)}</span>
+            <span class="product-cat">${icon} ${escHtml(label)}</span>
             <h2 class="product-name">${escHtml(p.name)}</h2>
             <p class="product-desc">${escHtml(p.description ?? '')}</p>
             ${noticeRepro}
@@ -122,15 +143,9 @@
         </article>`;
     }
 
-    function escHtml(str) {
-      return String(str ?? '')
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-    }
-
     function renderProducts(cat) {
       const filtered = cat === 'tous' ? allProducts : allProducts.filter(p => p.category === cat);
-      grid.innerHTML = filtered.map(productCard).join('');
+      grid.innerHTML = filtered.map((p, i) => productCard(p, i)).join('');
       grid.setAttribute('aria-busy', 'false');
       empty.hidden = filtered.length > 0;
     }
@@ -148,21 +163,80 @@
       renderProducts(btn.dataset.cat);
     });
 
-    // Produits locaux (affichés si l'API n'est pas encore disponible)
+    // ── Fiche produit par SKU (?sku=LBG-26-001) ───────────────
+    function productDetailCard(p) {
+      const icon   = CAT_ICONS[p.category] ?? '🪩';
+      const label  = CAT_LABEL_FR[p.category] ?? p.category;
+      const epuise = !p.in_stock;
+
+      const imgHtml = p.image_url
+        ? `<img src="${escHtml(p.image_url)}" alt="${escHtml(p.name)}" class="detail-img" onerror="this.onerror=null;this.src='${fallbackSrc(p.category)}'">`
+        : `<div class="detail-img-placeholder"><img src="${fallbackSrc(p.category)}" alt="" aria-hidden="true"></div>`;
+
+      const noticeRepro = p.piece_unique === false
+        ? `<p class="notice-photo-rep">Photo représentative — <a href="mailto:bijoux.labroche@gmail.com">écrivez-nous</a> pour voir les paires disponibles.</p>`
+        : '';
+
+      const actionBtn = epuise
+        ? `<span class="badge-epuise">Épuisé</span>`
+        : `<a href="commande.html?productId=${encodeURIComponent(p.id)}&productName=${encodeURIComponent(p.name)}&price=${encodeURIComponent(p.price_cad)}" class="btn-primary">Commander</a>`;
+
+      return `
+        <div class="product-detail-card">
+          <button class="detail-close" onclick="closeDetail()" aria-label="Fermer">✕</button>
+          <div class="detail-img-wrap">${imgHtml}</div>
+          <div class="detail-body">
+            <span class="product-cat">${icon} ${escHtml(label)}</span>
+            <h2 class="detail-name">${escHtml(p.name)}</h2>
+            <p class="detail-desc">${escHtml(p.description ?? '')}</p>
+            ${noticeRepro}
+            <div class="product-footer">
+              <span class="product-price">${p.price_cad.toFixed(2)} $</span>
+              ${actionBtn}
+            </div>
+          </div>
+        </div>`;
+    }
+
+    async function fetchSku(sku) {
+      try {
+        const res = await fetch(`${API}/api/product?sku=${encodeURIComponent(sku)}`);
+        if (!res.ok) return;
+        const p = await res.json();
+        const wrap = document.getElementById('detailWrap');
+        wrap.innerHTML = productDetailCard(p);
+        wrap.hidden = false;
+        wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } catch (err) {
+        console.warn('[boutique] fiche produit non chargée:', err);
+      }
+    }
+
+    function closeDetail() {
+      document.getElementById('detailWrap').hidden = true;
+      const url = new URL(location.href);
+      url.searchParams.delete('sku');
+      history.replaceState(null, '', url);
+    }
+
+    // Produits locaux (fallback si l'API est indisponible)
     const PRODUITS_LOCAUX = [
       {
         id: 'LBG-26-001',
-        name: 'Boucles d\'oreilles — Cornaline polie',
-        description: 'Ces boucles irradient une chaleur rare. Taillées et polies à la main par Nathan & Lyam, elles sont façonnées dans ce que les créateurs ont identifié comme de la cornaline — une pierre semi-précieuse aux tons orange-saumon lumineux, variété de calcédoine appréciée en bijouterie depuis l\'Antiquité pour sa couleur chaude et son éclat profond. Chaque paire est absolument unique : la taille, les nuances et le veinage varient d\'une pierre à l\'autre — c\'est précisément ce qui la rend précieuse. Monture dorée légère incluse. ✦ Note : l\'identification des pierres est réalisée avec passion par les créateurs — de légères variations sont toujours possibles.',
+        name: "Boucles d'oreilles — Cornaline saumon",
+        description: "Ces boucles irradient une chaleur rare. Taillées et polies à la main par Nathan & Lyam, elles sont façonnées dans ce que les créateurs ont identifié comme de la cornaline — une pierre semi-précieuse aux tons orange-saumon lumineux.",
         price_cad: 12.00,
         category: 'boucles',
-        image_url: 'assets/Produits/Boucles/LBG-26-001-boucles-pierre-polie.jpg',
-        stock: 1
+        image_url: 'assets/Produits/Boucles/LBG-26-001-boucles-cornaline-saumon.jpg',
+        piece_unique: true,
       }
     ];
 
-    // Chargement produits
+    // Chargement produits + fiche ?sku=
     (async () => {
+      const urlSku = new URLSearchParams(location.search).get('sku');
+      if (urlSku) fetchSku(urlSku);
+
       try {
         const res = await fetch(`${API}/api/products`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
