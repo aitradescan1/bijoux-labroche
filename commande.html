@@ -8,8 +8,139 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@400;500;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <!-- PayPal SDK — remplacer YOUR_PAYPAL_CLIENT_ID par la vraie valeur (variable non secrète) -->
-  <script src="https://www.paypal.com/sdk/js?client-id=ATYMSr7kWZPN-zR_OafVFrhccXKTwzxyNtE5i5Yd8nFmn6S0clqboq3M_mibYI6Mmqgxktk6_NeFBxHe&currency=CAD&locale=fr_CA" defer></script>
+  <style>
+    .coming-soon-wrap {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 5rem;
+      text-align: center;
+    }
+    .coming-soon-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .coming-soon-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      color: var(--color-heading, #1a1a1a);
+      margin: 0 0 0.75rem;
+    }
+    .coming-soon-subtitle {
+      font-size: 1.05rem;
+      color: #555;
+      margin: 0 0 2rem;
+      line-height: 1.6;
+    }
+    .coming-soon-card {
+      background: #faf7f3;
+      border: 1px solid #e8dfd4;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      text-align: left;
+    }
+    .coming-soon-card img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .coming-soon-card .product-placeholder-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+      background: #e8dfd4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+    .cs-product-name {
+      font-weight: 600;
+      font-size: 1rem;
+      margin: 0 0 0.25rem;
+      color: #1a1a1a;
+    }
+    .cs-product-price {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #a07850;
+    }
+    .coming-soon-steps {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 2rem;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .coming-soon-steps li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.97rem;
+      color: #444;
+      line-height: 1.5;
+    }
+    .cs-step-num {
+      background: #a07850;
+      color: #fff;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+    .cs-email-btn {
+      display: inline-block;
+      background: #a07850;
+      color: #fff;
+      padding: 0.85rem 2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: background 0.2s, transform 0.15s;
+      margin-bottom: 1rem;
+    }
+    .cs-email-btn:hover {
+      background: #8a6640;
+      transform: translateY(-1px);
+    }
+    .cs-back-link {
+      display: block;
+      color: #888;
+      font-size: 0.9rem;
+      text-decoration: none;
+      margin-top: 0.5rem;
+    }
+    .cs-back-link:hover { color: #333; }
+    .cs-badge {
+      display: inline-block;
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffc107;
+      border-radius: 50px;
+      padding: 0.3rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.03em;
+    }
+  </style>
 </head>
 <body>
 
@@ -22,6 +153,7 @@
       <nav class="main-nav">
         <a href="index.html"     class="nav-link">Accueil</a>
         <a href="boutique.html"  class="nav-link">Boutique</a>
+        <a href="pierre.html"    class="nav-link">Ma pierre</a>
         <a href="histoire.html"  class="nav-link">Notre histoire</a>
         <a href="pedagogie.html" class="nav-link">Pédagogie</a>
         <a href="geologie.html"  class="nav-link">Géologie</a>
@@ -30,350 +162,92 @@
     </div>
   </header>
 
-  <main class="checkout-main">
+  <main>
+    <div class="coming-soon-wrap">
 
-    <div class="checkout-wrap">
+      <span class="coming-soon-icon">✨</span>
+      <span class="cs-badge">Paiement électronique — Bientôt disponible</span>
 
-      <!-- Gauche: Récap commande -->
-      <aside class="checkout-summary">
-        <h2 class="checkout-section-title">Votre commande</h2>
-        <div class="summary-card">
-          <div class="summary-product" id="summaryProduct">
-            <img src="assets/svg/sparkle.svg" alt="" id="summaryImg" class="summary-img" aria-hidden="true">
-            <div>
-              <p class="summary-name"  id="summaryName">—</p>
-              <p class="summary-price" id="summaryPrice">—</p>
-            </div>
-          </div>
-          <div class="summary-line">
-            <span>Quantité</span>
-            <strong id="summaryQty">1</strong>
-          </div>
-          <div class="summary-line">
-            <span>Articles</span>
-            <strong id="summarySubtotal">—</strong>
-          </div>
-          <div class="summary-line" id="summaryShippingLine" hidden>
-            <span>Livraison</span>
-            <strong id="summaryShipping">—</strong>
-          </div>
-          <div class="summary-line summary-rabais" id="summaryRabaisLine" hidden>
-            <span>🎉 Rabais 35 $+</span>
-            <strong id="summaryRabais">—</strong>
-          </div>
-          <div class="summary-line summary-total">
-            <span>Total</span>
-            <strong id="summaryTotal">—</strong>
-          </div>
-          <p class="summary-note">🪨 Roche naturelle façonnée par Nathan &amp; Lyam</p>
+      <h1 class="coming-soon-title">La commande en ligne arrive&nbsp;!</h1>
+      <p class="coming-soon-subtitle">
+        Notre système de paiement électronique est en cours de finalisation.
+        En attendant, il est facile de commander directement par courriel.
+      </p>
+
+      <!-- Carte produit sélectionné -->
+      <div class="coming-soon-card" id="productCard">
+        <div class="product-placeholder-icon" id="productIcon">💎</div>
+        <div>
+          <p class="cs-product-name"  id="productName">—</p>
+          <p class="cs-product-price" id="productPrice"></p>
         </div>
-      </aside>
-
-      <!-- Droite: Formulaire + PayPal -->
-      <div class="checkout-form-wrap">
-        <h1 class="checkout-title">Finaliser la commande</h1>
-
-        <form id="orderForm" class="checkout-form" novalidate>
-
-          <div class="form-group">
-            <label for="customerName">Votre nom complet *</label>
-            <input type="text" id="customerName" name="customerName"
-                   autocomplete="name" maxlength="100" required
-                   placeholder="Prénom Nom">
-            <span class="field-error" id="nameErr" role="alert" hidden></span>
-          </div>
-
-          <div class="form-group">
-            <label for="customerEmail">Votre email *</label>
-            <input type="email" id="customerEmail" name="customerEmail"
-                   autocomplete="email" maxlength="254" required
-                   placeholder="vous@exemple.com">
-            <span class="field-error" id="emailErr" role="alert" hidden></span>
-          </div>
-
-          <div class="form-group form-group-row">
-            <div>
-              <label for="qty">Quantité *</label>
-              <input type="number" id="qty" name="qty" value="1" min="1" max="20" required>
-            </div>
-            <div class="form-group form-group-fill">
-              <label for="notes">Message (optionnel)</label>
-              <input type="text" id="notes" name="notes" maxlength="500"
-                     placeholder="Ex: Pour un cadeau, couleur préférée…">
-            </div>
-          </div>
-
-          <!-- ── Livraison ──────────────────────────────────── -->
-          <fieldset class="form-group livraison-group">
-            <legend>Mode de livraison *</legend>
-
-            <label class="livraison-option">
-              <input type="radio" name="livraison" value="collecte" checked>
-              <span class="livraison-label">
-                <span class="livraison-title">📍 Ramassage à l'adresse</span>
-                <span class="livraison-desc">Gratuit · On vous communique l'adresse par courriel</span>
-              </span>
-              <span class="livraison-price">Gratuit</span>
-            </label>
-
-            <label class="livraison-option">
-              <input type="radio" name="livraison" value="poste_sans_suivi">
-              <span class="livraison-label">
-                <span class="livraison-title">📬 Canada Post — Enveloppe capitonnée</span>
-                <span class="livraison-desc">Sans suivi · Partout au Canada · ~5–10 jours ouvrables</span>
-              </span>
-              <span class="livraison-price">+3,50 $</span>
-            </label>
-
-            <label class="livraison-option">
-              <input type="radio" name="livraison" value="colis_suivi">
-              <span class="livraison-label">
-                <span class="livraison-title">📦 Canada Post — Colis avec suivi</span>
-                <span class="livraison-desc">Expedited Parcel · Numéro de suivi inclus · 1–7 jours</span>
-              </span>
-              <span class="livraison-price">+14,95 $</span>
-            </label>
-
-          </fieldset>
-
-          <!-- Badge rabais — visible/caché selon le sous-total -->
-          <p class="promo-badge" id="promoBadge" hidden>
-            🎉 <strong>Rabais de 5 $ appliqué</strong> — Merci pour ta commande !
-          </p>
-          <p class="promo-hint" id="promoHint">
-            💡 Commande pour <strong>35 $</strong> ou plus et économise <strong>5 $</strong> !
-          </p>
-
-          <!-- Zone PayPal (apparaît après validation du formulaire) -->
-          <div class="paypal-zone" id="paypalZone" hidden>
-            <p class="paypal-zone-label">Paiement sécurisé via PayPal</p>
-            <div id="paypal-button-container"></div>
-          </div>
-
-          <!-- Bouton "Continuer" — masqué une fois PayPal affiché -->
-          <button type="submit" class="btn-primary btn-checkout" id="continueBtn">
-            Continuer vers le paiement →
-          </button>
-
-          <p class="form-error" id="formError" role="alert" hidden></p>
-        </form>
-
-        <p class="checkout-secure">🔒 Paiement traité par PayPal — Les Petits Bijoux ne stocke pas vos données bancaires.</p>
       </div>
-    </div>
 
+      <!-- Étapes -->
+      <ul class="coming-soon-steps">
+        <li>
+          <span class="cs-step-num">1</span>
+          <span>Envoyez-nous un courriel en mentionnant le produit qui vous intéresse et vos coordonnées.</span>
+        </li>
+        <li>
+          <span class="cs-step-num">2</span>
+          <span>Nous vous confirmons la disponibilité et les options de livraison (ramassage gratuit ou Canada Post).</span>
+        </li>
+        <li>
+          <span class="cs-step-num">3</span>
+          <span>Le paiement se fait en personne ou par virement — simple et sécuritaire.</span>
+        </li>
+      </ul>
+
+      <a id="emailBtn" href="mailto:bijoux.labroche@gmail.com" class="cs-email-btn">
+        📧 Nous écrire pour commander
+      </a>
+      <a href="boutique.html" class="cs-back-link">← Retour à la boutique</a>
+
+    </div>
   </main>
 
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-brand">
         <img src="assets/svg/sparkle.svg" alt="" class="footer-icon" aria-hidden="true">
-        <span>Les Petits Bijoux</span>
+        <span>Labroche et Gobeil</span>
       </div>
       <nav class="footer-nav">
         <a href="index.html">Accueil</a>
         <a href="boutique.html">Boutique</a>
+        <a href="pierre.html">Ma pierre</a>
+        <a href="histoire.html">Notre histoire</a>
+        <a href="pedagogie.html">Pédagogie</a>
+        <a href="geologie.html">Géologie</a>
       </nav>
-      <p class="footer-copy">© 2026 Labroche et Gobeil</p>
+      <p class="footer-copy">© 2026 Labroche et Gobeil — Bijoux en pierres naturelles</p>
     </div>
   </footer>
 
   <script>
-    const API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? '' : 'https://bijoux-labroche-aitradescan1s-projects.vercel.app';
-
-    // ── Lire les paramètres URL (pré-remplissage depuis boutique.html) ──
     const params      = new URLSearchParams(location.search);
-    const productId   = params.get('productId')   ?? '';
-    const productName = params.get('productName') ?? 'Bijou artisanal';
+    const productName = params.get('productName') ?? '';
     const priceCAD    = parseFloat(params.get('price') ?? '0');
 
-    // Miroir des valeurs serveur (affichage seulement — le serveur recalcule tout)
-    const FRAIS         = { collecte: 0, poste_sans_suivi: 3.50, colis_suivi: 14.95 };
-    const SEUIL_RABAIS  = 35.00;
-    const MONTANT_RABAIS = 5.00;
+    if (productName) {
+      document.getElementById('productName').textContent = productName;
+      if (priceCAD > 0) {
+        document.getElementById('productPrice').textContent = priceCAD.toFixed(2) + ' $CAD';
+      }
 
-    // ── Mettre à jour le récap ──────────────────────────────
-    document.getElementById('summaryName').textContent  = productName;
-    document.getElementById('summaryPrice').textContent = priceCAD > 0 ? `${priceCAD.toFixed(2)} $ / unité` : '—';
-    updateTotals();
-
-    document.getElementById('qty').addEventListener('input', updateTotals);
-    document.querySelectorAll('input[name="livraison"]').forEach(r =>
-      r.addEventListener('change', updateTotals)
-    );
-
-    function getLivraison() {
-      return document.querySelector('input[name="livraison"]:checked')?.value ?? 'collecte';
+      // Pré-remplir le sujet du courriel
+      const subject = encodeURIComponent('Commande — ' + productName);
+      const body    = encodeURIComponent(
+        'Bonjour,\n\nJe suis intéressé(e) par le produit suivant :\n' +
+        productName + (priceCAD > 0 ? ' (' + priceCAD.toFixed(2) + ' $CAD)' : '') +
+        '\n\nMon nom : \nMon numéro de téléphone : \nMode de livraison souhaité : \n\nMerci !'
+      );
+      document.getElementById('emailBtn').href =
+        'mailto:bijoux.labroche@gmail.com?subject=' + subject + '&body=' + body;
+    } else {
+      document.getElementById('productCard').hidden = true;
     }
-
-    function updateTotals() {
-      const qty       = parseInt(document.getElementById('qty').value, 10) || 1;
-      const livraison = getLivraison();
-      const frais     = FRAIS[livraison] ?? 0;
-      const subtotal  = priceCAD * qty;
-      const rabais    = subtotal >= SEUIL_RABAIS ? MONTANT_RABAIS : 0;
-      const total     = Math.max(0.01, subtotal + frais - rabais);
-
-      document.getElementById('summaryQty').textContent      = qty;
-      document.getElementById('summarySubtotal').textContent = subtotal > 0 ? `${subtotal.toFixed(2)} $CAD` : '—';
-
-      const shippingLine = document.getElementById('summaryShippingLine');
-      if (frais > 0) {
-        document.getElementById('summaryShipping').textContent = `+${frais.toFixed(2)} $CAD`;
-        shippingLine.hidden = false;
-      } else {
-        shippingLine.hidden = true;
-      }
-
-      const rabaisLine = document.getElementById('summaryRabaisLine');
-      if (rabais > 0) {
-        document.getElementById('summaryRabais').textContent = `−${rabais.toFixed(2)} $CAD`;
-        rabaisLine.hidden = false;
-        document.getElementById('promoBadge').hidden = false;
-        document.getElementById('promoHint').hidden  = true;
-      } else {
-        rabaisLine.hidden = true;
-        document.getElementById('promoBadge').hidden = true;
-        document.getElementById('promoHint').hidden  = false;
-      }
-
-      document.getElementById('summaryTotal').textContent = total > 0 ? `${total.toFixed(2)} $CAD` : '—';
-    }
-
-    function escHtml(str) {
-      return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-
-    // ── Validation formulaire ──────────────────────────────
-    function validateForm() {
-      let ok = true;
-      const name  = document.getElementById('customerName').value.trim();
-      const email = document.getElementById('customerEmail').value.trim();
-      const qty   = parseInt(document.getElementById('qty').value, 10);
-
-      const nameErr  = document.getElementById('nameErr');
-      const emailErr = document.getElementById('emailErr');
-      nameErr.hidden  = true;
-      emailErr.hidden = true;
-
-      if (name.length < 2) {
-        nameErr.textContent = 'Veuillez entrer votre nom complet.';
-        nameErr.hidden = false;
-        ok = false;
-      }
-      if (!email.includes('@') || email.length > 254) {
-        emailErr.textContent = 'Adresse email invalide.';
-        emailErr.hidden = false;
-        ok = false;
-      }
-      if (!Number.isInteger(qty) || qty < 1 || qty > 20) {
-        ok = false;
-      }
-      if (!productId) {
-        showFormError('Aucun produit sélectionné. Retourne à la boutique.');
-        ok = false;
-      }
-      if (!getLivraison()) {
-        showFormError('Veuillez choisir un mode de livraison.');
-        ok = false;
-      }
-      return ok;
-    }
-
-    function showFormError(msg) {
-      const el = document.getElementById('formError');
-      el.textContent = msg;
-      el.hidden = false;
-    }
-
-    let internalOrderId = null;
-
-    // ── Soumission du formulaire ────────────────────────────
-    document.getElementById('orderForm').addEventListener('submit', async e => {
-      e.preventDefault();
-      document.getElementById('formError').hidden = true;
-
-      if (!validateForm()) return;
-
-      const continueBtn = document.getElementById('continueBtn');
-      continueBtn.disabled    = true;
-      continueBtn.textContent = 'Chargement…';
-
-      try {
-        const res = await fetch(`${API}/api/orders/create`, {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            customerName:  document.getElementById('customerName').value.trim(),
-            customerEmail: document.getElementById('customerEmail').value.trim(),
-            productId,
-            qty:       parseInt(document.getElementById('qty').value, 10),
-            notes:     document.getElementById('notes').value.trim(),
-            livraison: getLivraison(),
-          }),
-        });
-
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err.error ?? `Erreur ${res.status}`);
-        }
-
-        const { orderId, paypalOrderId, amountCAD } = await res.json();
-        internalOrderId = orderId;
-
-        // Afficher le bouton PayPal
-        continueBtn.hidden = true;
-        document.getElementById('paypalZone').hidden = false;
-
-        // Désactiver le formulaire
-        ['customerName','customerEmail','qty','notes'].forEach(id => {
-          document.getElementById(id).disabled = true;
-        });
-        document.querySelectorAll('input[name="livraison"]').forEach(r => r.disabled = true);
-
-        // Rendu bouton PayPal
-        paypal.Buttons({
-          createOrder: () => paypalOrderId,
-
-          onApprove: async () => {
-            const capRes = await fetch(`${API}/api/orders/capture`, {
-              method:  'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ paypalOrderId }),
-            });
-
-            if (!capRes.ok) {
-              const err = await capRes.json().catch(() => ({}));
-              showFormError(err.error ?? 'Erreur lors de la confirmation. Contactez-nous.');
-              return;
-            }
-
-            // Redirection vers page de confirmation
-            window.location.href = `merci.html?orderId=${encodeURIComponent(orderId)}&name=${encodeURIComponent(document.getElementById('customerName').value.trim())}&product=${encodeURIComponent(productName)}&amount=${encodeURIComponent(amountCAD)}`;
-          },
-
-          onError: err => {
-            console.error('[PayPal]', err);
-            showFormError('Le paiement a échoué. Réessaie ou contacte-nous.');
-          },
-
-          onCancel: () => {
-            document.getElementById('paypalZone').hidden = true;
-            continueBtn.hidden    = false;
-            continueBtn.disabled  = false;
-            continueBtn.textContent = 'Continuer vers le paiement →';
-          },
-
-          style: { layout: 'vertical', color: 'gold', shape: 'pill', label: 'pay' },
-        }).render('#paypal-button-container');
-
-      } catch (err) {
-        console.error(err);
-        showFormError(err.message ?? 'Erreur inattendue. Réessaie.');
-        continueBtn.disabled    = false;
-        continueBtn.textContent = 'Continuer vers le paiement →';
-      }
-    });
   </script>
 
 </body>
