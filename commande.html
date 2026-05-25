@@ -492,7 +492,7 @@
         }
 
         const script = document.createElement('script');
-        script.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(cfg.paypalClientId)}&currency=CAD&locale=fr_CA&components=buttons&intent=capture`;
+        script.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(cfg.paypalClientId)}&currency=CAD&locale=fr_CA&components=buttons&intent=capture&enable-funding=card,applepay,googlepay`;
         script.onload  = renderButtons;
         script.onerror = () => {
           document.getElementById('paypalLoading').textContent =
@@ -571,6 +571,49 @@
         },
 
       }).render('#paypal-button-container');
+
+      // Bouton carte de crédit/débit séparé (sans compte PayPal requis)
+      if (paypal.isFundingEligible(paypal.FUNDING.CARD)) {
+        paypal.Buttons({
+          fundingSource: paypal.FUNDING.CARD,
+          style: { shape: 'pill', height: 50 },
+          createOrder: async () => {
+            hideError();
+            if (!validate()) throw new Error('Validation échouée');
+            const name  = document.getElementById('customerName').value.trim();
+            const email = document.getElementById('customerEmail').value.trim();
+            const { livraison } = getOrderCalc();
+            const res = await fetch(API + '/api/orders/create', {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ customerName: name, customerEmail: email, productId, qty: 1, livraison }),
+            });
+            const data = await res.json();
+            if (!res.ok) { showError(data.error ?? 'Erreur commande.'); throw new Error(data.error); }
+            return data.paypalOrderId;
+          },
+          onApprove: async (data) => {
+            document.getElementById('paypalLoading').hidden = false;
+            document.getElementById('paypalLoading').textContent = 'Confirmation du paiement…';
+            const res = await fetch(API + '/api/orders/capture', {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ paypalOrderId: data.orderID }),
+            });
+            const result = await res.json();
+            if (!res.ok || !result.success) {
+              document.getElementById('paypalLoading').hidden = true;
+              showError(result.error ?? 'Erreur confirmation paiement.'); return;
+            }
+            const name = document.getElementById('customerName').value.trim();
+            window.location.href =
+              `merci.html?orderId=${encodeURIComponent(result.orderId)}` +
+              `&name=${encodeURIComponent(name)}` +
+              `&product=${encodeURIComponent(productName)}` +
+              `&amount=${encodeURIComponent(result.amountCAD)}`;
+          },
+          onCancel: () => showError('Paiement annulé.'),
+          onError:  (err) => { console.error('[PayPal Card]', err); showError('Erreur de paiement. Réessayez.'); },
+        }).render('#paypal-button-container');
+      }
     }
   </script>
 
