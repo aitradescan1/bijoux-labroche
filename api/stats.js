@@ -1,6 +1,7 @@
 // api/stats.js
 // GET /api/stats — statistiques de visites (admin seulement)
-// Header requis : Authorization: Bearer <ADMIN_SECRET>
+// POST /api/stats — enregistre une vue de page (public, session_id requis)
+// Header GET requis : Authorization: Bearer <ADMIN_SECRET>
 
 import { getSupabase } from '../lib/supabase.js';
 
@@ -8,7 +9,7 @@ const ALLOWED_ORIGIN = (process.env.ALLOWED_ORIGIN ?? '*').trim();
 
 function cors(res) {
   res.setHeader('Access-Control-Allow-Origin',  ALLOWED_ORIGIN);
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
 }
 
@@ -31,7 +32,24 @@ const PAGE_LABELS = {
 export default async function handler(req, res) {
   cors(res);
   if (req.method === 'OPTIONS') return res.status(204).end();
-  if (req.method !== 'GET')    return res.status(405).end();
+
+  // ── POST : enregistrement d'une vue de page ────────────
+  if (req.method === 'POST') {
+    const { page, sku, referrer, session_id } = req.body ?? {};
+    if (!session_id) return res.status(200).json({ ok: true });
+    try {
+      const supabase = getSupabase();
+      await supabase.from('page_views').insert({
+        page:       String(page       ?? '').slice(0, 200) || '/',
+        sku:        sku        ? String(sku).slice(0, 20)  : null,
+        referrer:   referrer   ? String(referrer).slice(0, 200) : null,
+        session_id: String(session_id).slice(0, 36),
+      });
+    } catch (_) { /* silencieux */ }
+    return res.status(200).json({ ok: true });
+  }
+
+  if (req.method !== 'GET') return res.status(405).end();
 
   const auth = req.headers.authorization ?? '';
   if (!process.env.ADMIN_SECRET || auth !== `Bearer ${process.env.ADMIN_SECRET}`) {

@@ -23,7 +23,7 @@
   });
 
   try {
-    fetch(API + '/api/track', {
+    fetch(API + '/api/stats', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: body,
