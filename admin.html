@@ -55,6 +55,36 @@
     .btn-modal-print { padding:10px 20px; border-radius:12px; border:none;
                        background:var(--gold,#b8860b); color:#fff; font-weight:600; cursor:pointer; }
 
+    /* ── Stats visiteurs ────────────────────────────────────── */
+    .stats-grid    { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px; }
+    .stats-card    { background:#fff; border-radius:14px; padding:16px 20px; flex:1; min-width:130px;
+                     box-shadow:0 2px 10px rgba(0,0,0,.07); text-align:center; }
+    .stats-num     { font-size:2rem; font-weight:700; color:#2d1a0a; line-height:1.1; }
+    .stats-sub     { font-size:.72rem; color:#a07850; font-weight:600; margin-top:2px; }
+    .stats-lbl     { font-size:.78rem; color:#888; margin-top:4px; }
+    .stats-2col    { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+    @media(max-width:600px){ .stats-2col { grid-template-columns:1fr; } }
+    .stats-box     { background:#fff; border-radius:14px; padding:16px 20px;
+                     box-shadow:0 2px 10px rgba(0,0,0,.07); }
+    .stats-box-title { font-weight:700; font-size:.9rem; margin-bottom:12px; color:#2d1a0a; }
+    .stats-row     { display:flex; justify-content:space-between; align-items:center;
+                     padding:6px 0; border-bottom:1px solid #f0ebe3; font-size:.88rem; }
+    .stats-row:last-child { border-bottom:none; }
+    .stats-row-lbl { color:#444; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .stats-row-n   { font-weight:700; color:#a07850; margin-left:8px; }
+    .stats-bar-wrap { display:flex; align-items:center; gap:8px; }
+    .stats-bar     { height:8px; border-radius:4px; background:#e8c875; min-width:4px; }
+    .chart-wrap    { display:flex; align-items:flex-end; gap:6px; height:80px;
+                     padding:4px 0 0; border-bottom:2px solid #f0ebe3; margin-bottom:6px; }
+    .chart-bar-col { display:flex; flex-direction:column; align-items:center; flex:1; gap:4px; }
+    .chart-bar-bar { background:#c9a84c; border-radius:4px 4px 0 0; width:100%; min-height:2px; }
+    .chart-bar-lbl { font-size:.62rem; color:#aaa; white-space:nowrap; }
+    .stats-setup-box { background:#fffbf0; border:1px solid #f0c040; border-radius:12px;
+                       padding:16px 20px; margin-bottom:20px; }
+    .stats-setup-box p { font-size:.88rem; color:#7a5c00; margin-bottom:8px; }
+    .stats-setup-box pre { background:#fff; border:1px solid #e8ddd0; border-radius:8px;
+                           padding:12px; font-size:.78rem; overflow-x:auto; color:#333; }
+
     /* ── Ventes locales ─────────────────────────────────────── */
     .ventes-stats { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
     .v-stat       { background:#fff; border-radius:12px; padding:14px 20px; flex:1; min-width:120px;
@@ -102,6 +132,7 @@
         <button class="tab-btn active" role="tab" data-tab="commandes">Commandes</button>
         <button class="tab-btn"        role="tab" data-tab="inventaire">Inventaire</button>
         <button class="tab-btn"        role="tab" data-tab="ventes">Ventes boutique</button>
+        <button class="tab-btn"        role="tab" data-tab="stats">Stats visiteurs</button>
       </div>
 
       <!-- ═══ ONGLET COMMANDES ═══════════════════════════════ -->
@@ -211,6 +242,77 @@
         </div>
       </div><!-- /tab-ventes -->
 
+      <!-- ═══ ONGLET STATS VISITEURS ══════════════════════════ -->
+      <div id="tab-stats" hidden>
+
+        <!-- Encadré configuration (one-time) -->
+        <details class="stats-setup-box">
+          <summary style="cursor:pointer;font-weight:700;font-size:.9rem;color:#7a5c00">⚙️ Configuration initiale (cliquer pour voir)</summary>
+          <p style="margin-top:10px">Exécuter <strong>une seule fois</strong> dans Supabase → SQL Editor :</p>
+          <pre>create table if not exists page_views (
+  id          uuid        primary key default gen_random_uuid(),
+  page        text        not null,
+  sku         text,
+  referrer    text,
+  session_id  text,
+  created_at  timestamptz default now()
+);
+create index if not exists idx_pv_created on page_views (created_at desc);
+create index if not exists idx_pv_sku on page_views (sku) where sku is not null;
+alter table page_views disable row level security;</pre>
+        </details>
+
+        <!-- Vues de page -->
+        <p style="font-weight:700;font-size:.9rem;color:#2d1a0a;margin:0 0 10px">Pages vues</p>
+        <div class="stats-grid" id="statsViewCards">
+          <div class="stats-card"><div class="stats-num" id="svToday">—</div><div class="stats-sub">Aujourd'hui</div></div>
+          <div class="stats-card"><div class="stats-num" id="svWeek">—</div><div class="stats-sub">7 derniers jours</div></div>
+          <div class="stats-card"><div class="stats-num" id="svMonth">—</div><div class="stats-sub">30 derniers jours</div></div>
+          <div class="stats-card"><div class="stats-num" id="svTotal">—</div><div class="stats-sub">Total</div></div>
+        </div>
+
+        <!-- Sessions uniques -->
+        <p style="font-weight:700;font-size:.9rem;color:#2d1a0a;margin:0 0 10px">Sessions uniques</p>
+        <div class="stats-grid" id="statsSessionCards">
+          <div class="stats-card"><div class="stats-num" id="ssToday">—</div><div class="stats-sub">Aujourd'hui</div></div>
+          <div class="stats-card"><div class="stats-num" id="ssWeek">—</div><div class="stats-sub">7 derniers jours</div></div>
+          <div class="stats-card"><div class="stats-num" id="ssMonth">—</div><div class="stats-sub">30 derniers jours</div></div>
+        </div>
+
+        <!-- Graphe 7 jours -->
+        <div class="stats-box" style="margin-bottom:20px">
+          <div class="stats-box-title">Vues par jour (7 derniers jours)</div>
+          <div class="chart-wrap" id="statsChart">
+            <div style="color:#bbb;font-size:.85rem;align-self:center;margin:auto">Chargement…</div>
+          </div>
+          <div style="display:flex;gap:6px" id="statsChartLabels"></div>
+        </div>
+
+        <!-- 3 colonnes -->
+        <div class="stats-2col" style="grid-template-columns:1fr 1fr 1fr">
+          <!-- Top pages -->
+          <div class="stats-box">
+            <div class="stats-box-title">Pages populaires</div>
+            <div id="statsTopPages"><div style="color:#bbb;font-size:.82rem">—</div></div>
+          </div>
+          <!-- Top produits -->
+          <div class="stats-box">
+            <div class="stats-box-title">Produits consultés</div>
+            <div id="statsTopProducts"><div style="color:#bbb;font-size:.82rem">—</div></div>
+          </div>
+          <!-- Top référents -->
+          <div class="stats-box">
+            <div class="stats-box-title">Sources de trafic</div>
+            <div id="statsTopReferrers"><div style="color:#bbb;font-size:.82rem">—</div></div>
+          </div>
+        </div>
+
+        <div style="text-align:right;margin-top:8px">
+          <button class="btn-ghost" id="refreshStatsBtn">↻ Rafraîchir</button>
+        </div>
+
+      </div><!-- /tab-stats -->
+
     </main>
 
     <!-- ── Modal QR Code ──────────────────────────────────── -->
@@ -255,11 +357,12 @@
         document.querySelectorAll('.admin-tabs .tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentTab = btn.dataset.tab;
-        ['commandes','inventaire','ventes'].forEach(t => {
+        ['commandes','inventaire','ventes','stats'].forEach(t => {
           document.getElementById(`tab-${t}`).hidden = (t !== currentTab);
         });
         if (currentTab === 'inventaire') loadInventory();
         if (currentTab === 'ventes')     loadVentes();
+        if (currentTab === 'stats')      loadStats();
       });
     });
 
@@ -553,6 +656,84 @@
       }
     }
 
+    // ── Stats visiteurs ────────────────────────────────────
+    document.getElementById('refreshStatsBtn').addEventListener('click', loadStats);
+
+    async function loadStats() {
+      // Reset cards
+      ['svToday','svWeek','svMonth','svTotal','ssToday','ssWeek','ssMonth'].forEach(id => {
+        document.getElementById(id).textContent = '…';
+      });
+      document.getElementById('statsChart').innerHTML = '<div style="color:#bbb;font-size:.85rem;align-self:center;margin:auto">Chargement…</div>';
+      document.getElementById('statsChartLabels').innerHTML = '';
+      document.getElementById('statsTopPages').innerHTML    = '<div style="color:#bbb;font-size:.82rem">…</div>';
+      document.getElementById('statsTopProducts').innerHTML = '<div style="color:#bbb;font-size:.82rem">…</div>';
+      document.getElementById('statsTopReferrers').innerHTML= '<div style="color:#bbb;font-size:.82rem">…</div>';
+
+      try {
+        const res = await fetch(`${API}/api/stats`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const d = await res.json();
+
+        document.getElementById('svToday').textContent  = d.views?.today  ?? 0;
+        document.getElementById('svWeek').textContent   = d.views?.week   ?? 0;
+        document.getElementById('svMonth').textContent  = d.views?.month  ?? 0;
+        document.getElementById('svTotal').textContent  = d.views?.total  ?? 0;
+        document.getElementById('ssToday').textContent  = d.sessions?.today ?? 0;
+        document.getElementById('ssWeek').textContent   = d.sessions?.week  ?? 0;
+        document.getElementById('ssMonth').textContent  = d.sessions?.month ?? 0;
+
+        // Graphe 7 jours
+        const byDay = d.byDay ?? {};
+        const days  = Object.keys(byDay).sort();
+        const max   = Math.max(1, ...days.map(k => byDay[k]));
+        const chart = document.getElementById('statsChart');
+        chart.innerHTML = days.map(day => {
+          const pct = Math.round((byDay[day] / max) * 100);
+          return `<div class="chart-bar-col"><div class="chart-bar-bar" style="height:${Math.max(2,pct)}%"></div></div>`;
+        }).join('');
+        document.getElementById('statsChartLabels').innerHTML = days.map(day => {
+          const d2 = new Date(day + 'T00:00:00');
+          return `<div style="flex:1;text-align:center;font-size:.6rem;color:#aaa">${d2.toLocaleDateString('fr-CA',{month:'numeric',day:'numeric'})}</div>`;
+        }).join('');
+
+        // Top pages
+        const PAGE_NAMES = { '/index.html': 'Accueil', '/boutique.html': 'Boutique', '/pierre.html': 'Ma pierre',
+          '/histoire.html': 'Notre histoire', '/pedagogie.html': 'Pédagogie', '/geologie.html': 'Géologie',
+          '/commande.html': 'Commander', '/admin.html': 'Admin', '/vendre.html': 'Vendre' };
+        const topPages = d.topPages ?? [];
+        document.getElementById('statsTopPages').innerHTML = topPages.length
+          ? topPages.slice(0,8).map(r => {
+              const label = PAGE_NAMES[r.path] ?? r.path ?? r.label ?? '—';
+              return `<div class="stats-row"><span class="stats-row-lbl" title="${escHtml(r.path ?? '')}">${escHtml(label)}</span><span class="stats-row-n">${r.n}</span></div>`;
+            }).join('')
+          : '<div style="color:#bbb;font-size:.82rem">Aucune donnée</div>';
+
+        // Top produits
+        const topProducts = d.topProducts ?? [];
+        document.getElementById('statsTopProducts').innerHTML = topProducts.length
+          ? topProducts.slice(0,8).map(r =>
+              `<div class="stats-row"><span class="stats-row-lbl">${escHtml(r.sku ?? '—')}</span><span class="stats-row-n">${r.n}</span></div>`
+            ).join('')
+          : '<div style="color:#bbb;font-size:.82rem">Aucune donnée</div>';
+
+        // Top référents
+        const topReferrers = d.topReferrers ?? [];
+        document.getElementById('statsTopReferrers').innerHTML = topReferrers.length
+          ? topReferrers.slice(0,8).map(r =>
+              `<div class="stats-row"><span class="stats-row-lbl">${escHtml(r.ref ?? 'Direct')}</span><span class="stats-row-n">${r.n}</span></div>`
+            ).join('')
+          : '<div style="color:#bbb;font-size:.82rem">Aucune donnée</div>';
+
+      } catch (err) {
+        document.getElementById('svToday').textContent = '!';
+        document.getElementById('statsChart').innerHTML =
+          `<div style="color:#c62828;font-size:.82rem;align-self:center;margin:auto">Erreur: ${escHtml(err.message)}</div>`;
+      }
+    }
+
     const PAIEMENT_LABEL = { comptant: '💵 Comptant', interac: '📱 Interac', paypal: '🅿️ PayPal' };
 
     function renderVentes(ventes, total) {
@@ -584,6 +765,6 @@
         </tr>`).join('');
     }
   </script>
-
+  <script src="js/track.js"></script>
 </body>
 </html>
