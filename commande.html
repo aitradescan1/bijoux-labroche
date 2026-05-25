@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8">
@@ -9,137 +9,214 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@400;500;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <style>
-    .coming-soon-wrap {
-      max-width: 560px;
+    /* ── Layout caisse ────────────────────────────────────── */
+    .checkout-wrap {
+      max-width: 960px;
       margin: 0 auto;
-      padding: 3rem 1.5rem 5rem;
-      text-align: center;
+      padding: 2rem 1.25rem 5rem;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 2rem;
+      align-items: start;
     }
-    .coming-soon-icon {
-      font-size: 3.5rem;
-      margin-bottom: 1rem;
-      display: block;
+    @media (max-width: 700px) {
+      .checkout-wrap { grid-template-columns: 1fr; }
     }
-    .coming-soon-title {
+
+    /* ── Titre page ───────────────────────────────────────── */
+    .checkout-page-title {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-size: clamp(1.5rem, 4vw, 2rem);
       font-weight: 700;
-      color: var(--color-heading, #1a1a1a);
-      margin: 0 0 0.75rem;
+      color: #1a1a1a;
+      margin: 0 0 1.75rem;
+      grid-column: 1 / -1;
     }
-    .coming-soon-subtitle {
-      font-size: 1.05rem;
+
+    /* ── Sections formulaire ──────────────────────────────── */
+    .checkout-section {
+      background: #fff;
+      border: 1px solid #e8dfd4;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .checkout-section-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #a07850;
+      margin: 0 0 1.1rem;
+    }
+
+    /* ── Carte produit ────────────────────────────────────── */
+    .product-card {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .product-card-img {
+      width: 72px;
+      height: 72px;
+      border-radius: 10px;
+      object-fit: contain;
+      background: #faf7f3;
+      flex-shrink: 0;
+      border: 1px solid #e8dfd4;
+    }
+    .product-card-ph {
+      width: 72px;
+      height: 72px;
+      border-radius: 10px;
+      background: #f0ebe3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+    .product-card-name {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #1a1a1a;
+      margin: 0 0 0.25rem;
+    }
+    .product-card-price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #a07850;
+      margin: 0;
+    }
+
+    /* ── Champs formulaire ────────────────────────────────── */
+    .field-group { margin-bottom: 1rem; }
+    .field-group:last-child { margin-bottom: 0; }
+    .field-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
       color: #555;
-      margin: 0 0 2rem;
-      line-height: 1.6;
+      margin-bottom: 0.35rem;
     }
-    .coming-soon-card {
+    .field-group input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.7rem 1rem;
+      border: 1.5px solid #d4c4b0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: #fdfcfa;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .field-group input:focus { border-color: #a07850; background: #fff; }
+    .field-group input.invalid { border-color: #c62828; }
+
+    /* ── Options livraison ────────────────────────────────── */
+    .livraison-options { display: flex; flex-direction: column; gap: 0.75rem; }
+    .livraison-option {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.85rem 1rem;
+      border: 1.5px solid #e0d6c8;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .livraison-option:has(input:checked) {
+      border-color: #a07850;
+      background: #fdf8f3;
+    }
+    .livraison-option input[type="radio"] { accent-color: #a07850; width: 18px; height: 18px; }
+    .livraison-label { flex: 1; }
+    .livraison-label-title { font-weight: 600; font-size: 0.92rem; color: #1a1a1a; }
+    .livraison-label-desc  { font-size: 0.78rem; color: #888; margin-top: 1px; }
+    .livraison-price { font-weight: 700; color: #a07850; font-size: 0.95rem; white-space: nowrap; }
+
+    /* ── Résumé commande ──────────────────────────────────── */
+    .summary-box {
       background: #faf7f3;
       border: 1px solid #e8dfd4;
       border-radius: 16px;
       padding: 1.5rem;
-      margin: 2rem 0;
-      display: flex;
-      align-items: center;
-      gap: 1.25rem;
-      text-align: left;
+      position: sticky;
+      top: 1.5rem;
     }
-    .coming-soon-card img {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 10px;
-      flex-shrink: 0;
-    }
-    .coming-soon-card .product-placeholder-icon {
-      width: 80px;
-      height: 80px;
-      border-radius: 10px;
-      background: #e8dfd4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      flex-shrink: 0;
-    }
-    .cs-product-name {
-      font-weight: 600;
-      font-size: 1rem;
-      margin: 0 0 0.25rem;
+    .summary-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
       color: #1a1a1a;
+      margin: 0 0 1.1rem;
     }
-    .cs-product-price {
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: #555;
+      padding: 0.45rem 0;
+      border-bottom: 1px solid #ede6dc;
+    }
+    .summary-row:last-of-type { border-bottom: none; }
+    .summary-row.total {
       font-size: 1.05rem;
       font-weight: 700;
-      color: #a07850;
+      color: #1a1a1a;
+      border-top: 2px solid #e0d6c8;
+      margin-top: 0.25rem;
+      padding-top: 0.75rem;
     }
-    .coming-soon-steps {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 2rem;
-      text-align: left;
-      display: flex;
-      flex-direction: column;
-      gap: 0.85rem;
+    .summary-row.discount { color: #2e7d32; }
+    .summary-row.discount span:last-child { font-weight: 700; }
+    .summary-discount-badge {
+      display: inline-block;
+      background: #e8f5e9;
+      color: #2e7d32;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 50px;
+      padding: 0.2rem 0.65rem;
+      margin-bottom: 0.75rem;
     }
-    .coming-soon-steps li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      font-size: 0.97rem;
-      color: #444;
+
+    /* ── Zone PayPal ──────────────────────────────────────── */
+    .paypal-wrap { margin-top: 1.25rem; }
+    .paypal-loading {
+      text-align: center;
+      color: #aaa;
+      font-size: 0.88rem;
+      padding: 1rem 0;
+    }
+    .payment-error {
+      background: #fce4ec;
+      color: #c62828;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 0.88rem;
+      margin-top: 0.75rem;
       line-height: 1.5;
     }
-    .cs-step-num {
-      background: #a07850;
-      color: #fff;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
+    .security-note {
       display: flex;
       align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: #aaa;
+      margin-top: 0.85rem;
       justify-content: center;
-      font-size: 0.78rem;
-      font-weight: 700;
-      flex-shrink: 0;
-      margin-top: 0.1rem;
     }
-    .cs-email-btn {
-      display: inline-block;
-      background: #a07850;
-      color: #fff;
-      padding: 0.85rem 2rem;
-      border-radius: 50px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1rem;
-      transition: background 0.2s, transform 0.15s;
-      margin-bottom: 1rem;
+
+    /* ── No product ───────────────────────────────────────── */
+    .no-product-wrap {
+      text-align: center;
+      padding: 4rem 1.5rem;
+      grid-column: 1 / -1;
     }
-    .cs-email-btn:hover {
-      background: #8a6640;
-      transform: translateY(-1px);
-    }
-    .cs-back-link {
-      display: block;
-      color: #888;
-      font-size: 0.9rem;
-      text-decoration: none;
-      margin-top: 0.5rem;
-    }
-    .cs-back-link:hover { color: #333; }
-    .cs-badge {
-      display: inline-block;
-      background: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffc107;
-      border-radius: 50px;
-      padding: 0.3rem 1rem;
-      font-size: 0.82rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-      letter-spacing: 0.03em;
-    }
+    .no-product-wrap h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 1rem; }
+    .no-product-wrap p  { color: #666; margin-bottom: 2rem; }
   </style>
 </head>
 <body>
@@ -163,47 +240,128 @@
   </header>
 
   <main>
-    <div class="coming-soon-wrap">
+    <div class="checkout-wrap" id="checkoutWrap">
 
-      <span class="coming-soon-icon">✨</span>
-      <span class="cs-badge">Paiement électronique — Bientôt disponible</span>
+      <!-- ── Titre ──────────────────────────────────────── -->
+      <h1 class="checkout-page-title">Finaliser ma commande</h1>
 
-      <h1 class="coming-soon-title">La commande en ligne arrive&nbsp;!</h1>
-      <p class="coming-soon-subtitle">
-        Notre système de paiement électronique est en cours de finalisation.
-        En attendant, il est facile de commander directement par courriel.
-      </p>
+      <!-- ══════════════════════════════════════════════════
+           COLONNE GAUCHE — Formulaire
+      ══════════════════════════════════════════════════════ -->
+      <div id="formCol">
 
-      <!-- Carte produit sélectionné -->
-      <div class="coming-soon-card" id="productCard">
-        <div class="product-placeholder-icon" id="productIcon">💎</div>
-        <div>
-          <p class="cs-product-name"  id="productName">—</p>
-          <p class="cs-product-price" id="productPrice"></p>
+        <!-- Produit sélectionné -->
+        <div class="checkout-section">
+          <p class="checkout-section-title">Produit sélectionné</p>
+          <div class="product-card" id="productCard">
+            <div class="product-card-ph" id="productPh">💎</div>
+            <div>
+              <p class="product-card-name"  id="productCardName">Chargement…</p>
+              <p class="product-card-price" id="productCardPrice"></p>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <!-- Étapes -->
-      <ul class="coming-soon-steps">
-        <li>
-          <span class="cs-step-num">1</span>
-          <span>Envoyez-nous un courriel en mentionnant le produit qui vous intéresse et vos coordonnées.</span>
-        </li>
-        <li>
-          <span class="cs-step-num">2</span>
-          <span>Nous vous confirmons la disponibilité et les options de livraison (ramassage gratuit ou Canada Post).</span>
-        </li>
-        <li>
-          <span class="cs-step-num">3</span>
-          <span>Le paiement se fait en personne ou par virement — simple et sécuritaire.</span>
-        </li>
-      </ul>
+        <!-- Coordonnées -->
+        <div class="checkout-section">
+          <p class="checkout-section-title">Vos informations</p>
+          <div class="field-group">
+            <label for="customerName">Nom complet *</label>
+            <input type="text" id="customerName" autocomplete="name"
+                   placeholder="Ex : Marie Tremblay" maxlength="100">
+          </div>
+          <div class="field-group">
+            <label for="customerEmail">Courriel *</label>
+            <input type="email" id="customerEmail" autocomplete="email"
+                   placeholder="Ex : marie@exemple.com" maxlength="254">
+          </div>
+        </div>
 
-      <a id="emailBtn" href="mailto:bijoux.labroche@gmail.com" class="cs-email-btn">
-        📧 Nous écrire pour commander
-      </a>
-      <a href="boutique.html" class="cs-back-link">← Retour à la boutique</a>
+        <!-- Livraison -->
+        <div class="checkout-section">
+          <p class="checkout-section-title">Mode de livraison</p>
+          <div class="livraison-options">
+            <label class="livraison-option">
+              <input type="radio" name="livraison" value="collecte" checked>
+              <div class="livraison-label">
+                <div class="livraison-label-title">Ramassage</div>
+                <div class="livraison-label-desc">Récupérez votre bijou à notre adresse</div>
+              </div>
+              <span class="livraison-price">Gratuit</span>
+            </label>
+            <label class="livraison-option">
+              <input type="radio" name="livraison" value="poste_sans_suivi">
+              <div class="livraison-label">
+                <div class="livraison-label-title">Lettermail Canada Post</div>
+                <div class="livraison-label-desc">Enveloppe capitonnée, sans numéro de suivi</div>
+              </div>
+              <span class="livraison-price">3,50 $</span>
+            </label>
+            <label class="livraison-option">
+              <input type="radio" name="livraison" value="colis_suivi">
+              <div class="livraison-label">
+                <div class="livraison-label-title">Colis avec suivi</div>
+                <div class="livraison-label-desc">Expedited Parcel Canada Post — toutes provinces</div>
+              </div>
+              <span class="livraison-price">14,95 $</span>
+            </label>
+          </div>
+        </div>
 
+      </div><!-- /formCol -->
+
+      <!-- ══════════════════════════════════════════════════
+           COLONNE DROITE — Résumé + PayPal
+      ══════════════════════════════════════════════════════ -->
+      <div class="summary-box" id="summaryBox">
+
+        <p class="summary-title">Résumé</p>
+
+        <div id="discountBadge" class="summary-discount-badge" hidden>
+          Rabais fidélité 5 $ appliqué !
+        </div>
+
+        <div class="summary-row">
+          <span id="summaryProductLabel">Produit (×1)</span>
+          <span id="summarySubtotal">—</span>
+        </div>
+        <div class="summary-row" id="summaryLivraisonRow">
+          <span>Livraison</span>
+          <span id="summaryLivraison">Gratuit</span>
+        </div>
+        <div class="summary-row discount" id="summaryDiscountRow" hidden>
+          <span>Rabais fidélité</span>
+          <span>− 5,00 $</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span id="summaryTotal">—</span>
+        </div>
+
+        <!-- Zone PayPal -->
+        <div class="paypal-wrap">
+          <div class="paypal-loading" id="paypalLoading">Chargement du paiement…</div>
+          <div id="paypal-button-container"></div>
+          <div class="payment-error" id="paymentError" hidden></div>
+          <div class="security-note">
+            <span>🔒</span>
+            <span>Paiement sécurisé via PayPal — nous ne voyons pas vos données bancaires</span>
+          </div>
+        </div>
+
+        <a href="boutique.html" style="display:block;text-align:center;color:#aaa;font-size:.85rem;text-decoration:none;margin-top:1rem">
+          ← Retour à la boutique
+        </a>
+
+      </div><!-- /summaryBox -->
+
+    </div><!-- /checkoutWrap -->
+
+    <!-- Affiché si aucun produit dans l'URL -->
+    <div class="no-product-wrap" id="noProductWrap" hidden>
+      <h1>Aucun produit sélectionné</h1>
+      <p>Choisissez un bijou dans la boutique pour passer commande.</p>
+      <a href="boutique.html" class="btn-primary">Voir la boutique</a>
     </div>
   </main>
 
@@ -226,27 +384,193 @@
   </footer>
 
   <script>
+    const API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+      ? '' : 'https://bijoux-labroche-aitradescan1s-projects.vercel.app';
+
+    // Constantes livrais (miroir du serveur — pour affichage uniquement)
+    const FRAIS        = { collecte: 0, poste_sans_suivi: 3.50, colis_suivi: 14.95 };
+    const SEUIL_RABAIS = 35.00;
+    const RABAIS_AMT   = 5.00;
+
+    // ── Paramètres URL ───────────────────────────────────
     const params      = new URLSearchParams(location.search);
+    const productId   = params.get('productId')   ?? '';
     const productName = params.get('productName') ?? '';
     const priceCAD    = parseFloat(params.get('price') ?? '0');
 
-    if (productName) {
-      document.getElementById('productName').textContent = productName;
-      if (priceCAD > 0) {
-        document.getElementById('productPrice').textContent = priceCAD.toFixed(2) + ' $CAD';
-      }
+    function escHtml(s) {
+      return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
 
-      // Pré-remplir le sujet du courriel
-      const subject = encodeURIComponent('Commande — ' + productName);
-      const body    = encodeURIComponent(
-        'Bonjour,\n\nJe suis intéressé(e) par le produit suivant :\n' +
-        productName + (priceCAD > 0 ? ' (' + priceCAD.toFixed(2) + ' $CAD)' : '') +
-        '\n\nMon nom : \nMon numéro de téléphone : \nMode de livraison souhaité : \n\nMerci !'
-      );
-      document.getElementById('emailBtn').href =
-        'mailto:bijoux.labroche@gmail.com?subject=' + subject + '&body=' + body;
+    // ── Vérifier qu'un produit est sélectionné ───────────
+    if (!productId || !productName || !(priceCAD > 0)) {
+      document.getElementById('checkoutWrap').hidden = true;
+      document.getElementById('noProductWrap').hidden = false;
     } else {
-      document.getElementById('productCard').hidden = true;
+      init();
+    }
+
+    function init() {
+      // ── Afficher le produit ──────────────────────────
+      document.getElementById('productCardName').textContent  = productName;
+      document.getElementById('productCardPrice').textContent = priceCAD.toFixed(2) + ' $CAD';
+
+      // ── Résumé initial ───────────────────────────────
+      updateSummary();
+      document.querySelectorAll('input[name="livraison"]').forEach(r =>
+        r.addEventListener('change', updateSummary));
+
+      // ── Initialiser PayPal ───────────────────────────
+      loadPayPal();
+    }
+
+    // ── Calcul résumé ────────────────────────────────────
+    function getOrderCalc() {
+      const livraison = document.querySelector('input[name="livraison"]:checked')?.value ?? 'collecte';
+      const frais     = FRAIS[livraison] ?? 0;
+      const subtotal  = priceCAD;
+      const rabais    = subtotal >= SEUIL_RABAIS ? RABAIS_AMT : 0;
+      const total     = Math.max(0.01, parseFloat((subtotal + frais - rabais).toFixed(2)));
+      return { livraison, frais, subtotal, rabais, total };
+    }
+
+    function updateSummary() {
+      const { frais, subtotal, rabais, total } = getOrderCalc();
+      document.getElementById('summarySubtotal').textContent =
+        subtotal.toFixed(2) + ' $';
+      document.getElementById('summaryLivraison').textContent =
+        frais === 0 ? 'Gratuit' : frais.toFixed(2) + ' $';
+      document.getElementById('summaryDiscountRow').hidden = rabais === 0;
+      document.getElementById('discountBadge').hidden      = rabais === 0;
+      document.getElementById('summaryTotal').textContent  = total.toFixed(2) + ' $';
+    }
+
+    // ── Validation formulaire ────────────────────────────
+    function validate() {
+      const name  = document.getElementById('customerName').value.trim();
+      const email = document.getElementById('customerEmail').value.trim();
+      let ok = true;
+
+      const nameInput  = document.getElementById('customerName');
+      const emailInput = document.getElementById('customerEmail');
+      nameInput.classList.remove('invalid');
+      emailInput.classList.remove('invalid');
+
+      if (!name || name.length < 2) {
+        nameInput.classList.add('invalid');
+        nameInput.focus();
+        showError('Veuillez entrer votre nom complet (2 caractères minimum).');
+        ok = false;
+      } else if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+        emailInput.classList.add('invalid');
+        emailInput.focus();
+        showError('Veuillez entrer une adresse courriel valide.');
+        ok = false;
+      } else {
+        hideError();
+      }
+      return ok;
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('paymentError');
+      el.textContent = msg;
+      el.hidden = false;
+    }
+    function hideError() {
+      document.getElementById('paymentError').hidden = true;
+    }
+
+    // ── Chargement PayPal ─────────────────────────────────
+    async function loadPayPal() {
+      try {
+        const cfg = await fetch(API + '/api/ping').then(r => r.json());
+        if (!cfg.paypalClientId) {
+          document.getElementById('paypalLoading').textContent =
+            'Paiement en ligne temporairement indisponible.';
+          return;
+        }
+
+        const script = document.createElement('script');
+        script.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(cfg.paypalClientId)}&currency=CAD&locale=fr_CA&components=buttons&intent=capture`;
+        script.onload  = renderButtons;
+        script.onerror = () => {
+          document.getElementById('paypalLoading').textContent =
+            'Impossible de charger le module de paiement.';
+        };
+        document.head.appendChild(script);
+      } catch (e) {
+        document.getElementById('paypalLoading').textContent =
+          'Erreur de connexion. Veuillez réessayer.';
+      }
+    }
+
+    // ── Rendu des boutons PayPal ──────────────────────────
+    function renderButtons() {
+      document.getElementById('paypalLoading').hidden = true;
+
+      paypal.Buttons({
+        style: { color: 'gold', shape: 'pill', label: 'pay', height: 50 },
+
+        // ── Étape 1 : créer l'ordre côté serveur ─────────
+        createOrder: async () => {
+          hideError();
+          if (!validate()) throw new Error('Validation échouée');
+
+          const name      = document.getElementById('customerName').value.trim();
+          const email     = document.getElementById('customerEmail').value.trim();
+          const { livraison } = getOrderCalc();
+
+          const res = await fetch(API + '/api/orders/create', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ customerName: name, customerEmail: email, productId, qty: 1, livraison }),
+          });
+
+          const data = await res.json();
+          if (!res.ok) {
+            showError(data.error ?? 'Erreur lors de la création de la commande.');
+            throw new Error(data.error);
+          }
+          return data.paypalOrderId;
+        },
+
+        // ── Étape 2 : capturer le paiement ───────────────
+        onApprove: async (data) => {
+          document.getElementById('paypalLoading').hidden  = false;
+          document.getElementById('paypalLoading').textContent = 'Confirmation du paiement…';
+
+          const res = await fetch(API + '/api/orders/capture', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ paypalOrderId: data.orderID }),
+          });
+
+          const result = await res.json();
+          if (!res.ok || !result.success) {
+            document.getElementById('paypalLoading').hidden = true;
+            showError(result.error ?? 'Erreur lors de la confirmation du paiement.');
+            return;
+          }
+
+          const name = document.getElementById('customerName').value.trim();
+          window.location.href =
+            `merci.html?orderId=${encodeURIComponent(result.orderId)}` +
+            `&name=${encodeURIComponent(name)}` +
+            `&product=${encodeURIComponent(productName)}` +
+            `&amount=${encodeURIComponent(result.amountCAD)}`;
+        },
+
+        onCancel: () => {
+          showError('Paiement annulé. Vous pouvez réessayer quand vous voulez.');
+        },
+
+        onError: (err) => {
+          console.error('[PayPal]', err);
+          showError('Une erreur PayPal est survenue. Veuillez réessayer ou nous contacter.');
+        },
+
+      }).render('#paypal-button-container');
     }
   </script>
 

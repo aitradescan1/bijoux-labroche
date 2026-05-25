@@ -19,9 +19,11 @@ export default async function handler(req, res) {
     if (error) throw error;
 
     return res.status(200).json({
-      ok:       true,
-      products: count,
-      ts:       new Date().toISOString(),
+      ok:            true,
+      products:      count,
+      ts:            new Date().toISOString(),
+      paypalClientId: process.env.PAYPAL_CLIENT_ID ?? null,
+      paypalMode:    process.env.PAYPAL_MODE ?? 'sandbox',
     });
   } catch (err) {
     return res.status(500).json({ ok: false, error: err.message });
