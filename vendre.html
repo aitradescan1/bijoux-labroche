@@ -318,7 +318,7 @@
   let qty      = 1;
   let paiement = 'comptant';
   let vendeur  = 'Nathan';
-  let posPin   = localStorage.getItem(PIN_KEY) ?? '';
+  let posPin   = sessionStorage.getItem(PIN_KEY) ?? '';
   let skuActif = '';
 
   // ── Utilitaires ──────────────────────────────────────────
@@ -347,7 +347,7 @@
     const val = document.getElementById('pinInput').value.trim();
     if (!val) { document.getElementById('pinError').textContent = 'Entre ton PIN.'; return; }
     posPin = val;
-    localStorage.setItem(PIN_KEY, val);
+    sessionStorage.setItem(PIN_KEY, val);
     document.getElementById('pinError').textContent = '';
     hidePin();
     showSku();
@@ -507,7 +507,7 @@
 
       if (res.status === 401) {
         // PIN incorrect — vider le cache et redemander
-        localStorage.removeItem(PIN_KEY);
+        sessionStorage.removeItem(PIN_KEY);
         posPin = '';
         document.getElementById('pinInput').value = '';
         document.getElementById('pinError').textContent = 'PIN incorrect. Réessaie.';
