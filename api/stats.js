@@ -3,7 +3,8 @@
 // POST /api/stats — enregistre une vue de page (public, session_id requis)
 // Header GET requis : Authorization: Bearer <ADMIN_SECRET>
 
-import { getSupabase } from '../lib/supabase.js';
+import { getSupabase }                  from '../lib/supabase.js';
+import { timingSafeEqual, createHash }  from 'crypto';
 
 const ALLOWED_ORIGIN = (process.env.ALLOWED_ORIGIN ?? '*').trim();
 
@@ -51,10 +52,13 @@ export default async function handler(req, res) {
 
   if (req.method !== 'GET') return res.status(405).end();
 
-  const auth = req.headers.authorization ?? '';
-  if (!process.env.ADMIN_SECRET || auth !== `Bearer ${process.env.ADMIN_SECRET}`) {
-    return res.status(401).json({ error: 'Non autorisé' });
-  }
+  const auth   = req.headers.authorization ?? '';
+  const token  = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+  const secret = process.env.ADMIN_SECRET ?? '';
+  if (!secret || !token) return res.status(401).json({ error: 'Non autorisé' });
+  const ha = createHash('sha256').update(token).digest();
+  const hb = createHash('sha256').update(secret).digest();
+  if (!timingSafeEqual(ha, hb)) return res.status(401).json({ error: 'Non autorisé' });
 
   try {
     const supabase = getSupabase();

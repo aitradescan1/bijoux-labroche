@@ -30,7 +30,7 @@ function parseBody(req) {
   catch { return null; }
 }
 
-const VALID_CATEGORIES = new Set(['boucles', 'collier', 'bracelet', 'autre']);
+const VALID_CATEGORIES = new Set(['boucles', 'collier', 'bracelet', 'accessoire', 'autre']);
 
 export default async function handler(req, res) {
   cors(res);

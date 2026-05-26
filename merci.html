@@ -18,11 +18,13 @@
         <span class="logo-text">Labroche et Gobeil</span>
       </a>
       <nav class="main-nav">
-        <a href="index.html"    class="nav-link">Accueil</a>
-        <a href="boutique.html" class="nav-link">Boutique</a>
-        <a href="histoire.html" class="nav-link">Notre histoire</a>
+        <a href="index.html"     class="nav-link">Accueil</a>
+        <a href="boutique.html"  class="nav-link">Boutique</a>
+        <a href="pierre.html"    class="nav-link">Ma pierre</a>
+        <a href="histoire.html"  class="nav-link">Notre histoire</a>
         <a href="pedagogie.html" class="nav-link">Pédagogie</a>
         <a href="geologie.html"  class="nav-link">Géologie</a>
+        <a href="commande.html"  class="nav-cta">Commander →</a>
       </nav>
     </div>
   </header>
@@ -66,6 +68,14 @@
         <img src="assets/svg/sparkle.svg" alt="" class="footer-icon" aria-hidden="true">
         <span>Labroche et Gobeil</span>
       </div>
+      <nav class="footer-nav">
+        <a href="index.html">Accueil</a>
+        <a href="boutique.html">Boutique</a>
+        <a href="pierre.html">Ma pierre</a>
+        <a href="histoire.html">Notre histoire</a>
+        <a href="pedagogie.html">Pédagogie</a>
+        <a href="geologie.html">Géologie</a>
+      </nav>
       <p class="footer-copy">© 2026 Labroche et Gobeil — Bijoux en pierres naturelles</p>
     </div>
   </footer>
@@ -83,7 +93,7 @@
 
     if (name) {
       document.getElementById('merciSub').textContent =
-        `${escHtml(name)}, ton paiement a bien été reçu. Nathan et Lyam vont préparer ton bijou avec soin ✨`;
+        `${name}, ton paiement a bien été reçu. Nathan et Lyam vont préparer ton bijou avec soin ✨`;
     }
 
     const detail = document.getElementById('merciDetail');
