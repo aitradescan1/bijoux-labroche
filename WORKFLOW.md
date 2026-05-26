@@ -297,4 +297,4 @@ Aucun logiciel à acheter.
 ---
 
 *Document généré avec Claude Code — mai 2026*
-*Contact : Michael Labroche — consultant IA & automatisation*
+*Contact : consultez le dépôt GitHub pour plus d'informations*
