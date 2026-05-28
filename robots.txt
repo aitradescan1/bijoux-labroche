@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin.html
+Disallow: /vendre.html
+Disallow: /commande.html
+Disallow: /merci.html
+Disallow: /index_complet.html
+
+Sitemap: https://aitradescan1.github.io/bijoux-labroche/sitemap.xml
