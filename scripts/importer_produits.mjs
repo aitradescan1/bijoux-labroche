@@ -173,6 +173,9 @@ const DESCRIPTIONS = {
   'LBG-26-121': "Boucles d'oreilles jaspe dalmatien — les grands cabochons crème aux taches noires naturelles, chaque paire unique comme une empreinte. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
   'LBG-26-122': "Boucles d'oreilles calcédoine grise — les tons gris-perle apaisants de cette calcédoine lisse et polie, discrètes et élégantes. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
   'LBG-26-123': "Boucles d'oreilles aventurine foncée — les tons vert forêt profond de cette aventurine intense, naturelle et élégante. Présentées dans leur boîte en bois gravée Labroche et Gobeil.",
+
+  // ── Identifieurs (lot 20260524) ───────────────────────────
+  'LBG-26-124': "Ensemble de 2 identifieurs pour coupe à vin — plume dorée et étoile trèfle avec perle de verre noire. Un duo bohème et céleste pour ne plus jamais confondre son verre.",
 };
 
 // Position de cadrage par SKU (object-position CSS)
@@ -303,6 +306,7 @@ const IMAGE_POSITIONS = {
   'LBG-26-121': 'center center',
   'LBG-26-122': 'center center',
   'LBG-26-123': 'center center',
+  'LBG-26-124': 'center center',
 };
 
 // Génère un nom lisible depuis le nom de fichier
