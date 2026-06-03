@@ -176,6 +176,11 @@ const DESCRIPTIONS = {
 
   // ── Identifieurs (lot 20260524) ───────────────────────────
   'LBG-26-124': "Ensemble de 2 identifieurs pour coupe à vin — plume dorée et étoile trèfle avec perle de verre noire. Un duo bohème et céleste pour ne plus jamais confondre son verre.",
+
+  // ── Bracelets (lot 20260603) ──────────────────────────────
+  'LBG-26-125': "Bracelet chaîne dorée orné d'un charm serpent doré enroulé — mystérieux et envoûtant, un bijou aux allures de talisman protecteur. Présenté dans sa boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-126': "Bracelet chaîne argentée avec charm lune croissant et perle noire — un duo céleste et mystérieux qui joue entre lumière et ombre. Présenté dans sa boîte en bois gravée Labroche et Gobeil.",
+  'LBG-26-127': "Bracelet chaîne argentée avec pendentif goutte en pierre sombre — minimaliste et raffiné, une silhouette élégante sur une chaîne délicate. Présenté dans sa boîte en bois gravée Labroche et Gobeil.",
 };
 
 // Position de cadrage par SKU (object-position CSS)
@@ -307,6 +312,9 @@ const IMAGE_POSITIONS = {
   'LBG-26-122': 'center center',
   'LBG-26-123': 'center center',
   'LBG-26-124': 'center center',
+  'LBG-26-125': 'center center',
+  'LBG-26-126': 'center center',
+  'LBG-26-127': 'center center',
 };
 
 // Génère un nom lisible depuis le nom de fichier
