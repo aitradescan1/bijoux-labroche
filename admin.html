@@ -166,6 +166,7 @@
               <th>Client</th>
               <th>Email</th>
               <th>Produit</th>
+              <th>SKU</th>
               <th>Qté</th>
               <th>Montant</th>
               <th>Statut</th>
@@ -173,7 +174,7 @@
             </tr>
           </thead>
           <tbody id="ordersBody">
-            <tr><td colspan="8" class="admin-loading">Chargement…</td></tr>
+            <tr><td colspan="9" class="admin-loading">Chargement…</td></tr>
           </tbody>
         </table>
       </div>
@@ -228,6 +229,7 @@
               <tr>
                 <th>Réf.</th>
                 <th>Produit</th>
+                <th>SKU</th>
                 <th>Qté</th>
                 <th>Montant</th>
                 <th>Paiement</th>
@@ -236,7 +238,7 @@
               </tr>
             </thead>
             <tbody id="ventesBody">
-              <tr><td colspan="7" class="admin-loading">Chargement…</td></tr>
+              <tr><td colspan="8" class="admin-loading">Chargement…</td></tr>
             </tbody>
           </table>
         </div>
@@ -455,6 +457,7 @@ alter table page_views disable row level security;</pre>
           <td>${escHtml(o.customer_name)}</td>
           <td><a href="mailto:${escHtml(o.customer_email)}">${escHtml(o.customer_email)}</a></td>
           <td>${escHtml(o.product_name)}</td>
+          <td><code>${escHtml(o.products?.sku ?? '—')}</code></td>
           <td>${escHtml(o.qty)}</td>
           <td><strong>${escHtml(parseFloat(o.amount_cad).toFixed(2))} $</strong></td>
           <td><span class="status-badge ${STATUS_CLASS[o.status] ?? ''}">${STATUS_LABELS[o.status] ?? o.status}</span></td>
@@ -757,6 +760,7 @@ alter table page_views disable row level security;</pre>
         <tr>
           <td><code class="order-ref">${escHtml(v.id.slice(0,8).toUpperCase())}</code></td>
           <td>${escHtml(v.product_name)}</td>
+          <td><code>${escHtml(v.products?.sku ?? '—')}</code></td>
           <td>${escHtml(v.qty)}</td>
           <td><strong>${parseFloat(v.price_cad).toFixed(2)} $</strong></td>
           <td>${escHtml(PAIEMENT_LABEL[v.paiement] ?? v.paiement)}</td>

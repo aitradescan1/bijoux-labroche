@@ -47,7 +47,7 @@ export default async function handler(req, res) {
 
     const { data, error, count } = await supabase
       .from('ventes_locales')
-      .select('id, product_name, qty, price_cad, paiement, vendu_par, created_at', { count: 'exact' })
+      .select('id, product_name, qty, price_cad, paiement, vendu_par, created_at, products(sku)', { count: 'exact' })
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
 

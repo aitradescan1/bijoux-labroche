@@ -56,7 +56,7 @@ export default async function handler(req, res) {
 
     let query = supabase
       .from('orders')
-      .select('id, customer_name, customer_email, product_name, qty, amount_cad, livraison, frais_livraison, rabais, status, paypal_order_id, paypal_capture_id, notes, created_at', { count: 'exact' })
+      .select('id, customer_name, customer_email, product_name, qty, amount_cad, livraison, frais_livraison, rabais, status, paypal_order_id, paypal_capture_id, notes, created_at, products(sku)', { count: 'exact' })
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
 
