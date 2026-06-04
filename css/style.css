@@ -548,6 +548,28 @@ footer:not(.site-footer) {
   font-size: .76rem;
   opacity: .4;
 }
+.footer-event-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(212,175,55,.35);
+  border-radius: 8px;
+  padding: 9px 18px;
+  text-decoration: none;
+  color: var(--cream);
+  font-size: .82rem;
+  line-height: 1.45;
+  background: rgba(212,175,55,.05);
+  transition: border-color .2s, background .2s, color .2s;
+}
+.footer-event-badge:hover {
+  border-color: var(--gold-light);
+  background: rgba(212,175,55,.12);
+  color: var(--gold-light);
+}
+.footer-event-badge .feb-icon { font-size: 1.5rem; flex-shrink: 0; }
+.footer-event-badge strong { display: block; color: var(--gold-light); font-size: .86rem; letter-spacing: .3px; }
+.footer-event-badge em { opacity: .6; font-style: normal; font-size: .76rem; }
 
 /* ==========================================================
    PAGE PÉDAGOGIE — compat

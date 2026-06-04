@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Inventaire — Bijoux Labroche et Gobeil</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: #111;
+    background: white;
+    padding: 12mm 10mm;
+  }
+
+  /* ── EN-TÊTE ── */
+  .entete {
+    text-align: center;
+    border-bottom: 2px solid #333;
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+  }
+  .entete h1 { font-size: 18px; letter-spacing: 1px; }
+  .entete h2 { font-size: 13px; font-weight: normal; color: #555; margin-top: 2px; }
+  .entete .meta { font-size: 10px; color: #888; margin-top: 4px; }
+
+  /* ── TOTAUX ── */
+  .totaux {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .total-box {
+    border: 1.5px solid #333;
+    border-radius: 4px;
+    padding: 5px 10px;
+    min-width: 140px;
+    font-size: 10px;
+  }
+  .total-box strong { display: block; font-size: 12px; margin-bottom: 2px; }
+  .total-box .ligne { display: flex; justify-content: space-between; gap: 8px; margin-top: 1px; }
+  .fill { border-bottom: 1px dotted #999; flex: 1; min-width: 30px; height: 14px; }
+
+  /* ── CATÉGORIE ── */
+  .cat-titre {
+    background: #333;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 8px;
+    margin: 14px 0 4px 0;
+    letter-spacing: 0.5px;
+    page-break-after: avoid;
+  }
+
+  /* ── TABLE ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th {
+    background: #eee;
+    border: 1px solid #ccc;
+    padding: 3px 5px;
+    text-align: left;
+    font-size: 10px;
+  }
+  th.c { text-align: center; }
+  td {
+    border: 1px solid #ddd;
+    padding: 3px 5px;
+    vertical-align: middle;
+  }
+  td.prix { text-align: right; font-weight: bold; white-space: nowrap; }
+  td.sku  { font-family: monospace; font-size: 10px; color: #555; }
+  td.check { text-align: center; }
+
+  .checkbox {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid #555;
+    border-radius: 2px;
+  }
+
+  tr:nth-child(even) td { background: #fafafa; }
+  tr:hover td { background: #f0f0f0; }
+
+  /* ── NOTES ── */
+  .notes-section {
+    margin-top: 16px;
+    border: 1.5px solid #999;
+    border-radius: 4px;
+    padding: 8px;
+    page-break-inside: avoid;
+  }
+  .notes-section h3 { font-size: 11px; margin-bottom: 6px; }
+  .note-ligne {
+    border-bottom: 1px solid #ddd;
+    height: 18px;
+    margin-bottom: 2px;
+  }
+
+  .note-totaux {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    page-break-inside: avoid;
+  }
+  .note-total-box {
+    border: 2px solid #333;
+    border-radius: 4px;
+    padding: 6px 12px;
+    min-width: 160px;
+    font-size: 11px;
+  }
+  .note-total-box .label { color: #555; margin-bottom: 4px; }
+  .note-total-box .valeur {
+    border-bottom: 2px solid #333;
+    height: 20px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  /* ── IMPRESSION ── */
+  @media print {
+    body { padding: 8mm 8mm; }
+    .no-print { display: none; }
+    tr { page-break-inside: avoid; }
+    .cat-titre { page-break-before: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- BOUTON IMPRESSION (disparaît à l'impression) -->
+<div class="no-print" style="text-align:right; margin-bottom:10px;">
+  <button onclick="window.print()" style="padding:8px 20px; font-size:13px; cursor:pointer;">🖨️ Imprimer</button>
+</div>
+
+<!-- EN-TÊTE -->
+<div class="entete">
+  <h1>✦ BIJOUX LABROCHE ET GOBEIL ✦</h1>
+  <h2>Inventaire — Journée des Petits Entrepreneurs</h2>
+  <div class="meta">6 juin 2026 &nbsp;|&nbsp; 135 articles en stock &nbsp;|&nbsp; Cocher ✓ à chaque vente</div>
+</div>
+
+<!-- RÉSUMÉ PAR PRIX -->
+<div class="totaux">
+  <div class="total-box">
+    <strong>Vendus 3 $</strong>
+    <div class="ligne"><span>Qté :</span><span class="fill"></span></div>
+    <div class="ligne"><span>Total :</span><span class="fill"></span><span>$</span></div>
+  </div>
+  <div class="total-box">
+    <strong>Vendus 4 $</strong>
+    <div class="ligne"><span>Qté :</span><span class="fill"></span></div>
+    <div class="ligne"><span>Total :</span><span class="fill"></span><span>$</span></div>
+  </div>
+  <div class="total-box">
+    <strong>Vendus 10 $</strong>
+    <div class="ligne"><span>Qté :</span><span class="fill"></span></div>
+    <div class="ligne"><span>Total :</span><span class="fill"></span><span>$</span></div>
+  </div>
+  <div class="total-box">
+    <strong>Vendus 12 $</strong>
+    <div class="ligne"><span>Qté :</span><span class="fill"></span></div>
+    <div class="ligne"><span>Total :</span><span class="fill"></span><span>$</span></div>
+  </div>
+  <div class="total-box" style="border-color:#b8860b; background:#fffbf0;">
+    <strong style="color:#b8860b;">GRAND TOTAL</strong>
+    <div class="ligne"><span>Articles :</span><span class="fill"></span></div>
+    <div class="ligne" style="font-weight:bold"><span>Total $$ :</span><span class="fill"></span><span>$</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════ ACCESSOIRES ══════════════════ -->
+<div class="cat-titre">ACCESSOIRES — Identifieurs à vin (17 articles)</div>
+<table>
+  <thead>
+    <tr>
+      <th style="width:22px" class="c">✓</th>
+      <th style="width:100px">SKU</th>
+      <th>Article</th>
+      <th style="width:45px" class="c">Prix</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-039</td><td>Identifieur Coeur Pierre Verte</td><td class="prix">4 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-040</td><td>Identifieur Figure Royale</td><td class="prix">4 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-041</td><td>Identifieur Libellule</td><td class="prix">3 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-042</td><td>Identifieur Etoile Pierre Sombre</td><td class="prix">4 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-043</td><td>Identifieur Elephant Etoile Mer</td><td class="prix">4 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-044</td><td>Identifieur Coeur Celtique Lune</td><td class="prix">4 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-045</td><td>Identifieur Coeur Filigrane</td><td class="prix">3 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-046</td><td>Identifieur Feuille Fleur</td><td class="prix">4 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-047</td><td>Identifieur Lune Croissant</td><td class="prix">3 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-048</td><td>Identifieur Diamant Lune</td><td class="prix">4 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-049</td><td>Identifieur Coeur Pierre Ambree</td><td class="prix">4 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-050</td><td>Identifieur Lune Pierre Orange</td><td class="prix">4 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-051</td><td>Identifieur Lune Etoile</td><td class="prix">4 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-052</td><td>Identifieur Pendentif Simple</td><td class="prix">3 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-053</td><td>Identifieur Etoile Simple</td><td class="prix">3 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-054</td><td>Identifieur Anneau</td><td class="prix">3 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-124</td><td>Identifieur Plume Etoile</td><td class="prix">3 $</td></tr>
+  </tbody>
+</table>
+
+<!-- ══════════════════ BRACELETS ══════════════════ -->
+<div class="cat-titre">BRACELETS (14 articles)</div>
+<table>
+  <thead>
+    <tr>
+      <th style="width:22px" class="c">✓</th>
+      <th style="width:100px">SKU</th>
+      <th>Article</th>
+      <th style="width:45px" class="c">Prix</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-056</td><td>Bracelet Coeur Dore</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-057</td><td>Bracelet Cornaline Charm Soleil</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-058</td><td>Bracelet Oeil De Tigre Etoile</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-059</td><td>Bracelet Aventurine Verte</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-061</td><td>Bracelet Oeil De Tigre Pendentif</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-062</td><td>Bracelet Etoile Argent</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-063</td><td>Bracelet Amethyste Coeurs</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-064</td><td>Bracelet Cornaline Rouge</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-084</td><td>Bracelet Etoile Quartz Rose</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-085</td><td>Bracelet Etoile Argent 2</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-086</td><td>Bracelet Lune Doree</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-087</td><td>Bracelet Coeur Cornaline</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-125</td><td>Bracelet Serpent Dore</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-126</td><td>Bracelet Lune Pierre Argent</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-127</td><td>Bracelet Pendentif Goutte Argent</td><td class="prix">10 $</td></tr>
+  </tbody>
+</table>
+
+<!-- ══════════════════ COLLIERS ══════════════════ -->
+<div class="cat-titre">COLLIERS (3 articles)</div>
+<table>
+  <thead>
+    <tr>
+      <th style="width:22px" class="c">✓</th>
+      <th style="width:100px">SKU</th>
+      <th>Article</th>
+      <th style="width:45px" class="c">Prix</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-081</td><td>Collier Quartz Rose</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-082</td><td>Collier Cornaline</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-083</td><td>Collier Labradorite</td><td class="prix">12 $</td></tr>
+  </tbody>
+</table>
+
+<!-- ══════════════════ BOUCLES D'OREILLES ══════════════════ -->
+<div class="cat-titre">BOUCLES D'OREILLES (102 articles)</div>
+<table>
+  <thead>
+    <tr>
+      <th style="width:22px" class="c">✓</th>
+      <th style="width:100px">SKU</th>
+      <th>Article</th>
+      <th style="width:45px" class="c">Prix</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-001</td><td>Boucles Cornaline Saumon</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-002</td><td>Boucles Cornaline Rouge</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-003</td><td>Boucles Aventurine Verte</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-004</td><td>Boucles Jaspe Dalmatien</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-005</td><td>Boucles Pierre Miel</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-006</td><td>Boucles Jaspe Brun</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-007</td><td>Boucles Chalcedoine Gris-Bleu</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-008</td><td>Boucles Jaspe Rouge</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-009</td><td>Boucles Amazonite</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-010</td><td>Boucles Pendantes Pierre & Chaîne</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-011</td><td>Boucles Pendantes Plume & Coeur</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-012</td><td>Boucles Pierre de Lune</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-013</td><td>Boucles Quartz Blanc Laiteux</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-014</td><td>Boucles Pierre Miel Ambree</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-015</td><td>Boucles Pierre Miel Doree</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-016</td><td>Boucles Aventurine</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-017</td><td>Boucles Jaspe Rouge</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-018</td><td>Boucles Jaspe Beige</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-019</td><td>Boucles Jaspe Brun Clair</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-020</td><td>Boucles Cornaline Rouge</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-021</td><td>Boucles Pierre Miel</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-022</td><td>Boucles Cornaline Saumon</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-023</td><td>Boucles Jaspe Dalmatien</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-024</td><td>Boucles Oeil De Tigre</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-025</td><td>Boucles Jaspe Rouge Coeur</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-027</td><td>Boucles Calcedoine Mauve</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-028</td><td>Boucles Jaspe Brun Fonce</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-029</td><td>Boucles Amethyste Brute</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-030</td><td>Boucles Jaspe Brun</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-031</td><td>Boucles Quartz Blanc</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-032</td><td>Boucles Quartz Rose</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-033</td><td>Boucles Calcedoine Coeur</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-034</td><td>Boucles Oeil De Tigre Brun</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-035</td><td>Boucles Cornaline Rouge Vif</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-036</td><td>Boucles Cornaline Saumon Marbre</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-037</td><td>Boucles Oeil De Tigre Coeur</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-038</td><td>Boucles Obsidienne</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-060</td><td>Boucles Amethyste Claire</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-065</td><td>Boucles Oeil De Tigre Gros</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-066</td><td>Boucles Jaspe Dalmatien Brun</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-067</td><td>Boucles Obsidienne Noire</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-068</td><td>Boucles Quartz Inclusions</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-069</td><td>Boucles Labradorite</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-070</td><td>Boucles Amethyste Fumee</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-071</td><td>Boucles Quartz Blanc Vert</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-072</td><td>Boucles Quartz Blanc Ivoire</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-073</td><td>Boucles Jaspe Vert Fonce</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-074</td><td>Boucles Quartz Rose Pale</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-075</td><td>Boucles Jaspe Dalmatien Clair</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-076</td><td>Boucles Jaspe Dalmatien</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-077</td><td>Boucles Lapis Lazuli</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-078</td><td>Boucles Citrine Orange</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-079</td><td>Boucles Amazonite Turquoise</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-080</td><td>Boucles Amazonite Grand</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-088</td><td>Boucles Pierre De Lune</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-089</td><td>Boucles Lapis Lazuli</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-090</td><td>Boucles Amazonite Claire</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-091</td><td>Boucles Amazonite</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-092</td><td>Boucles Amazonite 2</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-093</td><td>Boucles Pendantes Malachite</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-094</td><td>Boucles Sodalite</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-095</td><td>Boucles Aventurine Verte</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-096</td><td>Boucles Quartz Rose Facette</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-097</td><td>Boucles Cornaline Saumon</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-098</td><td>Boucles Amazonite 3</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-099</td><td>Boucles Labradorite Grise</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-100</td><td>Boucles Pierre De Lune Creme</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-101</td><td>Boucles Obsidienne Noire</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-102</td><td>Boucles Quartz Fume</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-103</td><td>Boucles Labradorite Inclusions</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-104</td><td>Boucles Quartz Blanc Cristal</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-105</td><td>Boucles Cornaline Rouge</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-106</td><td>Boucles Labradorite 4</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-107</td><td>Boucles Rhodonite</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-108</td><td>Boucles Pierre De Lune Rectangle</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-109</td><td>Boucles Coeur Quartz Rose</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-110</td><td>Boucles Jaspe Dalmatien</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-111</td><td>Boucles Jaspe Gris</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-112</td><td>Boucles Amethyste Pale</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-113</td><td>Boucles Quartz Cristal</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-114</td><td>Boucles Bronzite</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-115</td><td>Boucles Tourmaline Quartz</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-116</td><td>Boucles Labradorite Bleue</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-117</td><td>Boucles Rhodonite 2</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-118</td><td>Boucles Labradorite Foncee</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-119</td><td>Boucles Pendantes Obsidienne</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-120</td><td>Boucles Oeil De Tigre</td><td class="prix">12 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-121</td><td>Boucles Jaspe Dalmatien 2</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-122</td><td>Boucles Calcedoine Grise</td><td class="prix">10 $</td></tr>
+    <tr><td class="check"><span class="checkbox"></span></td><td class="sku">LBG-26-123</td><td>Boucles Aventurine Foncee</td><td class="prix">12 $</td></tr>
+  </tbody>
+</table>
+
+<!-- ══════════════════ NOTES ══════════════════ -->
+<div class="notes-section">
+  <h3>Notes de la journée</h3>
+  <div class="note-ligne"></div>
+  <div class="note-ligne"></div>
+  <div class="note-ligne"></div>
+  <div class="note-ligne"></div>
+</div>
+
+<div class="note-totaux">
+  <div class="note-total-box">
+    <div class="label">Articles vendus (total)</div>
+    <div class="valeur"></div>
+  </div>
+  <div class="note-total-box">
+    <div class="label">Argent comptant reçu</div>
+    <div class="valeur"></div>
+  </div>
+  <div class="note-total-box">
+    <div class="label">Paiements électroniques</div>
+    <div class="valeur"></div>
+  </div>
+  <div class="note-total-box" style="border-color:#b8860b;">
+    <div class="label" style="color:#b8860b; font-weight:bold;">TOTAL FINAL</div>
+    <div class="valeur" style="font-size:18px;"></div>
+  </div>
+</div>
+
+</body>
+</html>
