@@ -1045,6 +1045,7 @@ footer:not(.site-footer) {
   gap: 64px;
   align-items: center;
 }
+.histoire-story-rev .histoire-visual { order: -1; }
 .histoire-text { display: flex; flex-direction: column; gap: 14px; }
 .histoire-text .section-title { margin: 8px 0 16px; }
 .histoire-text p { color: var(--text-muted); line-height: 1.75; }
