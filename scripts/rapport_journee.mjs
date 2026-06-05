@@ -101,8 +101,8 @@ console.log(`  Commandes en ligne: ${totalCommandes.toFixed(2)} $`);
 console.log(`  ─────────────────────────────`);
 console.log(`  TOTAL BRUT        : ${totalBrut.toFixed(2)} $`);
 console.log(`  ─────────────────────────────`);
-console.log(`  🏅 Nathan (50%)   : ${partChacun.toFixed(2)} $  (vendu : ${nathanTotal.toFixed(2)} $)`);
-console.log(`  🏅 Lyam   (50%)   : ${partChacun.toFixed(2)} $  (vendu : ${lyamTotal.toFixed(2)} $)`);
+console.log(`  🏅 Part Nathan    : ${partChacun.toFixed(2)} $  (50% — parts égales)`);
+console.log(`  🏅 Part Lyam      : ${partChacun.toFixed(2)} $  (50% — parts égales)`);
 console.log(ligne);
 
 // ── 5. Génération HTML imprimable ─────────────────────────────
@@ -178,14 +178,14 @@ const html = `<!DOCTYPE html>
     <div style="font-size:12px;color:#888;margin-top:4px">${ventes.length + commandes.length} ventes au total</div>
   </div>
   <div class="box nathan">
-    <div class="label">🏅 NATHAN (50%)</div>
+    <div class="label">🏅 PART DE NATHAN</div>
     <div class="montant">${partChacun.toFixed(2)} $</div>
-    <div style="font-size:12px;color:#888;margin-top:4px">A vendu ${nathanVentes.length} articles (${nathanTotal.toFixed(2)} $)</div>
+    <div style="font-size:12px;color:#888;margin-top:4px">50% du total — parts égales</div>
   </div>
   <div class="box lyam">
-    <div class="label">🏅 LYAM (50%)</div>
+    <div class="label">🏅 PART DE LYAM</div>
     <div class="montant">${partChacun.toFixed(2)} $</div>
-    <div style="font-size:12px;color:#888;margin-top:4px">A vendu ${lyamVentes.length} articles (${lyamTotal.toFixed(2)} $)</div>
+    <div style="font-size:12px;color:#888;margin-top:4px">50% du total — parts égales</div>
   </div>
 </div>
 
