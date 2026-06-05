@@ -37,8 +37,7 @@ export default async function handler(req, res) {
       const { data, error } = await supabase
         .from('products')
         .select('id, sku, name, category, price_cad, stock_qty, in_stock, image_url')
-        .order('category')
-        .order('name');
+        .order('sku');
 
       if (error) throw error;
       return res.status(200).json(data);
