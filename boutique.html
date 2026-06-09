@@ -152,12 +152,12 @@
             <span class="product-cat">${icon} ${escHtml(label)}</span>
             <h2 class="product-name">${escHtml(p.name)}</h2>
             <span class="product-sku">${escHtml(p.sku)}</span>
+            <div class="product-price-top">${escHtml(p.price_cad.toFixed(2))} $</div>
             <p class="product-desc">${escHtml(p.description ?? '')}</p>
             ${noticeRepro}
             <div class="product-footer">
-              <span class="product-price">${escHtml(p.price_cad.toFixed(2))} $</span>
               <a href="commande.html?productId=${encodeURIComponent(p.id)}&productName=${encodeURIComponent(p.name)}&price=${encodeURIComponent(p.price_cad)}"
-                 class="btn-primary">Commander</a>
+                 class="btn-commander">🛒 Commander</a>
             </div>
           </div>
         </article>`;

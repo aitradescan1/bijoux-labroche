@@ -717,16 +717,28 @@ footer:not(.site-footer) {
 }
 .product-img-placeholder img { width: 60px; height: 60px; opacity: .5; }
 
-.product-info { padding: 18px; display: flex; flex-direction: column; flex: 1; }
-.product-cat  { font-size: .73rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--rose); margin-bottom: 6px; }
+.product-info { padding: 16px 18px 18px; display: flex; flex-direction: column; flex: 1; }
+.product-cat  { font-size: .73rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--rose); margin-bottom: 5px; }
 .product-name { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
-.product-sku  { font-family: monospace; font-size: .72rem; color: var(--text-muted); opacity: .6; display: block; margin-bottom: 8px; }
-.product-desc { font-size: .84rem; color: var(--text-muted); line-height: 1.6; flex: 1; margin-bottom: 10px; }
+.product-sku  { font-family: monospace; font-size: .72rem; color: var(--text-muted); opacity: .6; display: block; margin-bottom: 6px; }
+.product-price-top { font-size: 1.18rem; font-weight: 700; color: var(--gold,#b8860b); margin-bottom: 10px; }
+.product-desc {
+  font-size: .84rem; color: var(--text-muted); line-height: 1.55; flex: 1; margin-bottom: 14px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
 .notice-photo-rep { font-size: .76rem; color: var(--text-muted); background: #fdf8f2; border-left: 3px solid var(--rose); padding: 5px 9px; border-radius: 0 4px 4px 0; margin-bottom: 14px; line-height: 1.5; }
 .notice-photo-rep a { color: var(--rose); text-decoration: underline; }
-.product-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.product-footer { margin-top: auto; }
+.product-footer .btn-commander {
+  display: block; width: 100%; text-align: center; text-decoration: none;
+  background: linear-gradient(135deg, var(--gold,#b8860b), #8a6640);
+  color: #fff; font-weight: 600; font-size: .95rem; letter-spacing: .02em;
+  padding: 13px 16px; border-radius: var(--radius-sm,8px);
+  transition: opacity .18s, transform .18s;
+}
+.product-footer .btn-commander:hover { opacity: .88; transform: translateY(-1px); }
+/* gardé pour compatibilité */
 .product-price  { font-size: 1.08rem; font-weight: 700; color: var(--dark); }
-.product-footer .btn-primary { padding: 8px 16px; font-size: .8rem; }
 
 /* ── Fiche produit (accès direct ?sku=) ─────────────────── */
 .product-detail-wrap { max-width: 800px; margin: 0 auto 40px; padding: 0 24px; }
