@@ -53,37 +53,39 @@
     /* ── Carte produit ────────────────────────────────────── */
     .product-card {
       display: flex;
-      gap: 1rem;
+      flex-direction: column;
       align-items: center;
+      text-align: center;
+      gap: .75rem;
     }
     .product-card-img {
-      width: 72px;
-      height: 72px;
-      border-radius: 10px;
+      width: 100%;
+      max-width: 280px;
+      height: 280px;
+      border-radius: 14px;
       object-fit: contain;
       background: #faf7f3;
-      flex-shrink: 0;
       border: 1px solid #e8dfd4;
     }
     .product-card-ph {
-      width: 72px;
-      height: 72px;
-      border-radius: 10px;
+      width: 100%;
+      max-width: 280px;
+      height: 280px;
+      border-radius: 14px;
       background: #f0ebe3;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.8rem;
-      flex-shrink: 0;
+      font-size: 4rem;
     }
     .product-card-name {
       font-weight: 600;
-      font-size: 1rem;
+      font-size: 1.1rem;
       color: #1a1a1a;
-      margin: 0 0 0.25rem;
+      margin: 0 0 0.2rem;
     }
     .product-card-price {
-      font-size: 1.1rem;
+      font-size: 1.25rem;
       font-weight: 700;
       color: #a07850;
       margin: 0;
