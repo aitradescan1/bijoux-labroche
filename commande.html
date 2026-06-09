@@ -349,10 +349,13 @@
           </div>
         </div>
 
-        <p style="text-align:center;font-size:.82rem;color:#aaa;margin-top:1.25rem;line-height:1.6">
-          Vous préférez payer autrement ?<br>
-          <a href="contact.html?sujet=Commander+sans+PayPal" style="color:#b8860b;text-decoration:underline">Écrivez-nous</a> — virement Interac ou autre arrangement possible.
-        </p>
+        <div style="margin-top:1.25rem;padding:1rem;background:#faf7f3;border-radius:10px;border:1px solid rgba(184,134,11,.2);text-align:center">
+          <p style="font-size:.85rem;color:#555;margin-bottom:.6rem;font-weight:600">Pas de PayPal ? Pas de problème.</p>
+          <p style="font-size:.82rem;color:#888;margin-bottom:.8rem;line-height:1.5">Réservez sans payer maintenant — on vous contacte pour confirmer le paiement (comptant ou Interac).</p>
+          <a id="btnReserver" href="reserver.html" style="display:inline-block;background:#1E0D00;color:#C9A84C;font-weight:600;font-size:.88rem;text-decoration:none;padding:.6rem 1.4rem;border-radius:8px">
+            📋 Réserver cet article
+          </a>
+        </div>
 
         <a href="boutique.html" style="display:block;text-align:center;color:#aaa;font-size:.85rem;text-decoration:none;margin-top:1rem">
           ← Retour à la boutique
@@ -433,6 +436,11 @@
       // ── Afficher le produit ──────────────────────────
       document.getElementById('productCardName').textContent  = productName;
       document.getElementById('productCardPrice').textContent = priceCAD.toFixed(2) + ' $CAD';
+
+      // Lien réserver avec produit pré-rempli
+      const reserveParams = new URLSearchParams({ productId, productName, price: priceCAD });
+      if (imageURL) reserveParams.set('image', imageURL);
+      document.getElementById('btnReserver').href = 'reserver.html?' + reserveParams.toString();
 
       // Image depuis l'URL ou récupérée via l'API
       if (imageURL) {
