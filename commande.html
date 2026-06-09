@@ -420,17 +420,28 @@
       init();
     }
 
+    function setProductImage(url) {
+      if (!url) return;
+      const ph = document.getElementById('productPh');
+      if (!ph) return;
+      const img = document.createElement('img');
+      img.src = url; img.alt = productName; img.className = 'product-card-img';
+      ph.replaceWith(img);
+    }
+
     function init() {
       // ── Afficher le produit ──────────────────────────
       document.getElementById('productCardName').textContent  = productName;
       document.getElementById('productCardPrice').textContent = priceCAD.toFixed(2) + ' $CAD';
+
+      // Image depuis l'URL ou récupérée via l'API
       if (imageURL) {
-        const ph = document.getElementById('productPh');
-        const img = document.createElement('img');
-        img.src = imageURL;
-        img.alt = productName;
-        img.className = 'product-card-img';
-        ph.replaceWith(img);
+        setProductImage(imageURL);
+      } else {
+        fetch(`${API}/api/product?id=${encodeURIComponent(productId)}`)
+          .then(r => r.ok ? r.json() : null)
+          .then(p => { if (p?.image_url) setProductImage(p.image_url); })
+          .catch(() => {});
       }
 
       // ── Résumé initial ───────────────────────────────

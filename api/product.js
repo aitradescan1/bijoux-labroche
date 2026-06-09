@@ -17,18 +17,16 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'GET')    return res.status(405).json({ error: 'Méthode non autorisée' });
 
-  const { sku } = req.query;
-  if (!sku || typeof sku !== 'string' || sku.trim().length === 0) {
-    return res.status(400).json({ error: 'Paramètre sku manquant' });
-  }
+  const { sku, id } = req.query;
+  if (!sku && !id) return res.status(400).json({ error: 'Paramètre sku ou id manquant' });
 
   try {
     const supabase = getSupabase();
-    const { data, error } = await supabase
+    let q = supabase
       .from('products')
-      .select('id, sku, name, description, price_cad, category, image_url, piece_unique, stock_qty, in_stock')
-      .eq('sku', sku.trim().toUpperCase())
-      .single();
+      .select('id, sku, name, description, price_cad, category, image_url, piece_unique, stock_qty, in_stock');
+    q = id ? q.eq('id', id.trim()) : q.eq('sku', sku.trim().toUpperCase());
+    const { data, error } = await q.single();
 
     if (error || !data) return res.status(404).json({ error: 'Produit introuvable' });
 
