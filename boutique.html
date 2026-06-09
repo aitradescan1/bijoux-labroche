@@ -156,7 +156,7 @@
             <p class="product-desc">${escHtml(p.description ?? '')}</p>
             ${noticeRepro}
             <div class="product-footer">
-              <a href="commande.html?productId=${encodeURIComponent(p.id)}&productName=${encodeURIComponent(p.name)}&price=${encodeURIComponent(p.price_cad)}"
+              <a href="commande.html?productId=${encodeURIComponent(p.id)}&productName=${encodeURIComponent(p.name)}&price=${encodeURIComponent(p.price_cad)}${p.image_url ? '&image=' + encodeURIComponent(p.image_url) : ''}"
                  class="btn-commander">🛒 Commander</a>
             </div>
           </div>

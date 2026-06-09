@@ -406,6 +406,7 @@
     const productId   = params.get('productId')   ?? '';
     const productName = params.get('productName') ?? '';
     const priceCAD    = parseFloat(params.get('price') ?? '0');
+    const imageURL    = params.get('image') ?? '';
 
     function escHtml(s) {
       return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -423,6 +424,14 @@
       // ── Afficher le produit ──────────────────────────
       document.getElementById('productCardName').textContent  = productName;
       document.getElementById('productCardPrice').textContent = priceCAD.toFixed(2) + ' $CAD';
+      if (imageURL) {
+        const ph = document.getElementById('productPh');
+        const img = document.createElement('img');
+        img.src = imageURL;
+        img.alt = productName;
+        img.className = 'product-card-img';
+        ph.replaceWith(img);
+      }
 
       // ── Résumé initial ───────────────────────────────
       updateSummary();
