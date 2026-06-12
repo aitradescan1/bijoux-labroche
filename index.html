@@ -16,6 +16,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@400;500;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="assets/svg/favicon.svg">
+  <meta name="theme-color" content="#FFF8F0">
   <link rel="stylesheet" href="css/style.css">
   <style>
     .featured-section { padding: 3rem 1rem 2rem; }
@@ -47,6 +49,24 @@
     .sku-form button:hover { background: #8a6640; }
     .sku-hint { font-size: 0.78rem; color: #888; margin: 0.4rem 0 0; }
   </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": "Labroche et Gobeil",
+    "description": "Bijoux artisanaux en pierres naturelles faits à la main par Nathan et Lyam. Boucles d'oreilles, colliers et bracelets — Chicoutimi, Québec.",
+    "url": "https://aitradescan1.github.io/bijoux-labroche/",
+    "image": "https://aitradescan1.github.io/bijoux-labroche/assets/Produits/Boucles/LBG-26-093-boucles-pendantes-malachite.jpg",
+    "email": "bijoux.labroche@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Chicoutimi",
+      "addressRegion": "QC",
+      "addressCountry": "CA"
+    },
+    "priceRange": "$"
+  }
+  </script>
 </head>
 <body>
 
@@ -106,7 +126,7 @@
 
       <div class="hero-visual">
         <div class="hero-img-wrap">
-          <img src="assets/Produits/Boucles/LBG-26-096-boucles-quartz-rose-facette.jpg" alt="Boucles d'oreilles artisanales faites main" class="hero-photo">
+          <img src="assets/Produits/Boucles/LBG-26-096-boucles-quartz-rose-facette.jpg" alt="Boucles d'oreilles artisanales faites main" class="hero-photo" fetchpriority="high">
           <div class="hero-tag" aria-hidden="true">Boucles d'oreilles · 10 – 12 $</div>
         </div>
         <div class="float-icon fi-necklace" aria-hidden="true"><img src="assets/svg/necklace.svg" alt=""></div>
@@ -234,13 +254,15 @@
         const res = await fetch(API + '/api/products');
         if (!res.ok) throw new Error();
         const products = await res.json();
+        const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         // Mélanger et prendre 14
         const sample = products.sort(() => Math.random() - 0.5).slice(0, 14);
         scroll.innerHTML = sample.map(p => {
+          const href = p.sku ? 'boutique.html?sku=' + encodeURIComponent(p.sku) : 'boutique.html';
           const img = p.image_url
-            ? `<img src="${p.image_url}" alt="${p.name.replace(/"/g,'')}" loading="lazy" onerror="this.style.display='none'">`
+            ? `<img src="${esc(p.image_url)}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.display='none'">`
             : '';
-          return `<a href="boutique.html" class="feat-card">${img}<div class="feat-card-body"><p class="feat-card-name">${p.name}</p><p class="feat-card-price">${p.price_cad.toFixed(2)} $</p></div></a>`;
+          return `<a href="${href}" class="feat-card">${img}<div class="feat-card-body"><p class="feat-card-name">${esc(p.name)}</p><p class="feat-card-price">${p.price_cad.toFixed(2)} $</p></div></a>`;
         }).join('');
       } catch (e) {
         document.querySelector('.featured-section').hidden = true;
