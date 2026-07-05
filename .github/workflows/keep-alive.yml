@@ -14,12 +14,16 @@ jobs:
       - name: Ping
         run: |
           echo "⏰ $(date -u '+%Y-%m-%d %H:%M UTC')"
-          RESP=$(curl -s -o /dev/null -w "%{http_code}" \
-            https://bijoux-labroche-aitradescan1s-projects.vercel.app/api/ping)
-          echo "Statut HTTP : $RESP"
-          if [ "$RESP" = "200" ]; then
-            echo "✅ Supabase actif"
-          else
-            echo "❌ Réponse inattendue : $RESP"
-            exit 1
-          fi
+          URL="https://bijoux-labroche.vercel.app/api/ping"
+          # 3 tentatives espacées de 30s pour absorber un réveil lent de Supabase
+          for i in 1 2 3; do
+            RESP=$(curl -s -o /dev/null -w "%{http_code}" -m 30 "$URL")
+            echo "Tentative $i — statut HTTP : $RESP"
+            if [ "$RESP" = "200" ]; then
+              echo "✅ Supabase actif"
+              exit 0
+            fi
+            [ "$i" -lt 3 ] && sleep 30
+          done
+          echo "❌ Ping échoué après 3 tentatives (dernier statut : $RESP)"
+          exit 1
