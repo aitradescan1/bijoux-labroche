@@ -272,7 +272,7 @@
       ? (p.image_url.startsWith('http') ? p.image_url : BASE_IMG + p.image_url)
       : null;
     const enStock = p.in_stock && p.stock_qty > 0;
-    const commandeUrl = `commande.html?sku=${encodeURIComponent(p.sku)}`;
+    const contactUrl = `contact.html?produit=${encodeURIComponent(p.name + ' (' + p.sku + ')')}`;
 
     let html = `<div class="fiche">
       <div class="pierre-hero">
@@ -335,7 +335,7 @@
     // Bouton commander
     if (enStock) {
       html += `<div style="padding:16px 0 0">
-        <a href="${commandeUrl}" class="btn-commander">Commander ce bijou — ${parseFloat(p.price_cad).toFixed(2)} $</a>
+        <a href="${contactUrl}" class="btn-commander">📩 Nous contacter — ${parseFloat(p.price_cad).toFixed(2)} $</a>
       </div>`;
     }
 

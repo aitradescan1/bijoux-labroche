@@ -249,6 +249,13 @@
       const opt = [...subjectEl.options].find(o => o.value === sujetParam);
       if (opt) subjectEl.value = sujetParam;
     }
+    // Depuis la boutique (?produit=Nom (SKU)) — intérêt pour un bijou précis
+    const produitParam = params.get('produit');
+    if (produitParam) {
+      document.getElementById('contactSubject').value = 'Question sur un bijou';
+      document.getElementById('contactMessage').value =
+        `Bonjour, je suis intéressé(e) par ce bijou : ${produitParam}.\nEst-il toujours disponible ?\n\n`;
+    }
 
     document.getElementById('contactForm').addEventListener('submit', async (e) => {
       e.preventDefault();
